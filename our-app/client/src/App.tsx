@@ -29,14 +29,19 @@ const App: React.FC = () => {
       {showChatbot && (
         <div style={{
           position: 'fixed',
-          bottom: 24,
-          right: 24,
+          top: 56, // Offset for navbar height (adjust if your navbar is taller)
+          right: 0,
+          height: 'calc(100vh - 56px)',
+          width: '420px',
           zIndex: 1050,
           boxShadow: '0 8px 32px rgba(0,0,0,0.18)',
-          borderRadius: 20,
-          background: 'transparent',
+          borderRadius: 0,
+          background: '#fff',
+          display: 'flex',
+          flexDirection: 'column',
+          transition: 'all 0.3s cubic-bezier(.4,2,.6,1)',
         }}>
-          <div style={{ position: 'relative' }}>
+          <div style={{ position: 'relative', flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
             <button
               onClick={() => setShowChatbot(false)}
               style={{
@@ -60,51 +65,53 @@ const App: React.FC = () => {
           </div>
         </div>
       )}
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/" element={<Home />} />
-        
-        {/* Protected Routes */}
-        <Route path="/initial-setup" element={
-          <ProtectedRoute>
-            <InitialSetup />
-          </ProtectedRoute>
-        } />
-        <Route path="/dashboard" element={
-          <ProtectedRoute>
-            <DashboardWrapper />
-          </ProtectedRoute>
-        } />
-        <Route path="/quizzes/lang/:lang/level/:level/topic/:topic" element={
-          <ProtectedRoute>
-            <BasicQuiz />
-          </ProtectedRoute>
-        } />
-        <Route path="/users/:id/:lang/:level/:topic/quiz" element={
-          <ProtectedRoute>
-            <BasicQuiz />
-          </ProtectedRoute>
-        } />
-        <Route path="/users/:userId/quiz" element={
-          <ProtectedRoute>
-            <CustomQuiz />
-          </ProtectedRoute>
-        } />
-        <Route path="/users/:userId/:lang/course/:topic" element={
-          <ProtectedRoute>
-            <CourseQuiz />
-          </ProtectedRoute>
-        } />
-        
-        {/* Catch old route format and redirect */}
-        <Route path="/users/:userId/course/:topic/quiz" element={
-          <div style={{ padding: '20px', textAlign: 'center' }}>
-            <h3>Redirecting...</h3>
-            <p>Old route detected. Please refresh the page or go back to dashboard.</p>
-            <button onClick={() => window.location.href = '/dashboard'}>Go to Dashboard</button>
-          </div>
-        } />
-      </Routes>
+      <div style={{ marginRight: showChatbot ? 420 : 0, transition: 'margin-right 0.3s cubic-bezier(.4,2,.6,1)' }}>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<Home />} />
+          
+          {/* Protected Routes */}
+          <Route path="/initial-setup" element={
+            <ProtectedRoute>
+              <InitialSetup />
+            </ProtectedRoute>
+          } />
+          <Route path="/dashboard" element={
+            <ProtectedRoute>
+              <DashboardWrapper />
+            </ProtectedRoute>
+          } />
+          <Route path="/quizzes/lang/:lang/level/:level/topic/:topic" element={
+            <ProtectedRoute>
+              <BasicQuiz />
+            </ProtectedRoute>
+          } />
+          <Route path="/users/:id/:lang/:level/:topic/quiz" element={
+            <ProtectedRoute>
+              <BasicQuiz />
+            </ProtectedRoute>
+          } />
+          <Route path="/users/:userId/quiz" element={
+            <ProtectedRoute>
+              <CustomQuiz />
+            </ProtectedRoute>
+          } />
+          <Route path="/users/:userId/:lang/course/:topic" element={
+            <ProtectedRoute>
+              <CourseQuiz />
+            </ProtectedRoute>
+          } />
+          
+          {/* Catch old route format and redirect */}
+          <Route path="/users/:userId/course/:topic/quiz" element={
+            <div style={{ padding: '20px', textAlign: 'center' }}>
+              <h3>Redirecting...</h3>
+              <p>Old route detected. Please refresh the page or go back to dashboard.</p>
+              <button onClick={() => window.location.href = '/dashboard'}>Go to Dashboard</button>
+            </div>
+          } />
+        </Routes>
+      </div>
     </>
   );
 };

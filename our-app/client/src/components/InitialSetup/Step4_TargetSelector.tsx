@@ -123,7 +123,7 @@ const Step4_TargetSelector: React.FC<Props> = ({ userId, onNext }) => {
   return (
     <div className="container py-5">
       <div className="text-center mb-5">
-        <h1 className="display-4 fw-bold text-primary mb-3">Choose Your Target Concept</h1>
+        <h1 className="fw-bold text-primary mb-2" style={{ fontSize: '2rem', lineHeight: 1.1 }}>Choose Your Target Concept</h1>
         <p className="lead text-muted">
           Select the <span className="fw-bold text-primary">advanced concept</span> you want to master.
           <br />We'll create a personalized learning path and save it to your profile!
@@ -169,10 +169,10 @@ const Step4_TargetSelector: React.FC<Props> = ({ userId, onNext }) => {
           ))}
         </div>
       ) : (
-        <div className="row justify-content-center">
-          <div className="col-lg-8">
-            <div className="card border-0 shadow-sm">
-              <div className="card-body p-5">
+        <div className="row justify-content-center" style={{ marginLeft: 0, marginRight: 0 }}>
+          <div className="col-12 p-0">
+            <div className="card border-0 shadow-sm w-100" style={{ borderRadius: 0 }}>
+              <div className="card-body p-0">
                 <div className="text-center mb-4">
                   <div className="mb-3">
                     <i className="fas fa-bullseye fa-3x text-success"></i>
@@ -229,6 +229,8 @@ const Step4_TargetSelector: React.FC<Props> = ({ userId, onNext }) => {
                   >
                     Choose Different Target
                   </button>
+                  <br/>
+                  <br/>
                   <button 
                     className="btn btn-success px-4"
                     onClick={handleComplete}

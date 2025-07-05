@@ -106,12 +106,12 @@ User: ${userInput}`;
   };
 
   return (
-    <div style={{ maxWidth: 500, margin: '40px auto', border: 'none', borderRadius: 16, background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)', boxShadow: '0 8px 32px rgba(0,0,0,0.12)', padding: 0, overflow: 'hidden', fontFamily: 'Segoe UI, sans-serif' }}>
-      <div style={{ background: 'linear-gradient(90deg, #1e40af 0%, #3b82f6 100%)', padding: 20, textAlign: 'center' }}>
-        <h2 style={{ margin: 0, color: '#fff', fontWeight: 700, letterSpacing: 1 }}>DSA Chatbot</h2>
-        <div style={{ fontSize: 24, marginTop: 4 }}>🤖</div>
+    <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)', fontFamily: 'Segoe UI, sans-serif', border: 'none', minHeight: 0, flex: 1 }}>
+      <div style={{ background: 'linear-gradient(90deg, #1e40af 0%, #3b82f6 100%)', padding: '12px 20px 8px 20px', textAlign: 'center' }}>
+        <h2 style={{ margin: 0, color: '#fff', fontWeight: 700, letterSpacing: 1, fontSize: 28 }}>DSA Chatbot</h2>
+        <div style={{ fontSize: 22, marginTop: 2 }}>🤖</div>
       </div>
-      <div style={{ minHeight: 240, maxHeight: 320, overflowY: 'auto', background: 'rgba(255,255,255,0.95)', padding: 16 }}>
+      <div style={{ flex: 1, overflowY: 'auto', background: 'rgba(255,255,255,0.95)', padding: '8px 12px', minHeight: 0 }}>
         {messages.map((msg, i) => {
           if (msg.sender === 'bot') {
             // Split response into lines, remove leading stars, and highlight heading
@@ -165,9 +165,9 @@ User: ${userInput}`;
         })}
         {loading && <div style={{ color: '#888', fontStyle: 'italic' }}>Bot is typing...</div>}
       </div>
-      <div style={{ display: 'flex', gap: 8, background: 'rgba(255,255,255,0.95)', padding: 16, borderTop: '1px solid #eee' }}>
+      <div style={{ display: 'flex', gap: 8, background: 'rgba(255,255,255,0.95)', padding: '10px 12px', borderTop: '1px solid #eee', position: 'sticky', bottom: 0, left: 0, right: 0, zIndex: 2 }}>
         <input
-          style={{ flex: 1, padding: 12, borderRadius: 8, border: '1px solid #bbb', fontSize: 16, outline: 'none', background: '#f8fafc', color: '#222', fontWeight: 500 }}
+          style={{ flex: 1, padding: 10, borderRadius: 8, border: '1px solid #bbb', fontSize: 16, outline: 'none', background: '#f8fafc', color: '#222', fontWeight: 500 }}
           value={input}
           onChange={e => setInput(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && sendMessage()}
@@ -186,4 +186,4 @@ User: ${userInput}`;
   );
 };
 
-export default ChatbotPage; 
+export default ChatbotPage;
