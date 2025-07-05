@@ -1,12 +1,6 @@
-
 import React, { useState } from 'react'
 import './App.css'
 import ChatbotPage from './components/ChatbotPage'
-
-function App() {
-  const [count, setCount] = useState(0)
-
-import React from "react";
 import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Login from "./components/Login";
@@ -20,15 +14,52 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 
 const App: React.FC = () => {
+  const [showChatbot, setShowChatbot] = useState(false);
+
+  React.useEffect(() => {
+    const handler = () => setShowChatbot((prev) => !prev);
+    window.addEventListener('toggleChatbot', handler);
+    return () => window.removeEventListener('toggleChatbot', handler);
+  }, []);
+
   return (
     <>
-      <ChatbotPage />
-    </>
-  )
-}
-
-  <>
       <Navbar />
+      {/* Floating Chatbot */}
+      {showChatbot && (
+        <div style={{
+          position: 'fixed',
+          bottom: 24,
+          right: 24,
+          zIndex: 1050,
+          boxShadow: '0 8px 32px rgba(0,0,0,0.18)',
+          borderRadius: 20,
+          background: 'transparent',
+        }}>
+          <div style={{ position: 'relative' }}>
+            <button
+              onClick={() => setShowChatbot(false)}
+              style={{
+                position: 'absolute',
+                top: 8,
+                right: 8,
+                zIndex: 1100,
+                background: '#fff',
+                border: 'none',
+                borderRadius: '50%',
+                width: 32,
+                height: 32,
+                fontWeight: 700,
+                fontSize: 18,
+                boxShadow: '0 2px 8px rgba(0,0,0,0.10)',
+                cursor: 'pointer',
+              }}
+              aria-label="Close chatbot"
+            >×</button>
+            <ChatbotPage />
+          </div>
+        </div>
+      )}
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<Home />} />
@@ -74,7 +105,7 @@ const App: React.FC = () => {
           </div>
         } />
       </Routes>
-  </>
+    </>
   );
 };
 

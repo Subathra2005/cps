@@ -60,10 +60,20 @@ const Navbar: React.FC = () => {
             </li>
           )}
         </ul>
-
         <div className="ms-3">
           <GoogleTranslateWidget />
         </div>
+        <button
+          className="btn btn-light ms-3"
+          id="chatbot-toggle-btn"
+          style={{ borderRadius: 20, fontWeight: 600 }}
+          onClick={() => {
+            const event = new CustomEvent('toggleChatbot');
+            window.dispatchEvent(event);
+          }}
+        >
+          <span role="img" aria-label="chatbot"></span> Chatbot
+        </button>
       </div>
     </nav>
   );
