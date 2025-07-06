@@ -1,27 +1,41 @@
 import React, { useState } from 'react';
-const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-const ChatbotPage = () => {
-  const [messages, setMessages] = useState([
+
+declare global {
+  interface ImportMeta {
+    env: {
+      VITE_GEMINI_API_KEY: string;
+    };
+  }
+}
+
+const apiKey: string = import.meta.env.VITE_GEMINI_API_KEY;
+
+interface Message {
+  sender: 'bot' | 'user';
+  text: string;
+}
+
+const ChatbotPage: React.FC = () => {
+  const [messages, setMessages] = useState<Message[]>([
     { sender: 'bot', text: "Welcome! I can help you with DSA topics and how to use the DSA Recommendation System app. Please ask your question." }
   ]);
-  const [input, setInput] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [input, setInput] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
 
-  // Expanded DSA topics and app-usage keywords
-  const allowedKeywords = [
+  const allowedKeywords: string[] = [
     // DSA topics
     'dsa', 'data structure', 'data structures', 'algorithm', 'algorithms', 'array', 'arrays', 'linked list', 'linked lists', 'stack', 'queue', 'tree', 'trees', 'binary tree', 'binary search tree', 'bst', 'avl tree', 'red black tree', 'heap', 'heaps', 'priority queue', 'graph', 'graphs', 'adjacency list', 'adjacency matrix', 'bfs', 'dfs', 'breadth first search', 'depth first search', 'topological sort', 'dijkstra', 'bellman ford', 'floyd warshall', 'kruskal', 'prim', 'minimum spanning tree', 'mst', 'shortest path', 'hash', 'hash table', 'hash map', 'hashing', 'set', 'map', 'dictionary', 'trie', 'segment tree', 'fenwick tree', 'binary indexed tree', 'suffix tree', 'suffix array', 'disjoint set', 'union find', 'recursion', 'dynamic programming', 'dp', 'memoization', 'tabulation', 'greedy', 'divide and conquer', 'backtracking', 'sliding window', 'two pointer', 'bit manipulation', 'sorting', 'searching', 'binary search', 'linear search', 'merge sort', 'quick sort', 'bubble sort', 'selection sort', 'insertion sort', 'counting sort', 'radix sort', 'bucket sort', 'shell sort', 'top k', 'kth largest', 'kth smallest', 'lru cache', 'lfu cache', 'time complexity', 'space complexity', 'big o', 'big o notation', 'asymptotic', 'complexity', 'optimization', 'coding problem', 'leetcode', 'hackerrank', 'competitive programming',
     // App usage
     'quiz', 'score', 'login', 'signup', 'register', 'language', 'java', 'python', 'c++', 'javascript', 'how to use', 'app', 'recommendation', 'user guide', 'help', 'instructions', 'features', 'usage', 'start', 'account', 'select language', 'choose language', 'test', 'exam', 'assessment', 'easy', 'intermediate', 'difficult', 'hard', 'level', 'levels', 'progress', 'marks', 'grade', 'tracking', 'achievement', 'badge', 'streak', 'performance', 'mode', 'learning mode', 'theory', 'practice', 'theory mode', 'practice mode', 'quiz mode', 'step', 'steps', 'tutorial', 'walkthrough', 'beginner', 'getting started', 'first time', 'new user'
   ];
 
-  const isAllowed = (question) => {
+  const isAllowed = (question: string): boolean => {
     return allowedKeywords.some(keyword => question.toLowerCase().includes(keyword));
   };
 
-  const sendMessage = async () => {
+  const sendMessage = async (): Promise<void> => {
     if (!input.trim()) return;
-    const userMsg = { sender: 'user', text: input };
+    const userMsg: Message = { sender: 'user', text: input };
     setMessages(msgs => [...msgs, userMsg]);
     setInput('');
     setLoading(true);
@@ -40,7 +54,6 @@ const ChatbotPage = () => {
     }
     // Gemini 2.0 Flash API call (with improved prompt)
     try {
-      const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
       const prompt = `You are an expert assistant for the DSA Recommendation System app. Here's how the app works:
 
 **App Features:**
