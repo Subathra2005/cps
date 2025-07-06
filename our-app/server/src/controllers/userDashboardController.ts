@@ -346,29 +346,45 @@ export const getQuestions = async (req: Request, res: Response) => {
                 }
 
                 // Check if user has failed twice (≤50% both times)
-                if (userAttempts.length >= 2) {
-                    const failedAttempts = userAttempts.filter(attempt => attempt.userScore <= passingScore);
-                    
-                    if (failedAttempts.length >= 2) {
-                        // Get the timestamp of the second failed attempt
-                        const sortedFailedAttempts = failedAttempts.sort((a, b) => {
-                            const aTime = a.submittedAt ? new Date(a.submittedAt).getTime() : 0;
-                            const bTime = b.submittedAt ? new Date(b.submittedAt).getTime() : 0;
-                            return bTime - aTime; // Sort by most recent first
-                        });
-                        
-                        const lastFailedAttemptTime = sortedFailedAttempts[0].submittedAt 
-                            ? new Date(sortedFailedAttempts[0].submittedAt).getTime()
-                            : new Date(user.updatedAt).getTime(); // Fallback to user update time
-                        
-                        const now = Date.now();
+                // --- Only consider the two most recent failed attempts AFTER the last lockout period ---
+                let lastLockoutEnd = 0;
+                if (
+                    user.courseQuizLockouts &&
+                    user.courseQuizLockouts[topic] &&
+                    user.courseQuizLockouts[topic][quizLevel]
+                ) {
+                    lastLockoutEnd = user.courseQuizLockouts[topic][quizLevel];
+                }
+                // Only consider attempts after the last lockout end time
+                const postLockoutAttempts = userAttempts.filter(attempt => {
+                    const t = attempt.submittedAt ? new Date(attempt.submittedAt).getTime() : 0;
+                    return t > lastLockoutEnd;
+                });
+                // Only consider the most recent post-lockout attempt
+                if (postLockoutAttempts.length >= 1) {
+                    const sortedAttempts = postLockoutAttempts.sort((a, b) => {
+                        const aTime = a.submittedAt ? new Date(a.submittedAt).getTime() : 0;
+                        const bTime = b.submittedAt ? new Date(b.submittedAt).getTime() : 0;
+                        return bTime - aTime; // Most recent first
+                    });
+                    const lastAttempt = sortedAttempts[0];
+                    const failed = lastAttempt.userScore <= passingScore;
+                    if (failed) {
+                        const lastFailedAttemptTime = lastAttempt.submittedAt 
+                            ? new Date(lastAttempt.submittedAt).getTime()
+                            : new Date(user.updatedAt).getTime();
                         const lockoutDuration = 24 * 60 * 60 * 1000; // 24 hours
-
-                        if (now - lastFailedAttemptTime < lockoutDuration) {
-                            const unlockTime = lastFailedAttemptTime + lockoutDuration;
+                        const unlockTime = lastFailedAttemptTime + lockoutDuration;
+                        // Always persist the new unlock time
+                        if (!user.courseQuizLockouts) user.courseQuizLockouts = {};
+                        if (!user.courseQuizLockouts[topic]) user.courseQuizLockouts[topic] = {};
+                        user.courseQuizLockouts[topic][quizLevel] = unlockTime;
+                        await user.save();
+                        const now = Date.now();
+                        if (now < unlockTime) {
                             return res.status(400).json({
-                                error: 'Quiz locked due to failed attempts',
-                                message: `You have failed this level twice. Please try again after the cooldown period.`,
+                                error: 'Quiz locked due to failed attempt',
+                                message: `You have failed this level. Please try again after the cooldown period.`,
                                 locked: true,
                                 unlockTime: unlockTime,
                                 attemptsRemaining: 0
@@ -650,7 +666,6 @@ export const reviewQuiz = async (req: Request, res: Response) => {
         res.status(500).json({ error: 'Failed to fetch review', details: err });
     }
 };
-
 // Assessment endpoint
 export const createAssessment = async (req: Request, res: Response) => {
     try {
@@ -1823,7 +1838,7 @@ export const debugUserQuizHistory = async (req: Request, res: Response) => {
         );
 
         res.json({
-            userInfo: {
+            user: {
                 id: user._id,
                 name: user.name,
                 email: user.email,

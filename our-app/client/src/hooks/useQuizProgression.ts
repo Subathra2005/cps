@@ -56,7 +56,25 @@ export function useQuizProgression({ userId, language, topic, difficulties }: Qu
             }
             
             // TOPIC QUIZ LOGIC: 2 attempts, lockout if both ≤50%
-            const passingAttempt = attempts.find((a: any) => {
+            // Sort attempts by most recent first
+            const sortedAttempts = attempts.sort((a: any, b: any) => {
+              const aTime = a.submittedAt ? new Date(a.submittedAt).getTime() : 0;
+              const bTime = b.submittedAt ? new Date(b.submittedAt).getTime() : 0;
+              return bTime - aTime;
+            });
+            // --- Lockout logic: Only consider attempts after last lockout period ---
+            // Find the last lockout end time for this level (if any)
+            let lastLockoutEnd = 0;
+            if (courseQuizLockouts[topic] && courseQuizLockouts[topic][diff.key]) {
+              lastLockoutEnd = courseQuizLockouts[topic][diff.key];
+            }
+            // Only consider attempts after the last lockout end time
+            const postLockoutAttempts = sortedAttempts.filter((a: any) => {
+              const t = a.submittedAt ? new Date(a.submittedAt).getTime() : 0;
+              return t > lastLockoutEnd;
+            });
+            // Check if any passing attempt exists after lockout
+            const passingAttempt = postLockoutAttempts.find((a: any) => {
               const score = typeof a.userScore === 'number' ? a.userScore : 0;
               const total = Array.isArray(a.userAnswers) ? a.userAnswers.length : 10;
               return total > 0 && (score / total) > 0.5;
@@ -65,27 +83,16 @@ export function useQuizProgression({ userId, language, topic, difficulties }: Qu
               completedLevels.push(diff.key);
               continue;
             }
-            if (attempts.length >= 2) {
-              const failedAttempts = attempts.filter((a: any) => {
-                const score = typeof a.userScore === 'number' ? a.userScore : 0;
-                const total = Array.isArray(a.userAnswers) ? a.userAnswers.length : 10;
-                return total > 0 && (score / total) <= 0.5;
-              });
-              
-              if (failedAttempts.length >= 2) {
-                // Sort by most recent first
-                const sortedFailedAttempts = failedAttempts.sort((a: any, b: any) => {
-                  const aTime = a.submittedAt ? new Date(a.submittedAt).getTime() : 0;
-                  const bTime = b.submittedAt ? new Date(b.submittedAt).getTime() : 0;
-                  return bTime - aTime;
-                });
-                
-                const lastFailedAttempt = sortedFailedAttempts[0];
-                const lastTime = lastFailedAttempt.submittedAt 
-                  ? new Date(lastFailedAttempt.submittedAt).getTime()
+            // Lockout after a single failed attempt (≤50%) after last lockout
+            if (postLockoutAttempts.length >= 1) {
+              const mostRecent = postLockoutAttempts[0];
+              const score = typeof mostRecent.userScore === 'number' ? mostRecent.userScore : 0;
+              const total = Array.isArray(mostRecent.userAnswers) ? mostRecent.userAnswers.length : 10;
+              if (total > 0 && (score / total) <= 0.5) {
+                const lastTime = mostRecent.submittedAt 
+                  ? new Date(mostRecent.submittedAt).getTime()
                   : new Date(userUpdatedAt).getTime();
                 const now = Date.now();
-                
                 if (now - lastTime < 24 * 60 * 60 * 1000) {
                   lockedLevels[diff.key] = lastTime + 24 * 60 * 60 * 1000;
                 }

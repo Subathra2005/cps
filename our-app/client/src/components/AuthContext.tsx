@@ -20,7 +20,7 @@ interface AuthContextType {
   userData: UserData | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  signup: (name: string, email: string, password: string) => Promise<void>;
+  signup: (name: string, email: string, password: string, role: string) => Promise<void>;
   logout: () => void;
 }
 
@@ -121,12 +121,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const signup = async (userName: string, email: string, password: string) => {
+  const signup = async (userName: string, email: string, password: string, role: string) => {
     try {
       await axios.post('/api/signup', {
         name: userName, // Backend expects 'name', not 'userName'
         email,
-        password
+        password,
+        role
       });
     } catch (err: any) {
       // Throw error so Login.tsx can handle it
