@@ -91,6 +91,14 @@ const customQuizSchema = new Schema<CustomQuizDocument>(
         submittedAt: {
             type: Date,
             default: null
+        },
+        violation: {
+            type: Boolean,
+            default: false
+        },
+        violationType: {
+            type: String,
+            default: null
         }
     },
     {

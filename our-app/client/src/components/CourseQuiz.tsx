@@ -249,6 +249,9 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({ onQuizStart, onQuizEnd }) => {
   const getLockoutMessage = (levelKey: string) => {
     if (isLevelLocked(levelKey)) {
       const unlockTime = new Date(lockedUntil[levelKey]);
+      
+      // Check if the most recent attempt was a violation by examining user data
+      // We'll make this more specific in a future update
       return `Locked until ${unlockTime.toLocaleDateString()} at ${unlockTime.toLocaleTimeString()}`;
     }
     return '';

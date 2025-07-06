@@ -32,6 +32,8 @@ export function useQuizProgression({ userId, language, topic, difficulties }: Qu
         const completedLevels: string[] = [];
         const lockedLevels: Record<string, number> = {};
         const userUpdatedAt = userData.updatedAt || userData.createdAt || new Date().toISOString();
+        // --- NEW: Merge courseQuizLockouts from backend if present ---
+        const courseQuizLockouts = userData.courseQuizLockouts || {};
         for (const diff of difficulties) {
           try {
             const quizRes = await axios.get(`/api/quizzes/lang/${language}/level/${diff.key}/topic/${topic}`);
@@ -91,6 +93,16 @@ export function useQuizProgression({ userId, language, topic, difficulties }: Qu
             }
           } catch (e) {
             continue;
+          }
+          // --- Merge violation lockout if present ---
+          if (
+            courseQuizLockouts[topic] &&
+            courseQuizLockouts[topic][diff.key]
+          ) {
+            const violationLockout = courseQuizLockouts[topic][diff.key];
+            if (!lockedLevels[diff.key] || violationLockout > lockedLevels[diff.key]) {
+              lockedLevels[diff.key] = violationLockout;
+            }
           }
         }
         setCompleted(completedLevels);

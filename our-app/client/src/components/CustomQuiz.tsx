@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
+import { useTabSwitchDetection } from '../hooks/useTabSwitchDetection';
 
 interface CustomQuizProps {
   onQuizStart: () => void;
@@ -19,6 +20,8 @@ const CustomQuiz: React.FC<CustomQuizProps> = ({ onQuizStart, onQuizEnd }) => {
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState<number | null>(null);
   const [review, setReview] = useState<any>(null);
+  const [tabViolationSubmitted, setTabViolationSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -73,9 +76,11 @@ const CustomQuiz: React.FC<CustomQuizProps> = ({ onQuizStart, onQuizEnd }) => {
           setCustomQuizId(res.data.customQuiz._id);
           setQuestions(res.data.customQuiz.customQuestions || []);
         }
+        setIsLoading(false);
       } catch (error) {
         console.error('Error creating custom quiz:', error);
         setQuestions([]);
+        setIsLoading(false);
       }
     };
 
@@ -123,6 +128,48 @@ const CustomQuiz: React.FC<CustomQuizProps> = ({ onQuizStart, onQuizEnd }) => {
       alert('Failed to submit quiz. Please try again.');
     }
   };
+
+  // Handle tab switching violation - auto submit with score 0 and lockout, fill with valid default
+  const handleTabSwitchViolation = async () => {
+    if (tabViolationSubmitted || submitted || !customQuizId) return;
+    
+    console.log('Tab switching violation detected in custom quiz - auto submitting with score 0 and lockout');
+    setTabViolationSubmitted(true);
+    
+    try {
+      // Fill remaining answers with a valid default (e.g., 'B') to avoid backend enum errors
+      const violationAnswers = [...answers];
+      while (violationAnswers.length < questions.length) {
+        violationAnswers.push('B');
+      }
+      // Submit with violation flag, force score 0, and lockout
+      const res = await axios.post(`/api/users/${userId}/custom-quiz/${customQuizId}/submit`, {
+        answers: violationAnswers,
+        violation: true,
+        forceZeroScore: true, // backend should treat this as a forced zero
+        lockout: true // backend should lock this quiz for 24 hours
+      });
+      setAnswers(violationAnswers);
+      setScore(0); // Force score to 0
+      setSubmitted(true);
+      onQuizEnd();
+      setTimeout(() => {
+        alert('Quiz automatically submitted due to tab switching. You are now locked out for 24 hours. This attempt will be highlighted in red in your history.');
+      }, 500);
+    } catch (error) {
+      console.error('Error submitting custom quiz violation:', error);
+      setScore(0);
+      setSubmitted(true);
+      onQuizEnd();
+    }
+  };
+
+  // Tab switching detection - only active during quiz (not during review)
+  useTabSwitchDetection({
+    onTabSwitch: handleTabSwitchViolation,
+    isQuizActive: !submitted && questions.length > 0 && customQuizId !== '' && !isLoading && !tabViolationSubmitted,
+    warningEnabled: true
+  });
 
   // Ensure onQuizEnd is called during the review phase
   useEffect(() => {
