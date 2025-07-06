@@ -2,7 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-const BasicQuiz: React.FC = () => {
+interface BasicQuizProps {
+  onQuizStart: () => void;
+  onQuizEnd: () => void;
+}
+
+const BasicQuiz: React.FC<BasicQuizProps> = ({ onQuizStart, onQuizEnd }) => {
   // Get userId from localStorage or context if not passed as prop
   let userId = localStorage.getItem('userId') || '';
   // If userId is in the route, extract from params (for /users/:id/:lang/:level/:topic/quiz)
@@ -101,6 +106,17 @@ const BasicQuiz: React.FC = () => {
     }
   }, [submitted, userId, lang, level, topic]);
 
+  useEffect(() => {
+    onQuizStart();
+    return () => onQuizEnd();
+  }, [onQuizStart, onQuizEnd]);
+
+  useEffect(() => {
+    if (questions.length > 0) {
+      onQuizStart();
+    }
+  }, [questions, onQuizStart]);
+
   const handleAnswer = (ans: string) => {
     setAnswers(prev => {
       const copy = [...prev];
@@ -119,11 +135,18 @@ const BasicQuiz: React.FC = () => {
       });
       setScore(res.data.results?.score ?? res.data.score);
       setSubmitted(true);
+      onQuizEnd(); // Call onQuizEnd immediately after submission
     } catch (error) {
       console.error('Error submitting quiz:', error);
       alert('Failed to submit quiz. Please try again.');
     }
   };
+
+  useEffect(() => {
+    if (submitted) {
+      onQuizEnd(); // Ensure chatbot is enabled during review
+    }
+  }, [submitted, onQuizEnd]);
 
   // Helper to get correct/incorrect count - use actual answers submitted
   const correctCount = questions.filter((q, idx) => {

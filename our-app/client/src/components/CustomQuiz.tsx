@@ -2,7 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 
-const CustomQuiz: React.FC = () => {
+interface CustomQuizProps {
+  onQuizStart: () => void;
+  onQuizEnd: () => void;
+}
+
+const CustomQuiz: React.FC<CustomQuizProps> = ({ onQuizStart, onQuizEnd }) => {
   const { userId } = useParams();
   const [searchParams] = useSearchParams();
   const difficulty = searchParams.get('level') || 'beginner';
@@ -82,11 +87,17 @@ const CustomQuiz: React.FC = () => {
   // Fetch review after submission
   useEffect(() => {
     if (submitted && userId && customQuizId) {
-      axios.get(`/api/users/${userId}/custom-quiz/${customQuizId}`).then(res => {
-        setReview(res.data);
-      }).catch(() => setReview(null));
+      axios.get(`/api/users/${userId}/custom-quiz/${customQuizId}`)
+        .then(res => {
+          setReview(res.data);
+        })
+        .catch(() => setReview(null))
+        .finally(() => {
+          // Re-enable the chatbot once review data is loaded
+          onQuizEnd();
+        });
     }
-  }, [submitted, userId, customQuizId]);
+  }, [submitted, userId, customQuizId, onQuizEnd]);
 
   const handleAnswer = (ans: string) => {
     setAnswers(prev => {
@@ -106,11 +117,19 @@ const CustomQuiz: React.FC = () => {
       });
       setScore(res.data.results?.score ?? res.data.score);
       setSubmitted(true);
+      onQuizEnd(); // Call onQuizEnd immediately after submission
     } catch (error) {
       console.error('Error submitting custom quiz:', error);
       alert('Failed to submit quiz. Please try again.');
     }
   };
+
+  // Ensure onQuizEnd is called during the review phase
+  useEffect(() => {
+    if (submitted) {
+      onQuizEnd(); // Ensure chatbot is enabled during review
+    }
+  }, [submitted, onQuizEnd]);
 
   // Helper to get correct/incorrect count from review if available
   const correctCount = review?.results?.correctAnswers ?? (score || 0);
@@ -152,6 +171,17 @@ const CustomQuiz: React.FC = () => {
       // From dashboard, go to dashboard
       navigate('/dashboard');
     }
+  };
+
+  useEffect(() => {
+    if (questions.length > 0) {
+      onQuizStart();
+    }
+  }, [questions, onQuizStart]);
+
+  const handleQuizEnd = () => {
+    onQuizEnd();
+    setSubmitted(true);
   };
 
   if (!questions.length) return <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '60vh' }}><div className="spinner-border text-primary" role="status"><span className="visually-hidden">Loading...</span></div></div>;

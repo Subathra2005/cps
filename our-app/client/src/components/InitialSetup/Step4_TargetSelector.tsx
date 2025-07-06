@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Hash } from 'crypto';
 
 interface Props {
   userId: string;
@@ -70,6 +71,9 @@ const displayNameMap: Record<string, string> = {
   DivideAndConquer: "Divide and Conquer",
   GreedyAlgorithms: "Greedy Algorithms",
   Backtracking: "Backtracking",
+  ComplexityAnalysis: "Complexity Analysis",
+  LinkedLists: "Linked Lists",
+  HashTables: "Hash Tables",
   DynamicProgramming: "Dynamic Programming",
   DijkstrasAlgorithm: "Dijkstra's Algorithm",
   BellmanFordAlgorithm: "Bellman-Ford Algorithm",

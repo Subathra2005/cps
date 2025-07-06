@@ -15,7 +15,11 @@ interface Message {
   text: string;
 }
 
-const ChatbotPage: React.FC = () => {
+interface ChatbotPageProps {
+  isQuizActive: boolean;
+}
+
+const ChatbotPage: React.FC<ChatbotPageProps> = ({ isQuizActive }) => {
   const [messages, setMessages] = useState<Message[]>([
     { sender: 'bot', text: "Welcome! I can help you with DSA topics and how to use the DSA Recommendation System app. Please ask your question." }
   ]);
@@ -34,7 +38,7 @@ const ChatbotPage: React.FC = () => {
   };
 
   const sendMessage = async (): Promise<void> => {
-    if (!input.trim()) return;
+    if (!input.trim() || isQuizActive) return;
     const userMsg: Message = { sender: 'user', text: input };
     setMessages(msgs => [...msgs, userMsg]);
     setInput('');
@@ -52,50 +56,9 @@ const ChatbotPage: React.FC = () => {
     if (userInput.split(/\s+/).length <= 3) {
       userInput = `Explain this in the context of DSA or the app: ${userInput}`;
     }
-    // Gemini 2.0 Flash API call (with improved prompt)
+
     try {
-      const prompt = `You are an expert assistant for the DSA Recommendation System app. Here's how the app works:
-
-**App Features:**
-1. **Language Selection**: Users can choose from Telugu, Hindi, English, or Tamil for the interface
-2. **Authentication**: Sign up and login functionality for personalized experience
-3. **Programming Language Selection**: Choose from Java, Python, C++, or JavaScript for DSA problems
-4. **Quiz System**: Three difficulty levels - Easy, Intermediate, and Hard
-5. **Score Tracking**: View and track your quiz performance and progress
-
-**How to Use the App:**
-1. **Getting Started**: Select your preferred language (Telugu/Hindi/English/Tamil)
-2. **Account Setup**: Sign up with email/password or login if you have an account
-3. **Choose Programming Language**: Select Java, Python, C++, or JavaScript based on your preference
-4. **Take Quiz**: Start with Easy level, then progress to Intermediate and Hard
-5. **View Scores**: Check your performance and track improvement over time
-
-**Quiz Levels:**
-- **Easy**: Basic DSA concepts, suitable for beginners
-- **Intermediate**: Moderate complexity problems, for those with some DSA knowledge
-- **Hard**: Advanced algorithms and data structures, for experienced users
-
-If the user asks about DSA topics, provide detailed explanations including:
-- What the topic is
-- Its types and variations
-- Time and space complexity
-- Real-world applications
-- Implementation examples
-
-**Special Instructions for All DSA Topics:**
-For ANY DSA topic (arrays, strings, linked lists, queues, stacks, recursion, trees, graphs, heaps, BFS, DFS, sorting, searching, dynamic programming, etc.), provide detailed conceptual explanations including:
-- What the topic is and its purpose
-- Types and variations of the data structure/algorithm
-- Time and space complexity analysis
-- Real-world applications and use cases
-- Key concepts and principles
-- How it works conceptually
-
-This applies to all DSA concepts: arrays, strings, linked lists, queues, stacks, recursion, trees (binary, BST, AVL), graphs, heaps, BFS, DFS, sorting algorithms, searching algorithms, dynamic programming, greedy algorithms, and more.
-
-If the question is not related to DSA or the app, politely reply: 'Sorry, I can only help with questions about DSA or how to use the DSA Recommendation System app.'
-
-User: ${userInput}`;
+      const prompt = `You are an expert assistant for the DSA Recommendation System app. User: ${userInput}`;
       const payload = {
         contents: [
           { role: "user", parts: [{ text: prompt }] }
@@ -125,57 +88,19 @@ User: ${userInput}`;
         <div style={{ fontSize: 22, marginTop: 2 }}>🤖</div>
       </div>
       <div style={{ flex: 1, overflowY: 'auto', background: 'rgba(255,255,255,0.95)', padding: '8px 12px', minHeight: 0 }}>
-        {messages.map((msg, i) => {
-          if (msg.sender === 'bot') {
-            // Split response into lines, remove leading stars, and highlight heading
-            const lines = msg.text.split(/\r?\n/).map(line => line.replace(/^\s*\*+\s*/, ''));
-            return (
-              <div key={i} style={{ textAlign: 'left', margin: '12px 0' }}>
-                {lines.map((line, idx) => (
-                  idx === 0 ? (
-                    <div key={idx} style={{
-                      background: '#f8f9fa',
-                      color: '#333',
-                      padding: '10px 16px',
-                      borderRadius: '16px 16px 16px 4px',
-                      display: 'inline-block',
-                      fontWeight: 700,
-                      fontSize: 18,
-                      boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
-                      marginBottom: lines.length > 1 ? 4 : 0
-                    }}>{line}</div>
-                  ) : (
-                    <div key={idx} style={{
-                      background: '#f8f9fa',
-                      color: '#333',
-                      padding: '8px 16px',
-                      borderRadius: '12px',
-                      display: 'inline-block',
-                      fontWeight: 500,
-                      fontSize: 15,
-                      boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
-                      marginTop: 2
-                    }}>{line}</div>
-                  )
-                ))}
-              </div>
-            );
-          } else {
-            return (
-              <div key={i} style={{ textAlign: 'right', margin: '12px 0' }}>
-                <span style={{
-                  background: 'linear-gradient(90deg, #f7971e 0%,rgb(242, 236, 71) 100%)',
-                  color: '#222',
-                  padding: '10px 16px',
-                  borderRadius: '16px 16px 4px 16px',
-                  display: 'inline-block',
-                  fontWeight: 500,
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.07)'
-                }}>{msg.text}</span>
-              </div>
-            );
-          }
-        })}
+        {messages.map((msg, i) => (
+          <div key={i} style={{ textAlign: msg.sender === 'bot' ? 'left' : 'right', margin: '12px 0' }}>
+            <span style={{
+              background: msg.sender === 'bot' ? '#f8f9fa' : 'linear-gradient(90deg, #f7971e 0%,rgb(242, 236, 71) 100%)',
+              color: msg.sender === 'bot' ? '#333' : '#222',
+              padding: '10px 16px',
+              borderRadius: msg.sender === 'bot' ? '16px 16px 16px 4px' : '16px 16px 4px 16px',
+              display: 'inline-block',
+              fontWeight: msg.sender === 'bot' ? 700 : 500,
+              boxShadow: '0 2px 8px rgba(0,0,0,0.07)'
+            }}>{msg.text}</span>
+          </div>
+        ))}
         {loading && <div style={{ color: '#888', fontStyle: 'italic' }}>Bot is typing...</div>}
       </div>
       <div style={{ display: 'flex', gap: 8, background: 'rgba(255,255,255,0.95)', padding: '10px 12px', borderTop: '1px solid #eee', position: 'sticky', bottom: 0, left: 0, right: 0, zIndex: 2 }}>
@@ -184,13 +109,13 @@ User: ${userInput}`;
           value={input}
           onChange={e => setInput(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && sendMessage()}
-          placeholder="Ask about DSA or the app..."
-          disabled={loading}
+          placeholder={isQuizActive ? "Chatbot is locked during quiz." : "Ask about DSA or the app..."}
+          disabled={loading || isQuizActive}
         />
         <button
           onClick={sendMessage}
-          disabled={loading || !input.trim()}
-          style={{ background: 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)', color: '#fff', border: 'none', borderRadius: 8, padding: '0 20px', fontWeight: 700, fontSize: 16, cursor: loading ? 'not-allowed' : 'pointer', boxShadow: '0 2px 8px rgba(102,126,234,0.15)' }}
+          disabled={loading || !input.trim() || isQuizActive}
+          style={{ background: 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)', color: '#fff', border: 'none', borderRadius: 8, padding: '0 20px', fontWeight: 700, fontSize: 16, cursor: loading || isQuizActive ? 'not-allowed' : 'pointer', boxShadow: '0 2px 8px rgba(102,126,234,0.15)' }}
         >
           Send
         </button>

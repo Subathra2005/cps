@@ -15,6 +15,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 const App: React.FC = () => {
   const [showChatbot, setShowChatbot] = useState(false);
+  const [isQuizActive, setIsQuizActive] = useState(false);
 
   React.useEffect(() => {
     const handler = () => setShowChatbot((prev) => !prev);
@@ -61,7 +62,7 @@ const App: React.FC = () => {
               }}
               aria-label="Close chatbot"
             >×</button>
-            <ChatbotPage />
+            <ChatbotPage isQuizActive={isQuizActive} />
           </div>
         </div>
       )}
@@ -83,22 +84,22 @@ const App: React.FC = () => {
           } />
           <Route path="/quizzes/lang/:lang/level/:level/topic/:topic" element={
             <ProtectedRoute>
-              <BasicQuiz />
+              <BasicQuiz onQuizStart={() => setIsQuizActive(true)} onQuizEnd={() => setIsQuizActive(false)} />
             </ProtectedRoute>
           } />
           <Route path="/users/:id/:lang/:level/:topic/quiz" element={
             <ProtectedRoute>
-              <BasicQuiz />
+              <BasicQuiz onQuizStart={() => setIsQuizActive(true)} onQuizEnd={() => setIsQuizActive(false)} />
             </ProtectedRoute>
           } />
           <Route path="/users/:userId/quiz" element={
             <ProtectedRoute>
-              <CustomQuiz />
+              <CustomQuiz onQuizStart={() => setIsQuizActive(true)} onQuizEnd={() => setIsQuizActive(false)} />
             </ProtectedRoute>
           } />
           <Route path="/users/:userId/:lang/course/:topic" element={
             <ProtectedRoute>
-              <CourseQuiz />
+              <CourseQuiz onQuizStart={() => setIsQuizActive(true)} onQuizEnd={() => setIsQuizActive(false)} />
             </ProtectedRoute>
           } />
           
