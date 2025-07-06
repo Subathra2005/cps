@@ -96,7 +96,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       basicQuizDone = attemptedLevels.length === 3; // All 3 levels attempted
     }
     
-    if (!data.lang || !basicQuizDone || !assessmentDone || !customQuizDone || !pathChosen) {
+    if (data.role === 'admin') {
+      navigate('/admin/users');
+    } else if (!data.lang || !basicQuizDone || !assessmentDone || !customQuizDone || !pathChosen) {
       navigate('/initial-setup');
     } else {
       navigate('/dashboard');
@@ -123,11 +125,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const signup = async (userName: string, email: string, password: string, role: string) => {
     try {
-      await axios.post('/api/signup', {
+      // Send role as a query parameter, not in the body
+      await axios.post(`/api/signup?role=${role}`, {
         name: userName, // Backend expects 'name', not 'userName'
         email,
-        password,
-        role
+        password
       });
     } catch (err: any) {
       // Throw error so Login.tsx can handle it

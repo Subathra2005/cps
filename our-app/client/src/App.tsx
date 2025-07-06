@@ -11,6 +11,8 @@ import CustomQuiz from "./components/CustomQuiz";
 import CourseQuiz from "./components/CourseQuiz";
 import DashboardWrapper from "./components/DashboardWrapper";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AdminUsers from "./components/AdminUsers";
+import AdminQuestions from "./components/AdminQuestions";
 
 
 const App: React.FC = () => {
@@ -70,7 +72,9 @@ const App: React.FC = () => {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/" element={<Home />} />
-          
+          {/* Admin Routes */}
+          <Route path="/admin/users" element={<AdminUsers />} />
+          <Route path="/admin/questions" element={<AdminQuestions />} />
           {/* Protected Routes */}
           <Route path="/initial-setup" element={
             <ProtectedRoute>
