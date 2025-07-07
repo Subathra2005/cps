@@ -123,6 +123,16 @@ const CustomQuiz: React.FC<CustomQuizProps> = ({ onQuizStart, onQuizEnd }) => {
       setScore(res.data.results?.score ?? res.data.score);
       setSubmitted(true);
       onQuizEnd(); // Call onQuizEnd immediately after submission
+
+      // Always update the custom quiz itself as completed using the custom quiz endpoint, regardless of percentage
+      try {
+        await axios.put(`/api/custom-quizzes/${customQuizId}`, {
+          result: percentage, // Store the user's percentage score
+          status: 'completed'
+        });
+      } catch (err) {
+        console.error('Failed to update custom quiz status:', err);
+      }
     } catch (error) {
       console.error('Error submitting custom quiz:', error);
       alert('Failed to submit quiz. Please try again.');

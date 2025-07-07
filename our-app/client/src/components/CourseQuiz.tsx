@@ -93,10 +93,10 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({ onQuizStart, onQuizEnd }) => {
           bestLevelPercentage
         );
         
-        // For official completion, we ensure a minimum passing score of 70
+        // For official completion, we ensure a minimum passing score of 60
         const resultToSend = Math.max(
           actualScore,
-          70 // Minimum passing score
+          60 // Minimum passing score changed from 70 to 60
         );
         
         console.log('Sending completion data:', {
@@ -105,8 +105,8 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({ onQuizStart, onQuizEnd }) => {
           isUsingMinimumPassingScore: resultToSend === 70 && actualScore < 70
         });
         
-        // Update course completion status with the correct score
-        const updateRes = await axios.put(`/api/users/${userId}/courses/${encodeURIComponent(formattedTopic || topic || '')}/complete`, {
+        // Update course quiz itself as completed using the course quiz endpoint
+        const updateRes = await axios.put(`/api/quizzes/${encodeURIComponent(formattedTopic || topic || '')}`, {
           result: resultToSend,
           actualScore: actualScore, // Also send the actual score for reference
           status: 'completed'
@@ -117,7 +117,7 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({ onQuizStart, onQuizEnd }) => {
           courseName: formattedTopic,
           result: resultToSend,
           status: 'completed',
-          endpoint: `/api/users/${userId}/courses/${encodeURIComponent(formattedTopic || topic || '')}/complete`
+          endpoint: `/api/quizzes/${encodeURIComponent(formattedTopic || topic || '')}`
         });
         
         if (updateRes.status === 200) {
