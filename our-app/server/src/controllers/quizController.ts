@@ -345,9 +345,9 @@ export const getQuizReview = async (req: Request, res: Response) => {
 
         // Validate required parameters
         if (!quizId || !userId) {
-            return res.status(400).json({ 
+            return res.status(400).json({
                 error: 'Quiz ID and User ID are required',
-                message: 'Please provide both quizId and userId parameters' 
+                message: 'Please provide both quizId and userId parameters'
             });
         }
 
@@ -375,7 +375,7 @@ export const getQuizReview = async (req: Request, res: Response) => {
             // Try to find in custom quizzes
             quiz = await CustomQuiz.findById(quizId);
             quizType = 'custom';
-            
+
             if (quiz) {
                 // Find user's LATEST attempt for this custom quiz
                 const allAttempts = user.customQuizzes.filter(q => q.quizId.toString() === quizId);
@@ -388,16 +388,16 @@ export const getQuizReview = async (req: Request, res: Response) => {
         }
 
         if (!userAttempt) {
-            return res.status(404).json({ 
+            return res.status(404).json({
                 error: 'No quiz attempt found',
-                message: 'User has not attempted this quiz yet' 
+                message: 'User has not attempted this quiz yet'
             });
         }
 
         // Build comprehensive review data
         const questions = (quiz as any).questions || (quiz as any).customQuestions || [];
         const maxScore = questions.reduce((sum: number, q: any) => sum + (q.score || 1), 0);
-        
+
         const reviewData = {
             quizInfo: {
                 id: quiz._id,
@@ -441,14 +441,14 @@ export const getQuizReview = async (req: Request, res: Response) => {
             }),
             summary: {
                 totalQuestions: questions.length,
-                correctAnswers: userAttempt.userAnswers.filter((answer, index) => 
+                correctAnswers: userAttempt.userAnswers.filter((answer, index) =>
                     answer === questions[index].correctOption
                 ).length,
-                incorrectAnswers: userAttempt.userAnswers.filter((answer, index) => 
+                incorrectAnswers: userAttempt.userAnswers.filter((answer, index) =>
                     answer && answer !== questions[index].correctOption
                 ).length,
                 unanswered: questions.length - userAttempt.userAnswers.filter(answer => answer).length,
-                accuracy: questions.length > 0 ? Math.round((userAttempt.userAnswers.filter((answer, index) => 
+                accuracy: questions.length > 0 ? Math.round((userAttempt.userAnswers.filter((answer, index) =>
                     answer === questions[index].correctOption
                 ).length / questions.length) * 100) : 0
             },
@@ -466,7 +466,7 @@ export const getQuizReview = async (req: Request, res: Response) => {
 // Helper function to generate recommendations
 function generateRecommendations(userScore: number, maxScore: number, lang: string, level: string, topic: string) {
     const percentage = Math.round((userScore / maxScore) * 100);
-    
+
     if (percentage >= 80) {
         return {
             message: "Excellent work! You've mastered this topic.",
@@ -496,3 +496,149 @@ function generateRecommendations(userScore: number, maxScore: number, lang: stri
         };
     }
 }
+
+// ADMIN-ONLY CONTROLLER FUNCTIONS
+
+export const editQuizzesByLangLevelTopic = async (req: Request, res: Response) => {
+    try {
+        const { lang, level, topic } = req.params;
+        const { role, ...updateData } = req.body;
+
+        // Check if user has admin role
+        if (role !== 'admin') {
+            return res.status(403).json({
+                error: 'Access denied',
+                message: 'Admin role required for this operation'
+            });
+        }
+
+        // Validate parameters
+        const validLanguages = ['cpp', 'python', 'javascript', 'java'];
+        const validLevels = ['beginner', 'intermediate', 'advanced'];
+
+        if (!validLanguages.includes(lang) || !validLevels.includes(level)) {
+            return res.status(400).json({ error: 'Invalid language or level parameter' });
+        }
+
+        // Find and update quizzes matching the criteria
+        const result = await Quiz.updateMany(
+            {
+                lang,
+                quizLevel: level,
+                'topic.courseName': { $regex: topic, $options: 'i' }
+            },
+            updateData,
+            { new: true }
+        );
+
+        // Get the updated quizzes
+        const updatedQuizzes = await Quiz.find({
+            lang,
+            quizLevel: level,
+            'topic.courseName': { $regex: topic, $options: 'i' }
+        });
+
+        res.json({
+            message: 'Quizzes updated successfully',
+            modifiedCount: result.modifiedCount,
+            matchedCount: result.matchedCount,
+            updatedQuizzes: updatedQuizzes
+        });
+
+    } catch (error) {
+        console.error('Error updating quizzes:', error);
+        res.status(500).json({ error: 'Failed to update quizzes', details: error });
+    }
+};
+
+export const submitQuizzesByLangLevelTopic = async (req: Request, res: Response) => {
+    try {
+        const { lang, level, topic } = req.params;
+        const { role, ...quizData } = req.body;
+
+        // Check if user has admin role
+        if (role !== 'admin') {
+            return res.status(403).json({
+                error: 'Access denied',
+                message: 'Admin role required for this operation'
+            });
+        }
+
+        // Validate parameters
+        const validLanguages = ['cpp', 'python', 'javascript', 'java'];
+        const validLevels = ['beginner', 'intermediate', 'advanced'];
+
+        if (!validLanguages.includes(lang) || !validLevels.includes(level)) {
+            return res.status(400).json({ error: 'Invalid language or level parameter' });
+        }
+
+        // Create new quiz with the specified parameters
+        const newQuiz = new Quiz({
+            ...quizData,
+            lang,
+            quizLevel: level,
+            topic: {
+                courseName: topic,
+                courseID: null // You can set this if needed
+            }
+        });
+
+        await newQuiz.save();
+
+        res.status(201).json({
+            message: 'Quiz created successfully',
+            quiz: newQuiz
+        });
+
+    } catch (error) {
+        console.error('Error creating quiz:', error);
+        res.status(500).json({ error: 'Failed to create quiz', details: error });
+    }
+};
+
+export const deleteQuizzesByLangLevelTopic = async (req: Request, res: Response) => {
+    try {
+        const { lang, level, topic } = req.params;
+        const { role } = req.body;
+
+        // Check if user has admin role
+        if (role !== 'admin') {
+            return res.status(403).json({
+                error: 'Access denied',
+                message: 'Admin role required for this operation'
+            });
+        }
+
+        // Validate parameters
+        const validLanguages = ['cpp', 'python', 'javascript', 'java'];
+        const validLevels = ['beginner', 'intermediate', 'advanced'];
+
+        if (!validLanguages.includes(lang) || !validLevels.includes(level)) {
+            return res.status(400).json({ error: 'Invalid language or level parameter' });
+        }
+
+        // Find quizzes to be deleted (for response)
+        const quizzesToDelete = await Quiz.find({
+            lang,
+            quizLevel: level,
+            'topic.courseName': { $regex: topic, $options: 'i' }
+        });
+
+        // Delete quizzes matching the criteria
+        const result = await Quiz.deleteMany({
+            lang,
+            quizLevel: level,
+            'topic.courseName': { $regex: topic, $options: 'i' }
+        });
+
+        res.json({
+            message: 'Quizzes deleted successfully',
+            deletedCount: result.deletedCount,
+            deletedQuizzes: quizzesToDelete
+        });
+
+    } catch (error) {
+        console.error('Error deleting quizzes:', error);
+        res.status(500).json({ error: 'Failed to delete quizzes', details: error });
+    }
+};

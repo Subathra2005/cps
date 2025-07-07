@@ -15,7 +15,10 @@ import {
     getQuizzesByLangLevelAndTopic,
     searchQuizzes,
     debugQuizzes,
-    getQuizReview
+    getQuizReview,
+    editQuizzesByLangLevelTopic,
+    submitQuizzesByLangLevelTopic,
+    deleteQuizzesByLangLevelTopic
 } from '../controllers/quizController';
 
 const router = express.Router();
@@ -64,5 +67,16 @@ router.put('/:id', updateQuiz as RequestHandler);
 
 // DELETE /api/quizzes/:id
 router.delete('/:id', deleteQuiz as RequestHandler);
+
+// ADMIN-ONLY ENDPOINTS (No authentication required)
+
+// PUT /api/quizzes/lang/:lang/level/:level/topic/:topic/edit
+router.put('/lang/:lang/level/:level/topic/:topic/edit', editQuizzesByLangLevelTopic as RequestHandler);
+
+// POST /api/quizzes/lang/:lang/level/:level/topic/:topic/submit
+router.post('/lang/:lang/level/:level/topic/:topic/submit', submitQuizzesByLangLevelTopic as RequestHandler);
+
+// DELETE /api/quizzes/lang/:lang/level/:level/topic/:topic/delete
+router.delete('/lang/:lang/level/:level/topic/:topic/delete', deleteQuizzesByLangLevelTopic as RequestHandler);
 
 export default router; 
