@@ -68,6 +68,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  // Redirect admin to /admin/users if already logged in
+  useEffect(() => {
+    if (!loading && userData && userData.role === 'admin') {
+      navigate('/admin/users');
+    }
+  }, [userData, loading, navigate]);
+
   const checkInitialSetupAndRedirect = (data: any) => {
     const lang = data.lang;
     const assessmentDone = data.lang; // User has selected a language
