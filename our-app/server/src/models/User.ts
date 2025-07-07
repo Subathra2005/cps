@@ -47,6 +47,14 @@ const userSchema = new Schema<UserDocument>(
                 submittedAt: {
                     type: Date,
                     default: Date.now
+                },
+                violation: {
+                    type: Boolean,
+                    default: false
+                },
+                violationType: {
+                    type: String,
+                    default: null
                 }
             }
         ],
@@ -70,6 +78,14 @@ const userSchema = new Schema<UserDocument>(
                 submittedAt: {
                     type: Date,
                     default: Date.now
+                },
+                violation: {
+                    type: Boolean,
+                    default: false
+                },
+                violationType: {
+                    type: String,
+                    default: null
                 }
             }
         ],
@@ -97,6 +113,11 @@ const userSchema = new Schema<UserDocument>(
         recommendedPath: {
             target: { type: String },
             path: { type: [String] }
+        },
+        // Add lockout map for course quizzes (per topic/level)
+        courseQuizLockouts: {
+            type: Object,
+            default: {}
         }
     },
     {

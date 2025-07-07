@@ -29,6 +29,8 @@ export interface QuizInfo {
     userScore: number;
     userAnswers: OptionTag[];
     submittedAt: Date;
+    violation?: boolean;
+    violationType?: string;
 }
 
 export interface CustomQuizInfo {
@@ -36,6 +38,8 @@ export interface CustomQuizInfo {
     userScore: number;
     userAnswers: OptionTag[];
     submittedAt: Date;
+    violation?: boolean;
+    violationType?: string;
 }
 
 export interface CourseInfo {

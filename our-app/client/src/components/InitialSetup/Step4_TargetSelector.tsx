@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Hash } from 'crypto';
 
 interface Props {
   userId: string;
@@ -60,6 +61,43 @@ const targetCourses = [
   'Topological Sort'
 ];
 
+const displayNameMap: Record<string, string> = {
+  BinaryTrees: "Binary Trees",
+  BinarySearchTrees: "Binary Search Trees",
+  SortingAlgorithms: "Sorting Algorithms",
+  SearchingAlgorithms: "Searching Algorithms",
+  BFS: "Breadth-First Search (BFS)",
+  DFS: "Depth-First Search (DFS)",
+  DivideAndConquer: "Divide and Conquer",
+  GreedyAlgorithms: "Greedy Algorithms",
+  Backtracking: "Backtracking",
+  ComplexityAnalysis: "Complexity Analysis",
+  LinkedLists: "Linked Lists",
+  HashTables: "Hash Tables",
+  DynamicProgramming: "Dynamic Programming",
+  DijkstrasAlgorithm: "Dijkstra's Algorithm",
+  BellmanFordAlgorithm: "Bellman-Ford Algorithm",
+  FloydWarshallAlgorithm: "Floyd-Warshall Algorithm",
+  PrimsAlgorithm: "Prim's Algorithm",
+  KruskalsAlgorithm: "Kruskal's Algorithm",
+  TopologicalSort: "Topological Sort",
+  AVLTrees: "AVL Trees",
+  RedBlackTrees: "Red-Black Trees",
+  BTrees: "B-Trees",
+  Tries: "Tries",
+  SegmentTrees: "Segment Trees",
+  FenwickTrees: "Fenwick Trees",
+  DisjointSetUnion: "Disjoint Set Union",
+  SuffixArraysTrees: "Suffix Arrays/Trees",
+  Strings: "Strings",
+  Pointers: "Pointers",
+  Matrices: "Matrices",
+  BinarySearch: "Binary Search",
+  TwoPointers: "Two Pointers",
+  SlidingWindow: "Sliding Window",
+  BinaryOperations: "Binary Operations"
+};
+
 const Step4_TargetSelector: React.FC<Props> = ({ userId, onNext }) => {
   const [selectedTarget, setSelectedTarget] = useState<string>('');
   const [recommendedPath, setRecommendedPath] = useState<string[]>([]);
@@ -97,12 +135,16 @@ const Step4_TargetSelector: React.FC<Props> = ({ userId, onNext }) => {
   }, [userId]);
 
   const handleTargetSelect = async (targetCourse: string) => {
+    const backendCourseName = Object.keys(displayNameMap).find(
+      key => displayNameMap[key] === targetCourse
+    ) || targetCourse;
+
     setSelectedTarget(targetCourse);
     setLoading(true);
 
     try {
       // Get the recommended path - this will automatically store both target and path in user document
-      const pathRes = await axios.get(`/api/users/${userId}/recommend-path?target=${encodeURIComponent(targetCourse)}`);
+      const pathRes = await axios.get(`/api/users/${userId}/recommend-path?target=${encodeURIComponent(backendCourseName)}`);
       
       setRecommendedPath(pathRes.data.recommendedPath || []);
       setMessage(`Great! Your learning path to reach "${targetCourse}" has been generated and saved.`);
@@ -123,7 +165,7 @@ const Step4_TargetSelector: React.FC<Props> = ({ userId, onNext }) => {
   return (
     <div className="container py-5">
       <div className="text-center mb-5">
-        <h1 className="display-4 fw-bold text-primary mb-3">Choose Your Target Concept</h1>
+        <h1 className="fw-bold text-primary mb-2" style={{ fontSize: '2rem', lineHeight: 1.1 }}>Choose Your Target Concept</h1>
         <p className="lead text-muted">
           Select the <span className="fw-bold text-primary">advanced concept</span> you want to master.
           <br />We'll create a personalized learning path and save it to your profile!
@@ -147,7 +189,7 @@ const Step4_TargetSelector: React.FC<Props> = ({ userId, onNext }) => {
                   cursor: 'pointer',
                   transition: 'transform 0.3s ease, box-shadow 0.3s ease'
                 }}
-                onClick={() => handleTargetSelect(course)}
+                onClick={() => handleTargetSelect(displayNameMap[course] || course)}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'translateY(-5px)';
                   e.currentTarget.style.boxShadow = '0 10px 25px rgba(0,0,0,0.1)';
@@ -161,7 +203,7 @@ const Step4_TargetSelector: React.FC<Props> = ({ userId, onNext }) => {
                   <div className="mb-3">
                     <i className="fas fa-brain fa-2x text-primary"></i>
                   </div>
-                  <h5 className="fw-bold mb-2">{course}</h5>
+                  <h5 className="fw-bold mb-2">{displayNameMap[course] || course}</h5>
                   <p className="text-muted small">Click to select this as your target</p>
                 </div>
               </div>
@@ -169,10 +211,10 @@ const Step4_TargetSelector: React.FC<Props> = ({ userId, onNext }) => {
           ))}
         </div>
       ) : (
-        <div className="row justify-content-center">
-          <div className="col-lg-8">
-            <div className="card border-0 shadow-sm">
-              <div className="card-body p-5">
+        <div className="row justify-content-center" style={{ marginLeft: 0, marginRight: 0 }}>
+          <div className="col-12 p-0">
+            <div className="card border-0 shadow-sm w-100" style={{ borderRadius: 0 }}>
+              <div className="card-body p-0">
                 <div className="text-center mb-4">
                   <div className="mb-3">
                     <i className="fas fa-bullseye fa-3x text-success"></i>
@@ -229,6 +271,8 @@ const Step4_TargetSelector: React.FC<Props> = ({ userId, onNext }) => {
                   >
                     Choose Different Target
                   </button>
+                  <br/>
+                  <br/>
                   <button 
                     className="btn btn-success px-4"
                     onClick={handleComplete}

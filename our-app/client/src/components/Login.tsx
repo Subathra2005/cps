@@ -7,6 +7,7 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [userName, setUserName] = useState<string>("");
+  const [role, setRole] = useState<string>("user");
 
   const { userId, loading, login, signup } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -51,7 +52,7 @@ const Login: React.FC = () => {
 
     try {
       if (isSignup) {
-        await signup(userName, email, password);
+        await signup(userName, email, password, role);
         alert(`Signed up as ${email}. Please login now.`);
         setIsSignup(false);
       } else {
@@ -78,6 +79,7 @@ const Login: React.FC = () => {
         
         <form onSubmit={handleSubmit}>
           {isSignup && (
+            <>
             <div className="mb-3">
               <label htmlFor="username" className="form-label">
                 Username
@@ -91,6 +93,20 @@ const Login: React.FC = () => {
                 required
               />
             </div>
+            <div className="mb-3">
+              <label htmlFor="role" className="form-label">Role</label>
+              <select
+                id="role"
+                className="form-select"
+                value={role}
+                onChange={e => setRole(e.target.value)}
+                required
+              >
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+            </>
           )}
           <div className="mb-3">
             <label htmlFor="email" className="form-label">

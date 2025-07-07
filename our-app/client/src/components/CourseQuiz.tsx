@@ -3,9 +3,12 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useQuizProgression } from '../hooks/useQuizProgression';
 
-interface Props {}
+interface CourseQuizProps {
+  onQuizStart: () => void;
+  onQuizEnd: () => void;
+}
 
-const CourseQuiz: React.FC<Props> = () => {
+const CourseQuiz: React.FC<CourseQuizProps> = ({ onQuizStart, onQuizEnd }) => {
   const { userId, lang, topic } = useParams<{ userId: string; lang: string; topic: string }>();
   const navigate = useNavigate();
   
@@ -192,6 +195,7 @@ const CourseQuiz: React.FC<Props> = () => {
       if (questionsRes.data && questionsRes.data.questions) {
         // Questions fetched successfully, navigate to quiz
         navigate(`/users/${userId}/${lang}/${levelKey}/${encodeURIComponent(topic!)}/quiz`);
+        onQuizEnd(); // Call onQuizEnd when navigating to quiz
       }
     } catch (error: any) {
       console.error('Error starting quiz:', error);
@@ -245,9 +249,28 @@ const CourseQuiz: React.FC<Props> = () => {
   const getLockoutMessage = (levelKey: string) => {
     if (isLevelLocked(levelKey)) {
       const unlockTime = new Date(lockedUntil[levelKey]);
+      
+      // Check if the most recent attempt was a violation by examining user data
+      // We'll make this more specific in a future update
       return `Locked until ${unlockTime.toLocaleDateString()} at ${unlockTime.toLocaleTimeString()}`;
     }
     return '';
+  };
+
+  useEffect(() => {
+    onQuizStart();
+    return () => onQuizEnd();
+  }, [onQuizStart, onQuizEnd]);
+
+  useEffect(() => {
+    if (completedLevels.length > 0) {
+      onQuizEnd(); // Ensure chatbot is enabled during review
+    }
+  }, [completedLevels, onQuizEnd]);
+
+  const handleQuizEnd = () => {
+    onQuizEnd();
+    console.log('Quiz ended');
   };
 
   if (loading) {

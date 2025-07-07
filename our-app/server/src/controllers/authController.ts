@@ -47,11 +47,14 @@ export const signup = async (req: Request, res: Response) => {
         // Hash password
         const hashedPassword = await bcrypt.hash(password, 12);
 
+        // Get role from query param, default to 'user'
+        const role = req.query.role === 'admin' ? 'admin' : 'user';
+
         const user = new User({
             name,
             email,
             password: hashedPassword,
-            role: 'user'
+            role
         });
 
         await user.save();
@@ -64,4 +67,4 @@ export const signup = async (req: Request, res: Response) => {
     } catch (err) {
         res.status(400).json({ error: 'Signup failed', details: err });
     }
-}; 
+};

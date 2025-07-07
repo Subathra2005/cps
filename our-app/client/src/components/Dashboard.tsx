@@ -279,6 +279,8 @@ const Dashboard: React.FC<{ userId: string }> = ({ userId }) => {
                 date={test.date || ''} 
                 score={test.userScore || 0} 
                 feedback={test.feedback || ''} 
+                violation={test.violation || false}
+                violationType={test.violationType || null}
                 onClick={() => handleTestClick(test)}
               />
             ))
@@ -388,22 +390,65 @@ const TimelineConnector = ({ covered }: { covered: boolean }) => (
   </div>
 );
 
-const TestItem = ({ name, date, score, feedback, onClick }: { name: string; date: string; score: number; feedback: string; onClick?: () => void }) => (
-  <div 
-    className={`border-top py-3 d-flex justify-content-between align-items-center ${onClick ? 'cursor-pointer' : ''}`}
-    onClick={onClick}
-    style={{ cursor: onClick ? 'pointer' : 'default' }}
-  >
-    <div>
-      <p className="fw-semibold mb-1">{typeof name === 'string' ? name : 'Quiz'}</p>
-      <p className="small text-secondary mb-0">{date ? new Date(date).toLocaleDateString() : 'No date'}</p>
+const TestItem = ({ 
+  name, 
+  date, 
+  score, 
+  feedback, 
+  violation = false, 
+  violationType = null, 
+  onClick 
+}: { 
+  name: string; 
+  date: string; 
+  score: number; 
+  feedback: string; 
+  violation?: boolean; 
+  violationType?: string | null; 
+  onClick?: () => void 
+}) => {
+  const getScoreColor = () => {
+    if (violation) return "text-danger";  // Always red for violations
+    if (score >= 80) return "text-success";
+    if (score >= 50) return "text-warning";
+    return "text-danger";
+  };
+
+  const getFeedbackText = () => {
+    if (violation) {
+      return `Violation: ${violationType === 'tab_switch' ? 'Tab Switching' : 'Policy Violation'}`;
+    }
+    return feedback || 'No feedback';
+  };
+
+  return (
+    <div 
+      className={`border-top py-3 d-flex justify-content-between align-items-center ${
+        onClick ? 'cursor-pointer' : ''
+      } ${violation ? 'bg-danger bg-opacity-10 border-danger' : ''}`}
+      onClick={onClick}
+      style={{ cursor: onClick ? 'pointer' : 'default' }}
+    >
+      <div>
+        <p className={`fw-semibold mb-1 ${violation ? 'text-danger' : ''}`}>
+          {violation && <i className="fas fa-exclamation-triangle me-2"></i>}
+          {typeof name === 'string' ? name : 'Quiz'}
+        </p>
+        <p className="small text-secondary mb-0">
+          {date ? new Date(date).toLocaleDateString() : 'No date'}
+        </p>
+      </div>
+      <div className="text-end">
+        <p className={`fw-bold fs-5 mb-1 ${getScoreColor()}`}>
+          {typeof score === 'number' ? score : 0}
+        </p>
+        <p className={`small mb-0 ${violation ? 'text-danger fw-semibold' : 'text-secondary'}`}>
+          {getFeedbackText()}
+        </p>
+      </div>
     </div>
-    <div className="text-end">
-      <p className={`fw-bold fs-5 mb-1 ${score >= 80 ? "text-success" : score >= 50 ? "text-warning" : "text-danger"}`}>{typeof score === 'number' ? score : 0}</p>
-      <p className="small text-secondary mb-0">{typeof feedback === 'string' ? feedback : 'No feedback'}</p>
-    </div>
-  </div>
-);
+  );
+};
 
 // Removed ReviewModal component as QuizReview is now used for quiz review modals
 

@@ -1,7 +1,95 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const allConcepts = ["Arrays", "Strings", "Linked List", "Stack", "Trees", "Binary Search", "Dynamic Programming"];
+const allConcepts = [
+  // Beginner Level
+  'Arrays',
+  'Recursion',
+  'Strings',
+  'Matrices',
+  'Complexity Analysis',
+  
+  // Intermediate Level - Data Structures
+  'Linked Lists',
+  'Stacks', 
+  'Queues',
+  'Hash Tables',
+  'Trees',
+  'Binary Trees',
+  'Binary Search Trees',
+  'Heaps',
+  'Graphs',
+  
+  // Intermediate Level - Algorithms
+  'Sorting Algorithms',
+  'Searching Algorithms',
+  'Binary Search',
+  'Two Pointers',
+  'Sliding Window',
+  'Breadth-First Search (BFS)',
+  'Depth-First Search (DFS)',
+  
+  // Advanced Level - Algorithm Paradigms
+  'Dynamic Programming',
+  'Greedy Algorithms',
+  'Backtracking', 
+  'Divide and Conquer',
+  
+  // Advanced Level - Advanced Data Structures
+  'AVL Trees',
+  'Red-Black Trees',
+  'B-Trees',
+  'Tries',
+  'Segment Trees',
+  'Fenwick Trees',
+  'Disjoint Set Union',
+  'Suffix Arrays/Trees',
+  
+  // Advanced Level - Graph Algorithms
+  "Dijkstra's Algorithm",
+  "Bellman-Ford Algorithm", 
+  "Floyd-Warshall Algorithm",
+  "Prim's Algorithm",
+  "Kruskal's Algorithm",
+  'Topological Sort'
+];
+
+const displayNameMap: Record<string, string> = {
+  BinaryTrees: "Binary Trees",
+  BinarySearchTrees: "Binary Search Trees",
+  SortingAlgorithms: "Sorting Algorithms",
+  SearchingAlgorithms: "Searching Algorithms",
+  BFS: "Breadth-First Search (BFS)",
+  DFS: "Depth-First Search (DFS)",
+  DivideAndConquer: "Divide and Conquer",
+  GreedyAlgorithms: "Greedy Algorithms",
+  Backtracking: "Backtracking",
+  ComplexityAnalysis: "Complexity Analysis",
+  LinkedLists: "Linked Lists",
+  DynamicProgramming: "Dynamic Programming",
+  DijkstrasAlgorithm: "Dijkstra's Algorithm",
+  BellmanFordAlgorithm: "Bellman-Ford Algorithm",
+  FloydWarshallAlgorithm: "Floyd-Warshall Algorithm",
+  PrimsAlgorithm: "Prim's Algorithm",
+  KruskalsAlgorithm: "Kruskal's Algorithm",
+  TopologicalSort: "Topological Sort",
+  AVLTrees: "AVL Trees",
+  RedBlackTrees: "Red-Black Trees",
+  BTrees: "B-Trees",
+  Tries: "Tries",
+  HashTables: "Hash Tables",
+  SegmentTrees: "Segment Trees",
+  FenwickTrees: "Fenwick Trees",
+  DisjointSetUnion: "Disjoint Set Union",
+  SuffixArraysTrees: "Suffix Arrays/Trees",
+  Strings: "Strings",
+  Pointers: "Pointers",
+  Matrices: "Matrices",
+  BinarySearch: "Binary Search",
+  TwoPointers: "Two Pointers",
+  SlidingWindow: "Sliding Window",
+  BinaryOperations: "Binary Operations"
+};
 
 interface Props {
   userId: string;
@@ -21,9 +109,14 @@ const Step2_Assessment: React.FC<Props> = ({ userId, language, onNext }) => {
   };
 
   const handleSubmit = async () => {
-    // Prepare list of known concepts as course names
-    const completedCourses = known;
-    
+    // Map known concepts to backend course names
+    const completedCourses = known.map((concept) => {
+      const backendName = Object.keys(displayNameMap).find(
+        (key) => displayNameMap[key] === concept
+      );
+      return backendName || concept; // Fallback to concept if no mapping found
+    });
+
     console.log('Submitting assessment with completed courses:', completedCourses);
     try {
       const res = await axios.post(`/api/users/${userId}/update-user-courses?status=enrolled`, {

@@ -346,29 +346,45 @@ export const getQuestions = async (req: Request, res: Response) => {
                 }
 
                 // Check if user has failed twice (≤50% both times)
-                if (userAttempts.length >= 2) {
-                    const failedAttempts = userAttempts.filter(attempt => attempt.userScore <= passingScore);
-                    
-                    if (failedAttempts.length >= 2) {
-                        // Get the timestamp of the second failed attempt
-                        const sortedFailedAttempts = failedAttempts.sort((a, b) => {
-                            const aTime = a.submittedAt ? new Date(a.submittedAt).getTime() : 0;
-                            const bTime = b.submittedAt ? new Date(b.submittedAt).getTime() : 0;
-                            return bTime - aTime; // Sort by most recent first
-                        });
-                        
-                        const lastFailedAttemptTime = sortedFailedAttempts[0].submittedAt 
-                            ? new Date(sortedFailedAttempts[0].submittedAt).getTime()
-                            : new Date(user.updatedAt).getTime(); // Fallback to user update time
-                        
-                        const now = Date.now();
+                // --- Only consider the two most recent failed attempts AFTER the last lockout period ---
+                let lastLockoutEnd = 0;
+                if (
+                    user.courseQuizLockouts &&
+                    user.courseQuizLockouts[topic] &&
+                    user.courseQuizLockouts[topic][quizLevel]
+                ) {
+                    lastLockoutEnd = user.courseQuizLockouts[topic][quizLevel];
+                }
+                // Only consider attempts after the last lockout end time
+                const postLockoutAttempts = userAttempts.filter(attempt => {
+                    const t = attempt.submittedAt ? new Date(attempt.submittedAt).getTime() : 0;
+                    return t > lastLockoutEnd;
+                });
+                // Only consider the most recent post-lockout attempt
+                if (postLockoutAttempts.length >= 1) {
+                    const sortedAttempts = postLockoutAttempts.sort((a, b) => {
+                        const aTime = a.submittedAt ? new Date(a.submittedAt).getTime() : 0;
+                        const bTime = b.submittedAt ? new Date(b.submittedAt).getTime() : 0;
+                        return bTime - aTime; // Most recent first
+                    });
+                    const lastAttempt = sortedAttempts[0];
+                    const failed = lastAttempt.userScore <= passingScore;
+                    if (failed) {
+                        const lastFailedAttemptTime = lastAttempt.submittedAt 
+                            ? new Date(lastAttempt.submittedAt).getTime()
+                            : new Date(user.updatedAt).getTime();
                         const lockoutDuration = 24 * 60 * 60 * 1000; // 24 hours
-
-                        if (now - lastFailedAttemptTime < lockoutDuration) {
-                            const unlockTime = lastFailedAttemptTime + lockoutDuration;
+                        const unlockTime = lastFailedAttemptTime + lockoutDuration;
+                        // Always persist the new unlock time
+                        if (!user.courseQuizLockouts) user.courseQuizLockouts = {};
+                        if (!user.courseQuizLockouts[topic]) user.courseQuizLockouts[topic] = {};
+                        user.courseQuizLockouts[topic][quizLevel] = unlockTime;
+                        await user.save();
+                        const now = Date.now();
+                        if (now < unlockTime) {
                             return res.status(400).json({
-                                error: 'Quiz locked due to failed attempts',
-                                message: `You have failed this level twice. Please try again after the cooldown period.`,
+                                error: 'Quiz locked due to failed attempt',
+                                message: `You have failed this level. Please try again after the cooldown period.`,
                                 locked: true,
                                 unlockTime: unlockTime,
                                 attemptsRemaining: 0
@@ -412,7 +428,7 @@ export const getQuestions = async (req: Request, res: Response) => {
 export const submitAnswers = async (req: Request, res: Response) => {
     try {
         const { id, lang, quizLevel, topic } = req.params;
-        const { answers } = req.body; // Array of OptionTag values
+        const { answers, violation, violationType } = req.body; // Array of OptionTag values + violation flags
 
         if (!answers || !Array.isArray(answers)) {
             return res.status(400).json({ error: 'Answers array is required' });
@@ -422,6 +438,22 @@ export const submitAnswers = async (req: Request, res: Response) => {
         const user = await User.findById(id);
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Check for active lockout before allowing any quiz attempts
+        const now = Date.now();
+        if (
+            user.courseQuizLockouts &&
+            user.courseQuizLockouts[topic] &&
+            user.courseQuizLockouts[topic][quizLevel] &&
+            now < user.courseQuizLockouts[topic][quizLevel]
+        ) {
+            return res.status(400).json({
+                error: 'Quiz locked due to violation',
+                message: `You are locked out for 24 hours due to a violation.`,
+                locked: true,
+                unlockTime: user.courseQuizLockouts[topic][quizLevel]
+            });
         }
 
         // Find quizzes for scoring
@@ -448,33 +480,52 @@ export const submitAnswers = async (req: Request, res: Response) => {
             topic: string;
         }> = [];
 
-        quizzes.forEach(quiz => {
-            quiz.questions.forEach((question, index) => {
-                totalQuestions++;
-                const isCorrect = answers[index] === question.correctOption;
-                if (isCorrect) {
-                    correctAnswers++;
-                    totalScore += question.score;
-                }
-                questionDetails.push({
-                    questionText: question.questionText,
-                    userAnswer: answers[index],
-                    correctAnswer: question.correctOption,
-                    isCorrect: isCorrect,
-                    score: isCorrect ? question.score : 0,
-                    topic: quiz.topic.courseName
+        // If this is a violation, force score to 0
+        if (violation) {
+            totalScore = 0;
+            correctAnswers = 0;
+            // Set 24-hour lockout for this topic/level
+            if (!user.courseQuizLockouts) user.courseQuizLockouts = {};
+            if (!user.courseQuizLockouts[topic]) user.courseQuizLockouts[topic] = {};
+            user.courseQuizLockouts[topic][quizLevel] = Date.now() + 24*60*60*1000;
+            await user.save();
+            console.log(`Violation detected: ${violationType} for user ${id}, topic ${topic}, level ${quizLevel}`);
+        } else {
+            quizzes.forEach(quiz => {
+                quiz.questions.forEach((question, index) => {
+                    totalQuestions++;
+                    const isCorrect = answers[index] === question.correctOption;
+                    if (isCorrect) {
+                        correctAnswers++;
+                        totalScore += question.score;
+                    }
+                    questionDetails.push({
+                        questionText: question.questionText,
+                        userAnswer: answers[index],
+                        correctAnswer: question.correctOption,
+                        isCorrect: isCorrect,
+                        score: isCorrect ? question.score : 0,
+                        topic: quiz.topic.courseName
+                    });
                 });
             });
-        });
+        }
 
-        const percentage = (correctAnswers / totalQuestions) * 100;
+        // Ensure totalQuestions is set even for violations
+        if (totalQuestions === 0) {
+            totalQuestions = quizzes[0]?.questions?.length || answers.length;
+        }
+
+        const percentage = totalQuestions > 0 ? (correctAnswers / totalQuestions) * 100 : 0;
 
         // Save quiz result to user
         const quizResult = {
             quizId: quizzes[0]._id as mongoose.Types.ObjectId,
             userScore: totalScore,
             userAnswers: answers,
-            submittedAt: new Date()
+            submittedAt: new Date(),
+            violation: violation || false,
+            violationType: violationType || null
         };
 
         user.quizzes.push(quizResult);
@@ -615,7 +666,6 @@ export const reviewQuiz = async (req: Request, res: Response) => {
         res.status(500).json({ error: 'Failed to fetch review', details: err });
     }
 };
-
 // Assessment endpoint
 export const createAssessment = async (req: Request, res: Response) => {
     try {
@@ -1285,7 +1335,7 @@ export const submitCustomQuizAnswers = async (req: Request, res: Response) => {
     try {
         const { id } = req.params; // user id
         const { customQuizId } = req.params; // custom quiz id
-        const { answers } = req.body; // Array of OptionTag values
+        const { answers, violation, violationType } = req.body; // Array of OptionTag values + violation flags
 
         if (!answers || !Array.isArray(answers)) {
             return res.status(400).json({ error: 'Answers array is required' });
@@ -1326,29 +1376,50 @@ export const submitCustomQuizAnswers = async (req: Request, res: Response) => {
             topic: string;
         }> = [];
 
-        customQuiz.customQuestions.forEach((question, index) => {
-            const isCorrect = answers[index] === question.correctOption;
-            if (isCorrect) {
-                correctAnswers++;
-                totalScore += question.score;
-            }
-            questionDetails.push({
-                questionText: question.questionText,
-                userAnswer: answers[index],
-                correctAnswer: question.correctOption,
-                isCorrect: isCorrect,
-                score: isCorrect ? question.score : 0,
-                topic: question.topic.courseName
+        // If this is a violation, force score to 0
+        if (violation) {
+            totalScore = 0;
+            correctAnswers = 0;
+            console.log(`Custom quiz violation detected: ${violationType} for user ${id}, quiz ${customQuizId}`);
+            
+            // Still populate question details for review, but mark all as incorrect
+            customQuiz.customQuestions.forEach((question, index) => {
+                questionDetails.push({
+                    questionText: question.questionText,
+                    userAnswer: answers[index] || '',
+                    correctAnswer: question.correctOption,
+                    isCorrect: false,
+                    score: 0,
+                    topic: question.topic.courseName
+                });
             });
-        });
+        } else {
+            customQuiz.customQuestions.forEach((question, index) => {
+                const isCorrect = answers[index] === question.correctOption;
+                if (isCorrect) {
+                    correctAnswers++;
+                    totalScore += question.score;
+                }
+                questionDetails.push({
+                    questionText: question.questionText,
+                    userAnswer: answers[index],
+                    correctAnswer: question.correctOption,
+                    isCorrect: isCorrect,
+                    score: isCorrect ? question.score : 0,
+                    topic: question.topic.courseName
+                });
+            });
+        }
 
-        const percentage = (correctAnswers / totalQuestions) * 100;
+        const percentage = totalQuestions > 0 ? (correctAnswers / totalQuestions) * 100 : 0;
 
         // Update custom quiz with submission data
         customQuiz.isSubmitted = true;
         customQuiz.userScore = totalScore;
         customQuiz.userAnswers = answers;
         customQuiz.submittedAt = new Date();
+        customQuiz.violation = violation || false;
+        customQuiz.violationType = violationType || null;
         await customQuiz.save();
 
         // Add to user's custom quizzes
@@ -1356,7 +1427,9 @@ export const submitCustomQuizAnswers = async (req: Request, res: Response) => {
             quizId: customQuiz._id as mongoose.Types.ObjectId,
             userScore: totalScore,
             userAnswers: answers,
-            submittedAt: new Date()
+            submittedAt: new Date(),
+            violation: violation || false,
+            violationType: violationType || null
         };
 
         user.customQuizzes.push(customQuizResult);
@@ -1765,7 +1838,7 @@ export const debugUserQuizHistory = async (req: Request, res: Response) => {
         );
 
         res.json({
-            userInfo: {
+            user: {
                 id: user._id,
                 name: user.name,
                 email: user.email,
@@ -1801,3 +1874,11 @@ export const debugUserQuizHistory = async (req: Request, res: Response) => {
         res.status(500).json({ error: 'Failed to debug quiz history', details: err });
     }
 };
+
+// At the top, after imports:
+// Add this utility to safely get/set nested lockout object
+function getCourseQuizLockout(user: any, topic: string, quizLevel: string) {
+    if (!user.courseQuizLockouts) user.courseQuizLockouts = {};
+    if (!user.courseQuizLockouts[topic]) user.courseQuizLockouts[topic] = {};
+    return user.courseQuizLockouts[topic][quizLevel];
+}

@@ -24,6 +24,8 @@ export interface CustomQuizDocument extends Document {
     userScore: number;
     userAnswers: string[];
     submittedAt?: Date;
+    violation?: boolean;
+    violationType?: string;
 }
 
 export interface QuizDocument extends Document {
@@ -53,6 +55,12 @@ export interface UserDocument extends Document {
     recommendedPath?: {
         target: string;
         path: string[];
+    };
+    // Add lockout map for course quizzes (per topic/level)
+    courseQuizLockouts?: {
+        [topic: string]: {
+            [quizLevel: string]: number;
+        };
     };
     createdAt: Date;
     updatedAt: Date;

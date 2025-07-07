@@ -1,8 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useTabSwitchDetection } from '../hooks/useTabSwitchDetection';
 
-const BasicQuiz: React.FC = () => {
+interface BasicQuizProps {
+  onQuizStart: () => void;
+  onQuizEnd: () => void;
+}
+
+const BasicQuiz: React.FC<BasicQuizProps> = ({ onQuizStart, onQuizEnd }) => {
   // Get userId from localStorage or context if not passed as prop
   let userId = localStorage.getItem('userId') || '';
   // If userId is in the route, extract from params (for /users/:id/:lang/:level/:topic/quiz)
@@ -18,6 +24,7 @@ const BasicQuiz: React.FC = () => {
   const [isNavigating, setIsNavigating] = useState(false);
   const [isBlocked, setIsBlocked] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [tabViolationSubmitted, setTabViolationSubmitted] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -80,10 +87,12 @@ const BasicQuiz: React.FC = () => {
         // If we reach here, the user can access this level - fetch questions
         const res = await axios.get(`/api/users/${userId}/${lang}/${level}/${topic}/questions`);
         setQuestions(res.data.questions || []);
+        setIsLoading(false); // Set loading to false after questions are fetched
         
       } catch (error) {
         console.error('Error checking availability or fetching questions:', error);
         setQuestions([]);
+        setIsLoading(false); // Set loading to false even on error
       }
     };
 
@@ -101,6 +110,17 @@ const BasicQuiz: React.FC = () => {
     }
   }, [submitted, userId, lang, level, topic]);
 
+  useEffect(() => {
+    onQuizStart();
+    return () => onQuizEnd();
+  }, [onQuizStart, onQuizEnd]);
+
+  useEffect(() => {
+    if (questions.length > 0) {
+      onQuizStart();
+    }
+  }, [questions, onQuizStart]);
+
   const handleAnswer = (ans: string) => {
     setAnswers(prev => {
       const copy = [...prev];
@@ -115,15 +135,83 @@ const BasicQuiz: React.FC = () => {
   const handleSubmit = async () => {
     try {
       const res = await axios.post(`/api/users/${userId}/${lang}/${level}/${topic}/submit`, {
-        answers
+        answers,
+        violation: false
       });
       setScore(res.data.results?.score ?? res.data.score);
       setSubmitted(true);
+      onQuizEnd(); // Call onQuizEnd immediately after submission
     } catch (error) {
       console.error('Error submitting quiz:', error);
       alert('Failed to submit quiz. Please try again.');
     }
   };
+
+  // Handle tab switching violation - mark as violation, do not lock or auto-submit with 0
+  const handleTabSwitchViolation = async () => {
+    if (tabViolationSubmitted || submitted) return;
+    
+    console.log('Tab switching violation detected - marking as violation, auto-submitting with score 0 and locking');
+    setTabViolationSubmitted(true);
+    
+    try {
+      // Fill remaining answers with a valid default (e.g., 'B') to avoid backend enum errors
+      const violationAnswers = [...answers];
+      while (violationAnswers.length < questions.length) {
+        violationAnswers.push('B');
+      }
+      // Submit with violation flag, force score 0, and lockout
+      const res = await axios.post(`/api/users/${userId}/${lang}/${level}/${topic}/submit`, {
+        answers: violationAnswers,
+        violation: true,
+        forceZeroScore: true, // backend should treat this as a forced zero
+        lockout: true // backend should lock this quiz for 24 hours
+      });
+      setAnswers(violationAnswers);
+      setScore(0); // Force score to 0
+      setSubmitted(true);
+      onQuizEnd();
+      setTimeout(() => {
+        alert('Quiz automatically submitted due to tab switching. You are now locked out for 24 hours. This attempt will be highlighted in red in your history.');
+      }, 500);
+    } catch (error) {
+      console.error('Error submitting violation:', error);
+      setScore(0);
+      setSubmitted(true);
+      onQuizEnd();
+    }
+  };
+
+  // Tab switching detection - only active during quiz (not during review)
+  useTabSwitchDetection({
+    onTabSwitch: handleTabSwitchViolation,
+    isQuizActive: !submitted && !isLoading && questions.length > 0 && !isBlocked && !tabViolationSubmitted,
+    warningEnabled: true
+  });
+
+  // Debug log for tab detection state
+  useEffect(() => {
+    console.log('Tab detection state:', {
+      submitted,
+      isLoading,
+      questionsLength: questions.length,
+      isBlocked,
+      tabViolationSubmitted,
+      shouldBeActive: !submitted && !isLoading && questions.length > 0 && !isBlocked && !tabViolationSubmitted
+    });
+  }, [submitted, isLoading, questions.length, isBlocked, tabViolationSubmitted]);
+
+  // Test function for debugging tab detection
+  const testTabDetection = () => {
+    console.log('Manual tab detection test triggered');
+    handleTabSwitchViolation();
+  };
+
+  useEffect(() => {
+    if (submitted) {
+      onQuizEnd(); // Ensure chatbot is enabled during review
+    }
+  }, [submitted, onQuizEnd]);
 
   // Helper to get correct/incorrect count - use actual answers submitted
   const correctCount = questions.filter((q, idx) => {
@@ -340,7 +428,15 @@ const BasicQuiz: React.FC = () => {
         <div className="col-12 col-lg-10">
           {/* Header with progress */}
           <div className="d-flex justify-content-between align-items-center mb-4">
-            <h5 className="text-muted mb-0">Question {current + 1} of {questions.length}</h5>
+            <div className="d-flex align-items-center">
+              <h5 className="text-muted mb-0 me-3">Question {current + 1} of {questions.length}</h5>
+              {/* Tab detection indicator */}
+              {!submitted && !isLoading && questions.length > 0 && !isBlocked && !tabViolationSubmitted && (
+                <span className="badge bg-warning text-dark">
+                  🔒 Anti-Cheat Active
+                </span>
+              )}
+            </div>
             <span className="badge bg-primary px-3 py-2 rounded-pill">
               {lang ? lang.charAt(0).toUpperCase() + lang.slice(1) : 'Quiz'} - {level || 'Level'}
             </span>
@@ -402,32 +498,44 @@ const BasicQuiz: React.FC = () => {
           </div>
           
           {/* Navigation buttons */}
-          <div className="d-flex justify-content-end gap-2">
-            {current > 0 && (
+          <div className="d-flex justify-content-between align-items-center">
+            <div>
+              {/* Debug button - remove in production */}
               <button 
-                className="btn btn-outline-secondary px-4"
-                onClick={handlePrev}
+                className="btn btn-warning btn-sm"
+                onClick={testTabDetection}
+                title="Test tab detection (Debug only)"
               >
-                Previous
+                🧪 Test Violation
               </button>
-            )}
-            {current < questions.length - 1 ? (
-              <button 
-                className="btn btn-primary px-4"
-                onClick={handleNext}
-                disabled={!answers[current]}
-              >
-                Next Question
-              </button>
-            ) : (
-              <button 
-                className="btn btn-success px-4"
-                onClick={handleSubmit}
-                disabled={!answers[current]}
-              >
-                Submit Quiz
-              </button>
-            )}
+            </div>
+            <div className="d-flex gap-2">
+              {current > 0 && (
+                <button 
+                  className="btn btn-outline-secondary px-4"
+                  onClick={handlePrev}
+                >
+                  Previous
+                </button>
+              )}
+              {current < questions.length - 1 ? (
+                <button 
+                  className="btn btn-primary px-4"
+                  onClick={handleNext}
+                  disabled={!answers[current]}
+                >
+                  Next Question
+                </button>
+              ) : (
+                <button 
+                  className="btn btn-success px-4"
+                  onClick={handleSubmit}
+                  disabled={!answers[current]}
+                >
+                  Submit Quiz
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>
