@@ -34,11 +34,11 @@ export function useQuizFetcher() {
       const endpointWithApi = endpoint.startsWith('/api') ? endpoint : `/api${endpoint.startsWith('/') ? '' : '/'}${endpoint}`;
       const response = await api.get(endpointWithApi);
 
-      if (!response.ok) {
+      if (response.status < 200 || response.status >= 300) {
         throw new Error(`Failed to fetch quiz data: ${response.status}`);
       }
 
-      const data = await response.json();
+      const data = response.data;
 
       if (!data) {
         throw new Error('Quiz data is empty or null');
