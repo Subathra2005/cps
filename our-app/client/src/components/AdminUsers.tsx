@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from '../utils/api';
 
 interface User {
   _id: string;
@@ -39,7 +39,7 @@ const AdminUsers: React.FC = () => {
     const fetchUsers = async () => {
       setLoading(true);
       try {
-        const res = await axios.get("/api/users");
+        const res = await api.get("/api/users");
         // Filter out users with role 'admin'
         const filteredUsers = (res.data.users || res.data || []).filter((u: User) => u.role !== 'admin');
         setUsers(filteredUsers);
@@ -60,7 +60,7 @@ const AdminUsers: React.FC = () => {
         quizIds.map(async (id) => {
           if (!id) return;
           try {
-            const res = await axios.get(`/api/quizzes/${id}`);
+            const res = await api.get(`/api/quizzes/${id}`);
             infoMap[id] = res.data;
           } catch {
             // ignore
@@ -81,7 +81,7 @@ const AdminUsers: React.FC = () => {
         customQuizIds.map(async (id) => {
           if (!id) return;
           try {
-            const res = await axios.get(`/api/custom-quizzes/${id}`);
+            const res = await api.get(`/api/custom-quizzes/${id}`);
             infoMap[id] = res.data;
           } catch {
             // ignore

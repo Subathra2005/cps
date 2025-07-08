@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { mongoIdToString } from "../utils/mongoIdHelper";
+import api from '../utils/api';
 
 export function useDashboardData(userId: string) {
   console.log("[useDashboardData] hook initialized for userId:", userId);
@@ -19,8 +20,8 @@ export function useDashboardData(userId: string) {
       setLoading(true);
       setError(null);
       try {
-        const userRes = await fetch(`/api/users/${userId}/dashboard`);
-        const userData = await userRes.json();
+        const userRes = await api.get(`/api/users/${userId}/dashboard`);
+        const userData = await userRes.data;
         console.log("[Dashboard DEBUG] userData from API:", userData);
         // Normalize quizzes and customQuizzes to preserve populated quizId object and add quizIdString for lookups
         if (userData.quizzes) {

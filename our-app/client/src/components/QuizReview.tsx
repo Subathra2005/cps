@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import api from '../utils/api';
 
 interface QuizReviewProps {
   attempt: {
@@ -29,11 +30,11 @@ const QuizReview: React.FC<QuizReviewProps> = ({ attempt, onClose }) => {
     const id = String(attempt.quizId);
     const userAnswers = Array.isArray(attempt.userAnswers) ? attempt.userAnswers : [];
     const isCustomQuiz = (typeof attempt.feedback === 'string' && attempt.feedback === 'Custom Quiz') ||
-                        (typeof attempt.type === 'string' && attempt.type === 'custom');
+      (typeof attempt.type === 'string' && attempt.type === 'custom');
 
     // Always get questions/options/correct answer from /api/custom-quizzes/:id for custom quizzes
     if (isCustomQuiz) {
-      fetch(`/api/custom-quizzes/${id}`)
+      api.get(`/api/custom-quizzes/${id}`)
         .then(res => {
           if (!res.ok) throw new Error(`Failed to fetch quiz data: ${res.status}`);
           return res.json();
@@ -55,7 +56,7 @@ const QuizReview: React.FC<QuizReviewProps> = ({ attempt, onClose }) => {
           // Use user answers from user object if available, else from attempt
           let answers = userAnswers;
           if (attempt.userId) {
-            fetch(`/api/users/${attempt.userId}`)
+            api.get(`/api/users/${attempt.userId}`)
               .then(res => res.ok ? res.json() : null)
               .then(userData => {
                 if (userData && Array.isArray(userData.customQuizzes)) {
@@ -102,8 +103,8 @@ const QuizReview: React.FC<QuizReviewProps> = ({ attempt, onClose }) => {
     }
     // Only fetch /api/quizzes/:id for non-custom quizzes
     if (!isCustomQuiz) {
-      const endpoint = `/api/quizzes/${id}`;
-      fetch(endpoint)
+      const endpoint = `/quizzes/${id}`;
+      api.get(endpoint)
         .then(res => {
           if (!res.ok) throw new Error(`Failed to fetch quiz data: ${res.status}`);
           return res.json();
@@ -192,23 +193,21 @@ const QuizReview: React.FC<QuizReviewProps> = ({ attempt, onClose }) => {
                         {question.options.map((option: any, optIndex: number) => (
                           <div
                             key={optIndex}
-                            className={`p-2 mb-2 rounded ${
-                              option.optionTag === question.correctOption
-                                ? 'bg-success bg-opacity-10 border border-success'
-                                : option.optionTag === question.userAnswer && option.optionTag !== question.correctOption
+                            className={`p-2 mb-2 rounded ${option.optionTag === question.correctOption
+                              ? 'bg-success bg-opacity-10 border border-success'
+                              : option.optionTag === question.userAnswer && option.optionTag !== question.correctOption
                                 ? 'bg-danger bg-opacity-10 border border-danger'
                                 : 'bg-light'
-                            }`}
+                              }`}
                           >
                             <div className="d-flex align-items-center">
                               <div
-                                className={`rounded-circle me-2 d-flex align-items-center justify-content-center ${
-                                  option.optionTag === question.correctOption
-                                    ? 'bg-success text-white'
-                                    : option.optionTag === question.userAnswer && option.optionTag !== question.correctOption
+                                className={`rounded-circle me-2 d-flex align-items-center justify-content-center ${option.optionTag === question.correctOption
+                                  ? 'bg-success text-white'
+                                  : option.optionTag === question.userAnswer && option.optionTag !== question.correctOption
                                     ? 'bg-danger text-white'
                                     : 'bg-secondary bg-opacity-10'
-                                }`}
+                                  }`}
                                 style={{ width: 24, height: 24 }}
                               >
                                 {option.optionTag}

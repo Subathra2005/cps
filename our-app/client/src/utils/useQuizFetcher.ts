@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { mongoIdToString } from './mongoIdHelper';
+import api from './api';
 
 /**
  * Custom hook for fetching quiz data with proper error handling
@@ -17,31 +18,32 @@ export function useQuizFetcher() {
   const fetchQuiz = useCallback(async (quizId: any) => {
     setLoading(true);
     setError(null);
-    
+
     try {
       // Convert the ID to a string using our helper
       const idString = mongoIdToString(quizId);
-      
+
       if (!idString) {
         throw new Error('Invalid quiz ID');
       }
-      
+
       // Fetch the quiz
       const endpoint = `/api/quizzes/${idString}`;
       console.log(`Fetching quiz data from: ${endpoint}`);
-      
-      const response = await fetch(endpoint);
-      
+
+      const endpointWithApi = endpoint.startsWith('/api') ? endpoint : `/api${endpoint.startsWith('/') ? '' : '/'}${endpoint}`;
+      const response = await api.get(endpointWithApi);
+
       if (!response.ok) {
         throw new Error(`Failed to fetch quiz data: ${response.status}`);
       }
-      
+
       const data = await response.json();
-      
+
       if (!data) {
         throw new Error('Quiz data is empty or null');
       }
-      
+
       return data;
     } catch (err: any) {
       const error = err instanceof Error ? err : new Error(String(err));

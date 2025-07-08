@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from '../utils/api';
 
 interface Question {
   _id: string;
@@ -23,7 +23,7 @@ const defaultForm = {
 };
 
 const levels = ["Beginner", "Intermediate", "Advanced"];
-const languages = [ "Java", "Python", "cpp", "JavaScript"];
+const languages = ["Java", "Python", "cpp", "JavaScript"];
 const topics = [
   // Beginner Level
   'Arrays',
@@ -31,10 +31,10 @@ const topics = [
   'Strings',
   'Matrices',
   'Complexity Analysis',
-  
+
   // Intermediate Level - Data Structures
   'Linked Lists',
-  'Stacks', 
+  'Stacks',
   'Queues',
   'Hash Tables',
   'Trees',
@@ -42,7 +42,7 @@ const topics = [
   'Binary Search Trees',
   'Heaps',
   'Graphs',
-  
+
   // Intermediate Level - Algorithms
   'Sorting Algorithms',
   'Searching Algorithms',
@@ -51,13 +51,13 @@ const topics = [
   'Sliding Window',
   'Breadth-First Search (BFS)',
   'Depth-First Search (DFS)',
-  
+
   // Advanced Level - Algorithm Paradigms
   'Dynamic Programming',
   'Greedy Algorithms',
-  'Backtracking', 
+  'Backtracking',
   'Divide and Conquer',
-  
+
   // Advanced Level - Advanced Data Structures
   'AVL Trees',
   'Red-Black Trees',
@@ -67,10 +67,10 @@ const topics = [
   'Fenwick Trees',
   'Disjoint Set Union',
   'Suffix Arrays/Trees',
-  
+
   // Advanced Level - Graph Algorithms
   "Dijkstra's Algorithm",
-  "Bellman-Ford Algorithm", 
+  "Bellman-Ford Algorithm",
   "Floyd-Warshall Algorithm",
   "Prim's Algorithm",
   "Kruskal's Algorithm",
@@ -152,7 +152,7 @@ const AdminQuestions: React.FC = () => {
           topicParam = (filterTopic as any).courseName;
         }
         console.log('Fetching questions with:', { langParam, level: filterLevel.toLowerCase(), topic: topicParam });
-        const res = await axios.get(`/api/quizzes/lang/${langParam}/level/${filterLevel.toLowerCase()}/topic/${encodeURIComponent(topicParam)}`);
+        const res = await api.get(`/api/quizzes/lang/${langParam}/level/${filterLevel.toLowerCase()}/topic/${encodeURIComponent(topicParam)}`);
         let data = res.data;
         console.log('Fetched questions data:', data);
         // If data is a quiz object or array of quiz objects, extract questions
@@ -251,7 +251,7 @@ const AdminQuestions: React.FC = () => {
           topicParam = question.topic || filterTopic;
         }
         // Fetch the quiz first
-        const getRes = await axios.get(`/api/quizzes/lang/${langParam}/level/${levelParam}/topic/${encodeURIComponent(topicParam)}`);
+        const getRes = await api.get(`/api/quizzes/lang/${langParam}/level/${levelParam}/topic/${encodeURIComponent(topicParam)}`);
         let payload = getRes.data;
         if (Array.isArray(payload) && payload.length > 0 && payload[0].questions) {
           payload = payload[0];
@@ -274,11 +274,11 @@ const AdminQuestions: React.FC = () => {
         }));
         if (updatedQuestions.length === 0) {
           // If no questions left, delete the quiz
-          await axios.delete(`/api/quizzes/lang/${langParam}/level/${levelParam}/topic/${encodeURIComponent(topicParam)}`);
+          await api.delete(`/api/quizzes/lang/${langParam}/level/${levelParam}/topic/${encodeURIComponent(topicParam)}`);
           setMessage('Quiz deleted as it had no questions left.');
         } else {
           // PUT the updated questions array to the edit endpoint
-          await axios.put(
+          await api.put(
             `/api/quizzes/lang/${langParam}/level/${levelParam}/topic/${encodeURIComponent(topicParam)}/edit`,
             { questions: updatedQuestions, role: 'admin' }
           );
@@ -309,7 +309,7 @@ const AdminQuestions: React.FC = () => {
     try {
       if (editingQuestion) {
         // 1. fetch the quiz
-        const getRes = await axios.get(
+        const getRes = await api.get(
           `/api/quizzes/lang/${langParam}/level/${form.level.toLowerCase()}/topic/${encodeURIComponent(topicParam)}`
         );
         let payload = getRes.data;
@@ -346,7 +346,7 @@ const AdminQuestions: React.FC = () => {
         });
 
         // 4. Send your PUT
-        await axios.put(
+        await api.put(
           `/api/quizzes/lang/${langParam}/level/${form.level.toLowerCase()}/topic/${encodeURIComponent(topicParam)}/edit`,
           { questions: updatedQuestions, role: 'admin' }
         );
@@ -357,7 +357,7 @@ const AdminQuestions: React.FC = () => {
         setShowForm(false);
       } else {
         // Add mode: check if quiz exists for this lang/level/topic
-        const getRes = await axios.get(
+        const getRes = await api.get(
           `/api/quizzes/lang/${langParam}/level/${form.level.toLowerCase()}/topic/${encodeURIComponent(topicParam)}`
         );
         let quizData = getRes.data;
@@ -389,7 +389,7 @@ const AdminQuestions: React.FC = () => {
             })),
             newQuestion
           ];
-          await axios.put(
+          await api.put(
             `/api/quizzes/lang/${langParam}/level/${form.level.toLowerCase()}/topic/${encodeURIComponent(topicParam)}/edit`,
             {
               questions: updatedQuestions,
@@ -399,7 +399,7 @@ const AdminQuestions: React.FC = () => {
           setMessage('Question added to existing quiz.');
         } else {
           // No quiz: create new quiz (ensure title is present)
-          await axios.post(
+          await api.post(
             `/api/quizzes/lang/${langParam}/level/${form.level.toLowerCase()}/topic/${encodeURIComponent(topicParam)}/submit`,
             {
               title: form.title || `${form.language} ${form.topic} - ${form.level}`,
@@ -512,7 +512,7 @@ const AdminQuestions: React.FC = () => {
         </div>
       )}
       <div className="card p-3 mb-4">
-        <div className="row g-2 align-items-center mb-2 w-100" style={{width: '100%'}}>
+        <div className="row g-2 align-items-center mb-2 w-100" style={{ width: '100%' }}>
           <div className="col-md-3 flex-grow-1">
             <select className="form-select w-100" value={filterTopic} onChange={e => setFilterTopic(e.target.value)}>
               <option value="">All Topics</option>
