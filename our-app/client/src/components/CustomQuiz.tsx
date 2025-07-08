@@ -136,34 +136,66 @@ const CustomQuiz: React.FC<CustomQuizProps> = ({ onQuizStart, onQuizEnd }) => {
   const handlePrev = () => setCurrent(c => c - 1);
 
   const handleSubmit = async () => {
+    // Ensure all answers are filled (backend may require all questions answered)
+    const filledAnswers = [...answers];
+    while (filledAnswers.length < questions.length) {
+      filledAnswers.push('B'); // Default to 'B' if unanswered
+    }
+    console.log('Submitting custom quiz:', {
+      userId,
+      customQuizId,
+      answers: filledAnswers
+    });
     try {
-      const res = await axios.post(`/api/users/${userId}/custom-quiz/${customQuizId}/submit`, {
-        answers
-      });
-      setScore(res.data.results?.score ?? res.data.score);
+      // 1) submit answers and get result
+      const res = await axios.post(
+        `/api/users/${userId}/custom-quiz/${customQuizId}/submit`,
+        { answers: filledAnswers }
+      );
+      // pull the numeric score from the response:
+      const rawScore = res.data.results?.score ?? res.data.score;
+      setScore(rawScore);
       setSubmitted(true);
-      onQuizEnd(); // Call onQuizEnd immediately after submission
+      onQuizEnd();
 
-      // Always update the custom quiz itself as completed using the custom quiz endpoint, regardless of percentage
-      try {
-        await axios.put(`/api/custom-quizzes/${customQuizId}`, {
-          result: percentage, // Store the user's percentage score
-          status: 'completed'
-        });
-      } catch (err) {
-        console.error('Failed to update custom quiz status:', err);
-      }
+      // 2) compute percentage here
+      const computedPercentage = questions.length > 0
+        ? Math.round((rawScore / questions.length) * 100)
+        : 0;
 
-      // Always update the custom quiz's course as completed using the course endpoint
+
+      // 3) Only update course status/result if all three levels are completed and avgScore >= 60
       try {
-        if (courseId) {
-          await axios.put(`/api/courses/${courseId}`, {
-            result: percentage,
-            status: 'completed'
-          });
+        // Fetch all custom quizzes for this user
+        const customQuizzesRes = await axios.get(`/api/users/${userId}/custom-quizzes`);
+        const allCustomQuizzes = customQuizzesRes.data.customQuizzes || [];
+        const levels = ['beginner', 'intermediate', 'advanced'];
+        const completedQuizzes = levels
+          .map(level => allCustomQuizzes.find((q: any) => q.quizLevel === level && q.isSubmitted))
+          .filter(Boolean);
+        if (completedQuizzes.length === 3) {
+          // compute average across the three
+          const total = completedQuizzes.reduce((sum, q) => sum + (q.result ?? 0), 0);
+          const avgScore = Math.round(total / 3);
+          if (avgScore >= 60) {
+            // fetch the up‐to‐date list of user courses
+            const { data: userData } = await axios.get(`/api/users/${userId}`);
+            const userCourses = userData.courses || [];
+            // fire all PUTs in parallel, sending only { result }
+            await Promise.all(userCourses.map(course =>
+              axios.put(
+                `/api/users/${userId}/courses/${encodeURIComponent(course.courseName)}/complete`,
+                { result: avgScore }
+              )
+            ));
+            // finally, re‐fetch or update your local state so the UI picks up the changes:
+            const { data: refreshed } = await axios.get(`/api/users/${userId}`);
+            console.log('Courses after update:', refreshed.courses);
+            // Optionally, update your local state here if you want to reflect changes in the UI
+          }
         }
       } catch (err) {
-        console.error('Failed to update course status for custom quiz:', err);
+        console.error('Failed to update known concepts courses after all levels:', err);
       }
     } catch (error) {
       console.error('Error submitting custom quiz:', error);
