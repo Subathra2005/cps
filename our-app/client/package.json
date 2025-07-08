@@ -9,7 +9,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -p tsconfig.app.json && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "tsc": "tsc -p tsconfig.app.json"
