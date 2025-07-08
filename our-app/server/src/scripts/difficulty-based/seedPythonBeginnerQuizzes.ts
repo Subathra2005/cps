@@ -14,7 +14,7 @@ import complexityAnalysisQuiz from "../../data/python/beginner/ComplexityAnalysi
 import pointersQuiz from "../../data/python/beginner/Pointers";
 import hashTablesQuiz from "../../data/python/beginner/HashTables";
 import treesQuiz from "../../data/python/beginner/Trees";
-import binaryTreesQuiz from "../../data/python/beginner/BinaryTrees";
+import binaryTreesQuiz from "../../data/python/beginner/BinaryTrees2";
 import binarySearchTreesQuiz from "../../data/python/beginner/BinarySearchTrees";
 import heapsQuiz from "../../data/python/beginner/Heaps";
 import graphsQuiz from "../../data/python/beginner/Graphs";
