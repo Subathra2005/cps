@@ -13,7 +13,7 @@
     "delete-data": "tsx src/scripts/deleteAllData.ts",
     "validate": "tsx src/scripts/validateData.ts",
     "start": "node dist/server.js",
-    "build": "tsc",
+    "build": "tsc -p tsconfig.node.json",
     "lint": "eslint .",
     "tsc": "tsc -p tsconfig.node.json"
   },
