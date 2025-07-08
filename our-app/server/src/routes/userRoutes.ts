@@ -25,7 +25,7 @@ import {
     getCustomQuizById,
     getUserCustomQuizzes,
     debugUserQuizHistory
-} from '../controllers/userDashboardController';
+} from '../controllers/userDashboardController.js';
 
 const router = express.Router();
 

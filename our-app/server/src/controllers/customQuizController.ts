@@ -1,4 +1,4 @@
-import CustomQuiz from '../models/CustomQuiz';
+import CustomQuiz from '../models/CustomQuiz.js';
 import type { Request, Response } from 'express';
 
 export const getAllCustomQuizzes = async (req: Request, res: Response) => {

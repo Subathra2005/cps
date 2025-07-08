@@ -1,7 +1,7 @@
-import User from '../models/User';
+import User from '../models/User.js';
 import type { Request, Response } from 'express';
 import mongoose from 'mongoose';
-import type { Lang } from '../types/customTypes';
+import type { Lang } from '../types/customTypes.js';
 
 const validLanguages: Lang[] = ['cpp', 'python', 'javascript', 'java'];
 

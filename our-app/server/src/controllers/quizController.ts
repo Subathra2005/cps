@@ -1,8 +1,8 @@
-import Quiz from '../models/Quiz';
-import User from '../models/User';
-import CustomQuiz from '../models/CustomQuiz';
+import Quiz from '../models/Quiz.js';
+import User from '../models/User.js';
+import CustomQuiz from '../models/CustomQuiz.js';
 import type { Request, Response } from 'express';
-import type { QuizDocument } from '../interfaces/Document_Interfaces';
+import type { QuizDocument } from '../interfaces/Document_Interfaces.js';
 import mongoose from 'mongoose';
 
 export const getAllQuizzes = async (req: Request, res: Response) => {
