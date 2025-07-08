@@ -1,7 +1,7 @@
 // src/data/java/beginner/backtracking.ts
 
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 
 const quizData: Partial<QuizDocument> = {
     title: "Java Backtracking - Beginner Quiz",
@@ -31,7 +31,7 @@ const quizData: Partial<QuizDocument> = {
                 { optionText: "N-Queens Problem", optionTag: "A" },
                 { optionText: "Binary Search", optionTag: "B" },
                 { optionText: "Bubble Sort", optionTag: "C" },
-                { optionText: "Dijkstra’s Algorithm", optionTag: "D" }
+                { optionText: "Dijkstra's Algorithm", optionTag: "D" }
             ],
             correctOption: "A",
             score: 1

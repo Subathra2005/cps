@@ -1,4 +1,4 @@
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
 
 const quizData: Partial<QuizDocument> = {
@@ -126,7 +126,7 @@ const quizData: Partial<QuizDocument> = {
       questionText: "Which node in a binary tree is always null?",
       options: [
         { optionText: "Parent node", optionTag: "C" },
-        { optionText: "Leaf node’s children", optionTag: "D" },
+        { optionText: "Leaf node's children", optionTag: "D" },
         { optionText: "Root node", optionTag: "B" },
         { optionText: "Internal node", optionTag: "A" }
       ],
@@ -200,7 +200,7 @@ const quizData: Partial<QuizDocument> = {
       score: 1
     },
     {
-      questionText: "What’s the maximum number of nodes in a binary tree of height h?",
+      questionText: "What's the maximum number of nodes in a binary tree of height h?",
       options: [
         { optionText: "2^h - 1", optionTag: "C" },
         { optionText: "2h", optionTag: "B" },

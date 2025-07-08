@@ -1,4 +1,4 @@
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
 
 const quizData: Partial<QuizDocument> = {
@@ -225,7 +225,7 @@ const quizData: Partial<QuizDocument> = {
       questionText: "Which of the following is an application of heaps?",
       options: [
         { optionText: "Median maintenance", optionTag: "A" },
-        { optionText: "Dijkstra’s Algorithm", optionTag: "B" },
+        { optionText: "Dijkstra's Algorithm", optionTag: "B" },
         { optionText: "Heap Sort", optionTag: "C" },
         { optionText: "All of the above", optionTag: "D" },
       ],

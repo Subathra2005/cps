@@ -1,4 +1,4 @@
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
 
 const quizData: Partial<QuizDocument> = {
@@ -167,7 +167,7 @@ const quizData: Partial<QuizDocument> = {
       score: 1
     },
     {
-      questionText: "What’s the benefit of Fenwick Tree over naive prefix sum approach?",
+      questionText: "What's the benefit of Fenwick Tree over naive prefix sum approach?",
       options: [
         { optionText: "Better update time", optionTag: "A" },
         { optionText: "Faster queries", optionTag: "B" },

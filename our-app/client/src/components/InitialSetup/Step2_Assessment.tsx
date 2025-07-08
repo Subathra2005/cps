@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../../utils/api';
 
 const allConcepts = [
   // Beginner Level
@@ -8,10 +8,10 @@ const allConcepts = [
   'Strings',
   'Matrices',
   'Complexity Analysis',
-  
+
   // Intermediate Level - Data Structures
   'Linked Lists',
-  'Stacks', 
+  'Stacks',
   'Queues',
   'Hash Tables',
   'Trees',
@@ -19,7 +19,7 @@ const allConcepts = [
   'Binary Search Trees',
   'Heaps',
   'Graphs',
-  
+
   // Intermediate Level - Algorithms
   'Sorting Algorithms',
   'Searching Algorithms',
@@ -28,13 +28,13 @@ const allConcepts = [
   'Sliding Window',
   'Breadth-First Search (BFS)',
   'Depth-First Search (DFS)',
-  
+
   // Advanced Level - Algorithm Paradigms
   'Dynamic Programming',
   'Greedy Algorithms',
-  'Backtracking', 
+  'Backtracking',
   'Divide and Conquer',
-  
+
   // Advanced Level - Advanced Data Structures
   'AVL Trees',
   'Red-Black Trees',
@@ -44,10 +44,10 @@ const allConcepts = [
   'Fenwick Trees',
   'Disjoint Set Union',
   'Suffix Arrays/Trees',
-  
+
   // Advanced Level - Graph Algorithms
   "Dijkstra's Algorithm",
-  "Bellman-Ford Algorithm", 
+  "Bellman-Ford Algorithm",
   "Floyd-Warshall Algorithm",
   "Prim's Algorithm",
   "Kruskal's Algorithm",
@@ -119,7 +119,7 @@ const Step2_Assessment: React.FC<Props> = ({ userId, language, onNext }) => {
 
     console.log('Submitting assessment with completed courses:', completedCourses);
     try {
-      const res = await axios.post(`/api/users/${userId}/update-user-courses?status=enrolled`, {
+      const res = await api.post(`/api/users/${userId}/update-user-courses?status=enrolled`, {
         completedCourses: completedCourses
       });
       if (res.status === 200) {
@@ -146,7 +146,7 @@ const Step2_Assessment: React.FC<Props> = ({ userId, language, onNext }) => {
         <h1 className="display-4 fw-bold text-primary mb-3">Assessment</h1>
         <p className="lead text-muted">Choose your topics to get started</p>
       </div>
-      
+
       <div className="row justify-content-center">
         <div className="col-12 col-lg-10">
           {/* Known Concepts Section */}
@@ -155,9 +155,9 @@ const Step2_Assessment: React.FC<Props> = ({ userId, language, onNext }) => {
             <div className="row g-3">
               {allConcepts.map((c) => (
                 <div key={c} className="col-md-4 col-sm-6">
-                  <div 
+                  <div
                     className={`card border-2 cursor-pointer h-100 ${known.includes(c) ? 'border-primary bg-primary bg-opacity-10' : 'border-light'}`}
-                    style={{ 
+                    style={{
                       cursor: 'pointer',
                       transition: 'all 0.2s ease'
                     }}
@@ -188,7 +188,7 @@ const Step2_Assessment: React.FC<Props> = ({ userId, language, onNext }) => {
               ))}
             </div>
           </div>
-          
+
           {/* Action Buttons */}
           <div className="d-flex gap-3 justify-content-end">
             <button

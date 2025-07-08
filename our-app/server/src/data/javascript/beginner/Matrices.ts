@@ -1,4 +1,4 @@
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
 
 const quizData: Partial<QuizDocument> = {
@@ -123,7 +123,7 @@ const quizData: Partial<QuizDocument> = {
             score: 1
         },
         {
-            questionText: "What will happen if you try to access an index that doesn’t exist?",
+            questionText: "What will happen if you try to access an index that doesn't exist?",
             options: [
                 { optionText: "Returns undefined", optionTag: "A" },
                 { optionText: "Throws an error", optionTag: "B" },

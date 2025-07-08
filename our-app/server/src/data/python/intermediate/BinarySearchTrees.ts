@@ -1,6 +1,5 @@
-
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 
 const quizData: Partial<QuizDocument> = {
   title: "Python Binary Search Trees - Intermediate Quiz",
@@ -95,7 +94,7 @@ const quizData: Partial<QuizDocument> = {
       options: [
         { optionText: "It throws an error", optionTag: "A" },
         { optionText: "It replaces the old value", optionTag: "B" },
-        { optionText: "It’s ignored or placed in a consistent location (based on implementation)", optionTag: "C" },
+        { optionText: "It's ignored or placed in a consistent location (based on implementation)", optionTag: "C" },
         { optionText: "Always added to left", optionTag: "D" }
       ],
       correctOption: "C",
@@ -146,7 +145,7 @@ const quizData: Partial<QuizDocument> = {
       score: 1
     },
     {
-      questionText: "Which BST operation changes the tree’s structure the most?",
+      questionText: "Which BST operation changes the tree's structure the most?",
       options: [
         { optionText: "Search", optionTag: "A" },
         { optionText: "Insert", optionTag: "B" },

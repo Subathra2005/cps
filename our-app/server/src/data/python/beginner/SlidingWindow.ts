@@ -1,4 +1,4 @@
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
 
 const quizData: Partial<QuizDocument> = {
@@ -92,7 +92,7 @@ const quizData: Partial<QuizDocument> = {
     {
       questionText: "Which of the following uses a fixed-size window?",
       options: [
-        { optionText: "Kadane’s algorithm", optionTag: "D" },
+        { optionText: "Kadane's algorithm", optionTag: "D" },
         { optionText: "Find longest substring", optionTag: "C" },
         { optionText: "Max sum subarray of size k", optionTag: "B" },
         { optionText: "Fibonacci", optionTag: "A" }
@@ -145,7 +145,7 @@ const quizData: Partial<QuizDocument> = {
       score: 1
     },
     {
-      questionText: "What data type does Python’s deque come from?",
+      questionText: "What data type does Python's deque come from?",
       options: [
         { optionText: "collections", optionTag: "B" },
         { optionText: "itertools", optionTag: "A" },

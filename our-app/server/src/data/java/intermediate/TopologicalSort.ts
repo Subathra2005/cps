@@ -1,4 +1,4 @@
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
 
 const quizData: Partial<QuizDocument> = {
@@ -125,10 +125,10 @@ const quizData: Partial<QuizDocument> = {
     {
       questionText: "Which of the following is a valid Topological Sort method?",
       options: [
-        { optionText: "Kahn’s Algorithm", optionTag: "C" },
+        { optionText: "Kahn's Algorithm", optionTag: "C" },
         { optionText: "Bellman-Ford", optionTag: "A" },
         { optionText: "Union-Find", optionTag: "D" },
-        { optionText: "Prim’s Algorithm", optionTag: "B" }
+        { optionText: "Prim's Algorithm", optionTag: "B" }
       ],
       correctOption: "C",
       score: 1
@@ -156,7 +156,7 @@ const quizData: Partial<QuizDocument> = {
       score: 1
     },
     {
-      questionText: "Kahn’s algorithm uses which technique to process nodes?",
+      questionText: "Kahn's algorithm uses which technique to process nodes?",
       options: [
         { optionText: "Queue and in-degree zero vertices", optionTag: "C" },
         { optionText: "DFS and recursion", optionTag: "A" },
@@ -167,7 +167,7 @@ const quizData: Partial<QuizDocument> = {
       score: 1
     },
     {
-      questionText: "Which vertex is eligible to be processed in Kahn’s algorithm?",
+      questionText: "Which vertex is eligible to be processed in Kahn's algorithm?",
       options: [
         { optionText: "Vertex with 0 in-degree", optionTag: "B" },
         { optionText: "Vertex with 0 out-degree", optionTag: "C" },

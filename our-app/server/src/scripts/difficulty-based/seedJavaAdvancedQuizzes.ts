@@ -136,7 +136,7 @@ const seedJavaAdvancedQuizzes = async () => {
             };
 
             await Quiz.create(newQuiz);
-            console.log(`Inserted advanced quiz for: ${courseTitle}`);
+            console.log(`Inserted Java advanced quiz for: ${courseTitle}`);
         }
 
         console.log("Java advanced quizzes inserted successfully.");

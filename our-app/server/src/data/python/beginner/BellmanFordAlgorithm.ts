@@ -1,4 +1,4 @@
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
 
 const quizData: Partial<QuizDocument> = {
@@ -35,7 +35,7 @@ const quizData: Partial<QuizDocument> = {
       score: 1,
     },
     {
-      questionText: "Which of the following conditions does Bellman-Ford handle that Dijkstra’s algorithm cannot?",
+      questionText: "Which of the following conditions does Bellman-Ford handle that Dijkstra's algorithm cannot?",
       options: [
         { optionText: "Graphs with loops", optionTag: "C" },
         { optionText: "Graphs with negative edge weights", optionTag: "D" },
@@ -225,9 +225,9 @@ const quizData: Partial<QuizDocument> = {
     {
       questionText: "Which algorithm is typically faster for graphs without negative edges?",
       options: [
-        { optionText: "Prim’s Algorithm", optionTag: "D" },
+        { optionText: "Prim's Algorithm", optionTag: "D" },
         { optionText: "Floyd-Warshall", optionTag: "C" },
-        { optionText: "Dijkstra’s Algorithm", optionTag: "B" },
+        { optionText: "Dijkstra's Algorithm", optionTag: "B" },
         { optionText: "Bellman-Ford", optionTag: "A" },
       ],
       correctOption: "B",

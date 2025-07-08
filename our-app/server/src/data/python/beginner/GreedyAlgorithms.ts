@@ -1,4 +1,4 @@
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
 
 const quizData: Partial<QuizDocument> = {
@@ -59,7 +59,7 @@ const quizData: Partial<QuizDocument> = {
     {
       questionText: "Which algorithm uses a greedy strategy?",
       options: [
-        { optionText: "Dijkstra’s Algorithm", optionTag: "D" },
+        { optionText: "Dijkstra's Algorithm", optionTag: "D" },
         { optionText: "Bubble Sort", optionTag: "A" },
         { optionText: "Depth First Search", optionTag: "B" },
         { optionText: "Binary Search", optionTag: "C" },
@@ -104,9 +104,9 @@ const quizData: Partial<QuizDocument> = {
       questionText: "Which is NOT a greedy algorithm?",
       options: [
         { optionText: "Kruskal's Algorithm", optionTag: "C" },
-        { optionText: "Prim’s Algorithm", optionTag: "A" },
+        { optionText: "Prim's Algorithm", optionTag: "A" },
         { optionText: "Merge Sort", optionTag: "B" },
-        { optionText: "Dijkstra’s Algorithm", optionTag: "D" },
+        { optionText: "Dijkstra's Algorithm", optionTag: "D" },
       ],
       correctOption: "B",
       score: 1,
@@ -225,9 +225,9 @@ const quizData: Partial<QuizDocument> = {
       questionText: "Which algorithm does NOT follow greedy strategy?",
       options: [
         { optionText: "Bellman-Ford", optionTag: "C" },
-        { optionText: "Prim’s Algorithm", optionTag: "D" },
-        { optionText: "Kruskal’s Algorithm", optionTag: "A" },
-        { optionText: "Dijkstra’s Algorithm", optionTag: "B" },
+        { optionText: "Prim's Algorithm", optionTag: "D" },
+        { optionText: "Kruskal's Algorithm", optionTag: "A" },
+        { optionText: "Dijkstra's Algorithm", optionTag: "B" },
       ],
       correctOption: "C",
       score: 1,

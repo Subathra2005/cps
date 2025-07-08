@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import Quiz from "../models/Quiz";
-import { questions } from "../../../shared/questions/basicQuestions";
+import { questions } from "../data/BasicQuestions";
 
 // Helper to map language and level to your enums
 const languageMap: Record<string, string> = {

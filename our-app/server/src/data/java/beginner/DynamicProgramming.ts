@@ -1,7 +1,7 @@
 // src/data/java/beginner/dynamic_programming.ts
 
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 
 const quizData: Partial<QuizDocument> = {
     title: "Java Dynamic Programming - Beginner Quiz",

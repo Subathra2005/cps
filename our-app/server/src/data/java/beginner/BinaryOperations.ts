@@ -1,7 +1,7 @@
 // File: binary_operations.ts
 
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 
 const quizData: Partial<QuizDocument> = {
   title: "Java Binary Operations - Beginner Quiz",

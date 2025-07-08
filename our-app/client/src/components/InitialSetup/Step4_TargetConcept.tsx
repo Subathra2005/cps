@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../../utils/api';
 
 interface Props {
   userId: string;
@@ -9,200 +9,200 @@ interface Props {
 
 const targetConcepts = [
   // Beginner Level
-  { 
-    name: 'Arrays', 
+  {
+    name: 'Arrays',
     description: 'Core concept for storing elements in contiguous memory',
     icon: '📊',
     difficulty: 'Beginner',
     estimatedTime: '2-3 weeks'
   },
-  { 
-    name: 'Recursion', 
+  {
+    name: 'Recursion',
     description: 'Technique of solving problems by breaking them into subproblems',
     icon: '�',
     difficulty: 'Beginner',
     estimatedTime: '3-4 weeks'
   },
-  { 
-    name: 'Strings', 
+  {
+    name: 'Strings',
     description: 'Text data and manipulations',
     icon: '📝',
     difficulty: 'Beginner',
     estimatedTime: '2-3 weeks'
   },
-  { 
-    name: 'Matrices', 
+  {
+    name: 'Matrices',
     description: '2D array structures',
     icon: '⬜',
     difficulty: 'Beginner',
     estimatedTime: '2-3 weeks'
   },
-  
+
   // Intermediate Level - Data Structures
-  { 
-    name: 'Linked Lists', 
+  {
+    name: 'Linked Lists',
     description: 'Dynamic data structure made of nodes',
     icon: '🔗',
     difficulty: 'Intermediate',
     estimatedTime: '2-4 weeks'
   },
-  { 
-    name: 'Stacks', 
+  {
+    name: 'Stacks',
     description: 'LIFO data structure',
     icon: '📚',
     difficulty: 'Intermediate',
     estimatedTime: '1-2 weeks'
   },
-  { 
-    name: 'Queues', 
+  {
+    name: 'Queues',
     description: 'FIFO data structure',
     icon: '🚶‍♂️',
     difficulty: 'Intermediate',
     estimatedTime: '1-2 weeks'
   },
-  { 
-    name: 'Hash Tables', 
+  {
+    name: 'Hash Tables',
     description: 'Key-value based lookup data structure',
     icon: '�️',
     difficulty: 'Intermediate',
     estimatedTime: '2-3 weeks'
   },
-  { 
-    name: 'Trees', 
+  {
+    name: 'Trees',
     description: 'Hierarchical data structure',
     icon: '🌳',
     difficulty: 'Intermediate',
     estimatedTime: '3-4 weeks'
   },
-  { 
-    name: 'Binary Search Trees', 
+  {
+    name: 'Binary Search Trees',
     description: 'Binary Tree with sorted properties',
     icon: '🌲',
     difficulty: 'Intermediate',
     estimatedTime: '2-3 weeks'
   },
-  { 
-    name: 'Heaps', 
+  {
+    name: 'Heaps',
     description: 'Complete binary tree used in priority queues',
     icon: '⛰️',
     difficulty: 'Intermediate',
     estimatedTime: '2-3 weeks'
   },
-  { 
-    name: 'Graphs', 
+  {
+    name: 'Graphs',
     description: 'Non-linear data structure of nodes and edges',
     icon: '🕸️',
     difficulty: 'Intermediate',
     estimatedTime: '4-5 weeks'
   },
-  
+
   // Intermediate Level - Algorithms
-  { 
-    name: 'Sorting Algorithms', 
+  {
+    name: 'Sorting Algorithms',
     description: 'Techniques for arranging elements',
     icon: '�',
     difficulty: 'Intermediate',
     estimatedTime: '3-4 weeks'
   },
-  { 
-    name: 'Binary Search', 
+  {
+    name: 'Binary Search',
     description: 'Efficient searching algorithm for sorted arrays',
     icon: '🔍',
     difficulty: 'Intermediate',
     estimatedTime: '1-2 weeks'
   },
-  { 
-    name: 'Two Pointers', 
+  {
+    name: 'Two Pointers',
     description: 'Technique using two pointers to iterate through data',
     icon: '👆',
     difficulty: 'Intermediate',
     estimatedTime: '2-3 weeks'
   },
-  { 
-    name: 'Breadth-First Search (BFS)', 
+  {
+    name: 'Breadth-First Search (BFS)',
     description: 'Graph traversal technique using queue',
     icon: '🌊',
     difficulty: 'Intermediate',
     estimatedTime: '2-3 weeks'
   },
-  { 
-    name: 'Depth-First Search (DFS)', 
+  {
+    name: 'Depth-First Search (DFS)',
     description: 'Graph traversal using stack or recursion',
     icon: '🏊‍♂️',
     difficulty: 'Intermediate',
     estimatedTime: '2-3 weeks'
   },
-  
+
   // Advanced Level - Algorithm Paradigms
-  { 
-    name: 'Dynamic Programming', 
+  {
+    name: 'Dynamic Programming',
     description: 'Optimizing overlapping subproblems',
     icon: '🧠',
     difficulty: 'Advanced',
     estimatedTime: '4-6 weeks'
   },
-  { 
-    name: 'Greedy Algorithms', 
+  {
+    name: 'Greedy Algorithms',
     description: 'Algorithm design using local optimum',
     icon: '🎯',
     difficulty: 'Advanced',
     estimatedTime: '3-4 weeks'
   },
-  { 
-    name: 'Backtracking', 
+  {
+    name: 'Backtracking',
     description: 'Exploration of all possibilities',
     icon: '🔙',
     difficulty: 'Advanced',
     estimatedTime: '3-4 weeks'
   },
-  { 
-    name: 'Divide and Conquer', 
+  {
+    name: 'Divide and Conquer',
     description: 'Algorithm design paradigm',
     icon: '⚔️',
     difficulty: 'Advanced',
     estimatedTime: '3-4 weeks'
   },
-  
+
   // Advanced Level - Advanced Data Structures
-  { 
-    name: 'AVL Trees', 
+  {
+    name: 'AVL Trees',
     description: 'Self-balancing BST',
     icon: '⚖️',
     difficulty: 'Advanced',
     estimatedTime: '2-3 weeks'
   },
-  { 
-    name: 'Tries', 
+  {
+    name: 'Tries',
     description: 'Prefix tree for strings',
     icon: '📊',
     difficulty: 'Advanced',
     estimatedTime: '2-3 weeks'
   },
-  { 
-    name: 'Segment Trees', 
+  {
+    name: 'Segment Trees',
     description: 'Range query tree',
     icon: '🌿',
     difficulty: 'Advanced',
     estimatedTime: '3-4 weeks'
   },
-  { 
-    name: 'Disjoint Set Union', 
+  {
+    name: 'Disjoint Set Union',
     description: 'Union-Find data structure',
     icon: '🔗',
     difficulty: 'Advanced',
     estimatedTime: '2-3 weeks'
   },
-  
+
   // Advanced Level - Graph Algorithms
-  { 
-    name: "Dijkstra's Algorithm", 
+  {
+    name: "Dijkstra's Algorithm",
     description: 'Shortest path algorithm',
     icon: '🛣️',
     difficulty: 'Advanced',
     estimatedTime: '2-3 weeks'
   },
-  { 
-    name: "Prim's Algorithm", 
+  {
+    name: "Prim's Algorithm",
     description: 'MST using greedy and heap',
     icon: '�',
     difficulty: 'Advanced',
@@ -224,12 +224,12 @@ const Step4_TargetConcept: React.FC<Props> = ({ userId, onNext }) => {
 
     try {
       // Set the target concept as in-progress
-      await axios.post(`/api/users/${userId}/update-user-courses?status=in-progress`, {
+      await api.post(`/api/users/${userId}/update-user-courses?status=in-progress`, {
         completedCourses: [conceptName]
       });
 
       // Get the recommended learning path
-      const pathRes = await axios.get(`/api/users/${userId}/recommend-path?target=${encodeURIComponent(conceptName)}`);
+      const pathRes = await api.get(`/api/users/${userId}/recommend-path?target=${encodeURIComponent(conceptName)}`);
       setLearningPath(pathRes.data.recommendedPath || []);
       setShowPath(true);
     } catch (error) {
@@ -249,11 +249,11 @@ const Step4_TargetConcept: React.FC<Props> = ({ userId, onNext }) => {
     try {
       // Enroll user in the learning path courses
       if (learningPath.length > 0) {
-        await axios.post(`/api/users/${userId}/update-user-courses?status=enrolled`, {
+        await api.post(`/api/users/${userId}/update-user-courses?status=enrolled`, {
           completedCourses: learningPath
         });
       }
-      
+
       onNext();
     } catch (error) {
       console.error('Error enrolling in courses:', error);
@@ -272,11 +272,10 @@ const Step4_TargetConcept: React.FC<Props> = ({ userId, onNext }) => {
         <div className="row g-4">
           {targetConcepts.map(concept => (
             <div key={concept.name} className="col-lg-3 col-md-4 col-sm-6">
-              <div 
-                className={`card h-100 border-0 text-center cursor-pointer ${
-                  selectedConcept === concept.name ? 'border-primary border-3 bg-primary bg-opacity-10' : 'shadow-sm'
-                }`}
-                style={{ 
+              <div
+                className={`card h-100 border-0 text-center cursor-pointer ${selectedConcept === concept.name ? 'border-primary border-3 bg-primary bg-opacity-10' : 'shadow-sm'
+                  }`}
+                style={{
                   cursor: loading ? 'not-allowed' : 'pointer',
                   transition: 'all 0.3s ease',
                   opacity: loading ? 0.7 : 1
@@ -302,10 +301,9 @@ const Step4_TargetConcept: React.FC<Props> = ({ userId, onNext }) => {
                   <h5 className="fw-bold mb-2">{concept.name}</h5>
                   <p className="text-muted mb-3 small">{concept.description}</p>
                   <div className="d-flex justify-content-between align-items-center mb-2">
-                    <span className={`badge ${
-                      concept.difficulty === 'Beginner' ? 'bg-success' :
+                    <span className={`badge ${concept.difficulty === 'Beginner' ? 'bg-success' :
                       concept.difficulty === 'Intermediate' ? 'bg-warning' : 'bg-danger'
-                    }`}>
+                      }`}>
                       {concept.difficulty}
                     </span>
                     <small className="text-muted">{concept.estimatedTime}</small>
@@ -345,7 +343,7 @@ const Step4_TargetConcept: React.FC<Props> = ({ userId, onNext }) => {
                     <div className="d-flex flex-column gap-3">
                       {learningPath.map((step, index) => (
                         <div key={index} className="d-flex align-items-center p-3 bg-light rounded">
-                          <div 
+                          <div
                             className="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3"
                             style={{ width: '40px', height: '40px', fontSize: '16px', fontWeight: 'bold' }}
                           >
@@ -354,9 +352,9 @@ const Step4_TargetConcept: React.FC<Props> = ({ userId, onNext }) => {
                           <div className="flex-grow-1">
                             <h6 className="mb-1 fw-bold">{step}</h6>
                             <small className="text-muted">
-                              {index === 0 ? 'Start here' : 
-                               index === learningPath.length - 1 ? 'Final step' : 
-                               'Continue learning'}
+                              {index === 0 ? 'Start here' :
+                                index === learningPath.length - 1 ? 'Final step' :
+                                  'Continue learning'}
                             </small>
                           </div>
                           <i className="fas fa-arrow-right text-primary"></i>
@@ -374,7 +372,7 @@ const Step4_TargetConcept: React.FC<Props> = ({ userId, onNext }) => {
                 )}
 
                 <div className="d-flex justify-content-center gap-3">
-                  <button 
+                  <button
                     className="btn btn-outline-secondary px-4"
                     onClick={() => {
                       setShowPath(false);
@@ -384,7 +382,7 @@ const Step4_TargetConcept: React.FC<Props> = ({ userId, onNext }) => {
                   >
                     Choose Different Concept
                   </button>
-                  <button 
+                  <button
                     className="btn btn-primary btn-lg px-5"
                     onClick={handleContinue}
                   >

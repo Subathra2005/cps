@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
-import axios from 'axios';
+import api from '../utils/api';
 import { useTabSwitchDetection } from '../hooks/useTabSwitchDetection';
 
 interface CustomQuizProps {
@@ -29,36 +29,36 @@ const CustomQuiz: React.FC<CustomQuizProps> = ({ onQuizStart, onQuizEnd }) => {
     const checkAvailabilityAndCreateQuiz = async () => {
       try {
         // First check if this level is available for the user
-        const userRes = await axios.get(`/api/users/${userId}`);
+        const userRes = await api.get(`/api/users/${userId}`);
         const userData = userRes.data;
-        
+
         // Get all custom quizzes for this user to check progression
-        const customQuizzesRes = await axios.get(`/api/users/${userId}/custom-quizzes`);
+        const customQuizzesRes = await api.get(`/api/users/${userId}/custom-quizzes`);
         const allCustomQuizzes = customQuizzesRes.data.customQuizzes || [];
-        
+
         // Check if this level is already completed
-        const levelCompleted = allCustomQuizzes.some((quiz: any) => 
+        const levelCompleted = allCustomQuizzes.some((quiz: any) =>
           quiz.quizLevel === difficulty && quiz.isSubmitted
         );
-        
+
         if (levelCompleted) {
           alert(`You have already completed the ${difficulty} level! Each level can only be attempted once.`);
           navigate('/initial-setup');
           return;
         }
-        
+
         // Check if user can access this level (sequential unlock)
         const difficultyOrder = ['beginner', 'intermediate', 'advanced'];
         const currentIndex = difficultyOrder.indexOf(difficulty);
-        
+
         if (currentIndex > 0) {
           // Check if previous levels are completed
           for (let i = 0; i < currentIndex; i++) {
             const prevLevel = difficultyOrder[i];
-            const prevLevelCompleted = allCustomQuizzes.some((quiz: any) => 
+            const prevLevelCompleted = allCustomQuizzes.some((quiz: any) =>
               quiz.quizLevel === prevLevel && quiz.isSubmitted
             );
-            
+
             if (!prevLevelCompleted) {
               alert(`Please complete ${prevLevel} level first before attempting ${difficulty} level.`);
               navigate('/initial-setup');
@@ -66,13 +66,13 @@ const CustomQuiz: React.FC<CustomQuizProps> = ({ onQuizStart, onQuizEnd }) => {
             }
           }
         }
-        
+
         // If we reach here, the user can access this level
         const userLang = userData.lang || 'java';
-        
+
         // Create custom quiz for user based on enrolled courses
-        const res = await axios.post(`/api/users/${userId}/custom-quiz?lang=${userLang}&level=${difficulty}&totalQuestions=15`);
-        
+        const res = await api.post(`/api/users/${userId}/custom-quiz?lang=${userLang}&level=${difficulty}&totalQuestions=15`);
+
         if (res.data.customQuiz) {
           setCustomQuizId(res.data.customQuiz._id);
           setQuestions(res.data.customQuiz.customQuestions || []);
@@ -93,7 +93,7 @@ const CustomQuiz: React.FC<CustomQuizProps> = ({ onQuizStart, onQuizEnd }) => {
   // Fetch review after submission
   useEffect(() => {
     if (submitted && userId && customQuizId) {
-      axios.get(`/api/users/${userId}/custom-quiz/${customQuizId}`)
+      api.get(`/api/users/${userId}/custom-quiz/${customQuizId}`)
         .then(res => {
           setReview(res.data);
         })
@@ -147,6 +147,12 @@ const CustomQuiz: React.FC<CustomQuizProps> = ({ onQuizStart, onQuizEnd }) => {
       answers: filledAnswers
     });
     try {
+<<<<<<< HEAD
+      const res = await api.post(`/api/users/${userId}/custom-quiz/${customQuizId}/submit`, {
+        answers
+      });
+      setScore(res.data.results?.score ?? res.data.score);
+=======
       // 1) submit answers and get result
       const res = await axios.post(
         `/api/users/${userId}/custom-quiz/${customQuizId}/submit`,
@@ -155,6 +161,7 @@ const CustomQuiz: React.FC<CustomQuizProps> = ({ onQuizStart, onQuizEnd }) => {
       // pull the numeric score from the response:
       const rawScore = res.data.results?.score ?? res.data.score;
       setScore(rawScore);
+>>>>>>> team-Sai_Deepak-Recommendation
       setSubmitted(true);
       onQuizEnd();
 
@@ -206,10 +213,10 @@ const CustomQuiz: React.FC<CustomQuizProps> = ({ onQuizStart, onQuizEnd }) => {
   // Handle tab switching violation - auto submit with score 0 and lockout, fill with valid default
   const handleTabSwitchViolation = async () => {
     if (tabViolationSubmitted || submitted || !customQuizId) return;
-    
+
     console.log('Tab switching violation detected in custom quiz - auto submitting with score 0 and lockout');
     setTabViolationSubmitted(true);
-    
+
     try {
       // Fill remaining answers with a valid default (e.g., 'B') to avoid backend enum errors
       const violationAnswers = [...answers];
@@ -217,7 +224,7 @@ const CustomQuiz: React.FC<CustomQuizProps> = ({ onQuizStart, onQuizEnd }) => {
         violationAnswers.push('B');
       }
       // Submit with violation flag, force score 0, and lockout
-      const res = await axios.post(`/api/users/${userId}/custom-quiz/${customQuizId}/submit`, {
+      const res = await api.post(`/api/users/${userId}/custom-quiz/${customQuizId}/submit`, {
         answers: violationAnswers,
         violation: true,
         forceZeroScore: true, // backend should treat this as a forced zero
@@ -306,7 +313,7 @@ const CustomQuiz: React.FC<CustomQuizProps> = ({ onQuizStart, onQuizEnd }) => {
   };
 
   if (!questions.length) return <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '60vh' }}><div className="spinner-border text-primary" role="status"><span className="visually-hidden">Loading...</span></div></div>;
-  
+
   if (submitted) return (
     <div className="container mt-5">
       <div className="d-flex flex-column align-items-center mb-4">
@@ -314,9 +321,9 @@ const CustomQuiz: React.FC<CustomQuizProps> = ({ onQuizStart, onQuizEnd }) => {
         <div style={{ width: 120, height: 120, borderRadius: '50%', background: 'linear-gradient(135deg, #ff9800 60%, #1976d2 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 24, boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }}>
           <span style={{ color: 'white', fontWeight: 700, fontSize: 32 }}>{score}</span>
         </div>
-        
+
         <h3 className="mb-4 text-center fw-bold" style={{ letterSpacing: 1 }}>Quiz Completed!</h3>
-        
+
         {/* Stats Row */}
         <div className="row w-100 justify-content-center mb-4">
           <div className="col-6 col-md-2 mb-2">
@@ -364,7 +371,7 @@ const CustomQuiz: React.FC<CustomQuizProps> = ({ onQuizStart, onQuizEnd }) => {
               {context === 'setup' ? 'Continue Setup' : 'Go to Dashboard'}
             </button>
           )}
-          <button className="btn btn-outline-secondary px-4 py-2" onClick={() => window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'})}>
+          <button className="btn btn-outline-secondary px-4 py-2" onClick={() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })}>
             View Review
           </button>
         </div>
@@ -376,7 +383,7 @@ const CustomQuiz: React.FC<CustomQuizProps> = ({ onQuizStart, onQuizEnd }) => {
         {questions.map((question, qIdx) => {
           const userAnswer = answers[qIdx];
           const isCorrect = userAnswer === question.correctOption;
-          
+
           return (
             <div key={qIdx} className="card mb-4 border-0 shadow-sm">
               <div className="card-body p-4">
@@ -387,12 +394,12 @@ const CustomQuiz: React.FC<CustomQuizProps> = ({ onQuizStart, onQuizEnd }) => {
                     {isCorrect ? 'Correct' : 'Incorrect'}
                   </span>
                 </div>
-                
+
                 <div className="d-flex flex-column gap-2">
                   {question.options.map((option: any, optIdx: number) => {
                     let className = 'px-3 py-2 rounded border d-flex align-items-center';
                     let style: React.CSSProperties = { fontWeight: 500 };
-                    
+
                     // Correct answer styling
                     if (option.optionTag === question.correctOption) {
                       className += ' border-success';
@@ -425,7 +432,7 @@ const CustomQuiz: React.FC<CustomQuizProps> = ({ onQuizStart, onQuizEnd }) => {
                     );
                   })}
                 </div>
-                
+
                 <div className="mt-3 p-3 bg-light rounded">
                   <div className="row">
                     <div className="col-md-4">
@@ -446,7 +453,7 @@ const CustomQuiz: React.FC<CustomQuizProps> = ({ onQuizStart, onQuizEnd }) => {
             </div>
           );
         })}
-        
+
         {/* Bottom Navigation */}
         <div className="text-center py-4">
           {getNextLevel() ? (
@@ -476,27 +483,27 @@ const CustomQuiz: React.FC<CustomQuizProps> = ({ onQuizStart, onQuizEnd }) => {
               Custom Quiz - {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
             </span>
           </div>
-          
+
           {/* Progress bar */}
           <div className="progress mb-4" style={{ height: '8px' }}>
-            <div 
-              className="progress-bar bg-primary" 
-              role="progressbar" 
+            <div
+              className="progress-bar bg-primary"
+              role="progressbar"
               style={{ width: `${((current + 1) / questions.length) * 100}%` }}
             ></div>
           </div>
-          
+
           {/* Main question card */}
           <div className="card border-0 shadow-sm rounded-4 p-4 mb-4">
             <div className="card-body">
               <h2 className="h4 fw-bold mb-4">{q.questionText}</h2>
-              
+
               <div className="d-grid gap-3">
                 {q.options.map((option: any, idx: number) => (
-                  <div 
+                  <div
                     key={idx}
                     className={`card border-2 cursor-pointer ${answers[current] === option.optionTag ? 'border-primary bg-primary bg-opacity-10' : 'border-light'}`}
-                    style={{ 
+                    style={{
                       cursor: 'pointer',
                       transition: 'all 0.2s ease'
                     }}
@@ -515,7 +522,7 @@ const CustomQuiz: React.FC<CustomQuizProps> = ({ onQuizStart, onQuizEnd }) => {
                     }}
                   >
                     <div className="card-body py-3 d-flex align-items-center">
-                      <div 
+                      <div
                         className={`rounded-circle d-flex align-items-center justify-content-center me-3 ${answers[current] === option.optionTag ? 'bg-primary text-white' : 'bg-light text-dark'}`}
                         style={{ width: '40px', height: '40px', fontSize: '16px', fontWeight: 'bold' }}
                       >
@@ -528,11 +535,11 @@ const CustomQuiz: React.FC<CustomQuizProps> = ({ onQuizStart, onQuizEnd }) => {
               </div>
             </div>
           </div>
-          
+
           {/* Navigation buttons */}
           <div className="d-flex justify-content-end gap-2">
             {current > 0 && (
-              <button 
+              <button
                 className="btn btn-outline-secondary px-4"
                 onClick={handlePrev}
               >
@@ -540,7 +547,7 @@ const CustomQuiz: React.FC<CustomQuizProps> = ({ onQuizStart, onQuizEnd }) => {
               </button>
             )}
             {current < questions.length - 1 ? (
-              <button 
+              <button
                 className="btn btn-primary px-4"
                 onClick={handleNext}
                 disabled={!answers[current]}
@@ -548,7 +555,7 @@ const CustomQuiz: React.FC<CustomQuizProps> = ({ onQuizStart, onQuizEnd }) => {
                 Next Question
               </button>
             ) : (
-              <button 
+              <button
                 className="btn btn-success px-4"
                 onClick={handleSubmit}
                 disabled={!answers[current]}

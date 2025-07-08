@@ -1,4 +1,4 @@
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
 
 const quizData: Partial<QuizDocument> = {
@@ -178,7 +178,7 @@ const quizData: Partial<QuizDocument> = {
       score: 1
     },
     {
-      questionText: "How is a node’s children typically stored in Python implementation?",
+      questionText: "How is a node's children typically stored in Python implementation?",
       options: [
         { optionText: "As a dictionary", optionTag: "A" },
         { optionText: "As a string", optionTag: "B" },

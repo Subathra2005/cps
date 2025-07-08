@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Hash } from 'crypto';
+import api from '../../utils/api';
 
 interface Props {
   userId: string;
@@ -15,10 +14,10 @@ const targetCourses = [
   'Strings',
   'Matrices',
   'Complexity Analysis',
-  
+
   // Intermediate Level - Data Structures
   'Linked Lists',
-  'Stacks', 
+  'Stacks',
   'Queues',
   'Hash Tables',
   'Trees',
@@ -26,7 +25,7 @@ const targetCourses = [
   'Binary Search Trees',
   'Heaps',
   'Graphs',
-  
+
   // Intermediate Level - Algorithms
   'Sorting Algorithms',
   'Searching Algorithms',
@@ -35,13 +34,13 @@ const targetCourses = [
   'Sliding Window',
   'Breadth-First Search (BFS)',
   'Depth-First Search (DFS)',
-  
+
   // Advanced Level - Algorithm Paradigms
   'Dynamic Programming',
   'Greedy Algorithms',
-  'Backtracking', 
+  'Backtracking',
   'Divide and Conquer',
-  
+
   // Advanced Level - Advanced Data Structures
   'AVL Trees',
   'Red-Black Trees',
@@ -51,10 +50,10 @@ const targetCourses = [
   'Fenwick Trees',
   'Disjoint Set Union',
   'Suffix Arrays/Trees',
-  
+
   // Advanced Level - Graph Algorithms
   "Dijkstra's Algorithm",
-  "Bellman-Ford Algorithm", 
+  "Bellman-Ford Algorithm",
   "Floyd-Warshall Algorithm",
   "Prim's Algorithm",
   "Kruskal's Algorithm",
@@ -109,9 +108,9 @@ const Step4_TargetSelector: React.FC<Props> = ({ userId, onNext }) => {
   useEffect(() => {
     const checkExistingPath = async () => {
       try {
-        const userRes = await axios.get(`/api/users/${userId}/dashboard`);
+        const userRes = await api.get(`/api/users/${userId}/dashboard`);
         const userData = userRes.data;
-        
+
         if (userData.recommendations?.path?.target && userData.recommendations?.path?.path) {
           // User already has a recommended path, skip to dashboard
           setSelectedTarget(userData.recommendations.path.target);
@@ -144,8 +143,8 @@ const Step4_TargetSelector: React.FC<Props> = ({ userId, onNext }) => {
 
     try {
       // Get the recommended path - this will automatically store both target and path in user document
-      const pathRes = await axios.get(`/api/users/${userId}/recommend-path?target=${encodeURIComponent(backendCourseName)}`);
-      
+      const pathRes = await api.get(`/api/users/${userId}/recommend-path?target=${encodeURIComponent(backendCourseName)}`);
+
       setRecommendedPath(pathRes.data.recommendedPath || []);
       setMessage(`Great! Your learning path to reach "${targetCourse}" has been generated and saved.`);
     } catch (error) {
@@ -183,9 +182,9 @@ const Step4_TargetSelector: React.FC<Props> = ({ userId, onNext }) => {
         <div className="row g-3">
           {targetCourses.map((course) => (
             <div key={course} className="col-lg-4 col-md-6">
-              <div 
+              <div
                 className="card h-100 border-0 shadow-sm cursor-pointer"
-                style={{ 
+                style={{
                   cursor: 'pointer',
                   transition: 'transform 0.3s ease, box-shadow 0.3s ease'
                 }}
@@ -243,7 +242,7 @@ const Step4_TargetSelector: React.FC<Props> = ({ userId, onNext }) => {
                       {recommendedPath.map((course, index) => (
                         <div key={index} className="col-12">
                           <div className="d-flex align-items-center p-3 bg-light rounded">
-                            <div 
+                            <div
                               className="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3"
                               style={{ width: '30px', height: '30px', fontSize: '14px', fontWeight: 'bold' }}
                             >
@@ -261,7 +260,7 @@ const Step4_TargetSelector: React.FC<Props> = ({ userId, onNext }) => {
                 )}
 
                 <div className="text-center">
-                  <button 
+                  <button
                     className="btn btn-outline-secondary me-3"
                     onClick={() => {
                       setSelectedTarget('');
@@ -271,9 +270,9 @@ const Step4_TargetSelector: React.FC<Props> = ({ userId, onNext }) => {
                   >
                     Choose Different Target
                   </button>
-                  <br/>
-                  <br/>
-                  <button 
+                  <br />
+                  <br />
+                  <button
                     className="btn btn-success px-4"
                     onClick={handleComplete}
                     disabled={!selectedTarget || recommendedPath.length === 0 || loading}

@@ -1,4 +1,4 @@
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
 
 const quizData: Partial<QuizDocument> = {
@@ -125,7 +125,7 @@ const quizData: Partial<QuizDocument> = {
     {
       questionText: "Which of the following is NOT a Divide and Conquer algorithm?",
       options: [
-        { optionText: "Dijkstra’s Algorithm", optionTag: "A" },
+        { optionText: "Dijkstra's Algorithm", optionTag: "A" },
         { optionText: "Merge Sort", optionTag: "B" },
         { optionText: "Quick Sort", optionTag: "C" },
         { optionText: "Binary Search", optionTag: "D" }

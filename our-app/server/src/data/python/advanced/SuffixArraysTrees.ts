@@ -1,4 +1,4 @@
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
 
 const quizData: Partial<QuizDocument> = {
@@ -104,8 +104,8 @@ const quizData: Partial<QuizDocument> = {
       questionText: "Which algorithm is NOT typically associated with suffix structures?",
       options: [
         { optionText: "Bellman-Ford", optionTag: "C" },
-        { optionText: "Kasai’s Algorithm", optionTag: "A" },
-        { optionText: "Ukkonen’s Algorithm", optionTag: "B" },
+        { optionText: "Kasai's Algorithm", optionTag: "A" },
+        { optionText: "Ukkonen's Algorithm", optionTag: "B" },
         { optionText: "DC3", optionTag: "D" },
       ],
       correctOption: "C",
@@ -224,7 +224,7 @@ const quizData: Partial<QuizDocument> = {
     {
       questionText: "Which algorithm generates both suffix array and LCP together efficiently?",
       options: [
-        { optionText: "Kasai’s algorithm", optionTag: "C" },
+        { optionText: "Kasai's algorithm", optionTag: "C" },
         { optionText: "Ford-Fulkerson", optionTag: "A" },
         { optionText: "KMP", optionTag: "D" },
         { optionText: "Aho-Corasick", optionTag: "B" },

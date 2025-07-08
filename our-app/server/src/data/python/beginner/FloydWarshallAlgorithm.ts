@@ -1,4 +1,4 @@
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
 
 const quizData: Partial<QuizDocument> = {
@@ -215,8 +215,8 @@ const quizData: Partial<QuizDocument> = {
     {
       questionText: "Which algorithm is most similar to Floyd-Warshall?",
       options: [
-        { optionText: "Kruskal’s", optionTag: "B" },
-        { optionText: "Prim’s", optionTag: "D" },
+        { optionText: "Kruskal's", optionTag: "B" },
+        { optionText: "Prim's", optionTag: "D" },
         { optionText: "Bellman-Ford", optionTag: "A" },
         { optionText: "DFS", optionTag: "C" },
       ],

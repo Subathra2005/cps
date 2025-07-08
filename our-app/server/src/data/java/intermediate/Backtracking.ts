@@ -1,4 +1,4 @@
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
 
 const quizData: Partial<QuizDocument> = {
@@ -180,7 +180,7 @@ const quizData: Partial<QuizDocument> = {
     {
       questionText: "Which algorithm is NOT based on backtracking?",
       options: [
-        { optionText: "Knight’s Tour", optionTag: "A" },
+        { optionText: "Knight's Tour", optionTag: "A" },
         { optionText: "Bubble Sort", optionTag: "B" },
         { optionText: "Sudoku Solver", optionTag: "C" },
         { optionText: "Word Search", optionTag: "D" }

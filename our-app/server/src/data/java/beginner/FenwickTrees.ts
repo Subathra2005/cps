@@ -1,7 +1,7 @@
 // src/data/java/beginner/fenwick_trees.ts
 
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 
 const quizData: Partial<QuizDocument> = {
     title: "Java Fenwick Trees - Beginner Quiz",

@@ -1,4 +1,4 @@
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
 
 const quizData: Partial<QuizDocument> = {
@@ -49,7 +49,7 @@ const quizData: Partial<QuizDocument> = {
       questionText: "Which of these problems uses binary search in its solution?",
       options: [
         { optionText: "Peak element finding", optionTag: "B" },
-        { optionText: "Kruskal’s algorithm", optionTag: "A" },
+        { optionText: "Kruskal's algorithm", optionTag: "A" },
         { optionText: "Heap sort", optionTag: "C" },
         { optionText: "Inorder traversal", optionTag: "D" },
       ],

@@ -1,4 +1,4 @@
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
 
 const quizData: Partial<QuizDocument> = {
@@ -150,7 +150,7 @@ const quizData: Partial<QuizDocument> = {
         { optionText: "They are always balanced", optionTag: "A" },
         { optionText: "They allow duplicate keys", optionTag: "B" },
         { optionText: "They are used in graph processing", optionTag: "C" },
-        { optionText: "They don’t support deletion", optionTag: "D" }
+        { optionText: "They don't support deletion", optionTag: "D" }
       ],
       correctOption: "A",
       score: 1

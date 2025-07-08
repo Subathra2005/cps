@@ -1,13 +1,5 @@
 import React, { useState } from 'react';
 
-declare global {
-  interface ImportMeta {
-    env: {
-      VITE_GEMINI_API_KEY: string;
-    };
-  }
-}
-
 const apiKey: string = import.meta.env.VITE_GEMINI_API_KEY;
 
 interface Message {

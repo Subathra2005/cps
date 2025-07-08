@@ -1,4 +1,4 @@
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
 
 const quizData: Partial<QuizDocument> = {
@@ -127,7 +127,7 @@ const quizData: Partial<QuizDocument> = {
     {
       questionText: "What happens if Red-Black Tree becomes unbalanced?",
       options: [
-        { optionText: "It’s rebuilt from scratch", optionTag: "D" },
+        { optionText: "It's rebuilt from scratch", optionTag: "D" },
         { optionText: "Tree is deleted", optionTag: "C" },
         { optionText: "Rotations and recoloring fix it", optionTag: "A" },
         { optionText: "Only left child is adjusted", optionTag: "B" },

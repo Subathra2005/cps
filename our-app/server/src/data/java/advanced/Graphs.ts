@@ -1,4 +1,4 @@
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
 
 const quizData: Partial<QuizDocument> = {
@@ -103,10 +103,10 @@ const quizData: Partial<QuizDocument> = {
     {
       questionText: "Which of the following is used to find strongly connected components?",
       options: [
-        { optionText: "Dijkstra’s Algorithm", optionTag: "A" },
+        { optionText: "Dijkstra's Algorithm", optionTag: "A" },
         { optionText: "Floyd-Warshall", optionTag: "B" },
-        { optionText: "Kosaraju’s Algorithm", optionTag: "C" },
-        { optionText: "Prim’s Algorithm", optionTag: "D" }
+        { optionText: "Kosaraju's Algorithm", optionTag: "C" },
+        { optionText: "Prim's Algorithm", optionTag: "D" }
       ],
       correctOption: "C",
       score: 1
@@ -137,7 +137,7 @@ const quizData: Partial<QuizDocument> = {
       questionText: "Which of the following statements is true for undirected graphs?",
       options: [
         { optionText: "Every edge is bidirectional", optionTag: "A" },
-        { optionText: "DFS doesn’t work", optionTag: "B" },
+        { optionText: "DFS doesn't work", optionTag: "B" },
         { optionText: "It must be connected", optionTag: "C" },
         { optionText: "It cannot have loops", optionTag: "D" }
       ],
@@ -149,7 +149,7 @@ const quizData: Partial<QuizDocument> = {
       options: [
         { optionText: "DFS", optionTag: "A" },
         { optionText: "BFS", optionTag: "B" },
-        { optionText: "Prim’s", optionTag: "C" },
+        { optionText: "Prim's", optionTag: "C" },
         { optionText: "Topological Sort", optionTag: "D" }
       ],
       correctOption: "C",

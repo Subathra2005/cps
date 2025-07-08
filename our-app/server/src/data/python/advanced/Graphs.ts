@@ -1,4 +1,4 @@
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
 
 const quizData: Partial<QuizDocument> = {
@@ -106,7 +106,7 @@ const quizData: Partial<QuizDocument> = {
         { optionText: "Every edge has direction", optionTag: "A" },
         { optionText: "Degree = In-degree + Out-degree", optionTag: "B" },
         { optionText: "No direction is associated with edges", optionTag: "C" },
-        { optionText: "Edges can’t be bidirectional", optionTag: "D" },
+        { optionText: "Edges can't be bidirectional", optionTag: "D" },
       ],
       correctOption: "C",
       score: 1,
@@ -211,7 +211,7 @@ const quizData: Partial<QuizDocument> = {
       score: 1,
     },
     {
-      questionText: "Which edge representation is best for Kruskal’s algorithm?",
+      questionText: "Which edge representation is best for Kruskal's algorithm?",
       options: [
         { optionText: "Adjacency matrix", optionTag: "A" },
         { optionText: "Adjacency list", optionTag: "B" },

@@ -1,7 +1,7 @@
 // src/data/java/beginner/suffix_arrays_trees.ts
 
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 
 const quizData: Partial<QuizDocument> = {
     title: "Java Suffix Arrays/Trees - Beginner Quiz",
@@ -73,8 +73,8 @@ const quizData: Partial<QuizDocument> = {
             questionText: "Which algorithm is used to build suffix arrays efficiently?",
             options: [
                 { optionText: "Kasai algorithm", optionTag: "A" },
-                { optionText: "Prim’s algorithm", optionTag: "B" },
-                { optionText: "Dijkstra’s algorithm", optionTag: "C" },
+                { optionText: "Prim's algorithm", optionTag: "B" },
+                { optionText: "Dijkstra's algorithm", optionTag: "C" },
                 { optionText: "DFS", optionTag: "D" }
             ],
             correctOption: "A",
@@ -149,10 +149,10 @@ const quizData: Partial<QuizDocument> = {
         {
             questionText: "Which suffix array-based algorithm is used to find longest common prefix (LCP)?",
             options: [
-                { optionText: "Kasai’s algorithm", optionTag: "A" },
+                { optionText: "Kasai's algorithm", optionTag: "A" },
                 { optionText: "KMP algorithm", optionTag: "B" },
                 { optionText: "DFS algorithm", optionTag: "C" },
-                { optionText: "Dijkstra’s algorithm", optionTag: "D" }
+                { optionText: "Dijkstra's algorithm", optionTag: "D" }
             ],
             correctOption: "A",
             score: 1
@@ -174,7 +174,7 @@ const quizData: Partial<QuizDocument> = {
                 { optionText: "They support O(m) search time for pattern of length m", optionTag: "A" },
                 { optionText: "They are uncompressed tries", optionTag: "B" },
                 { optionText: "They store suffixes as paths", optionTag: "C" },
-                { optionText: "They are built using Ukkonen’s algorithm", optionTag: "D" }
+                { optionText: "They are built using Ukkonen's algorithm", optionTag: "D" }
             ],
             correctOption: "B",
             score: 1

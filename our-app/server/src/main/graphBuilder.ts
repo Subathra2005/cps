@@ -1,5 +1,5 @@
 import Course from '../models/Course';
-import { CourseDocument } from '../interfaces/Document_Interfaces';
+import type { CourseDocument } from '../interfaces/Document_Interfaces';
 import type { PrerequisiteGraph } from '../types/customTypes';
 
 // Building Prerequisite Graph

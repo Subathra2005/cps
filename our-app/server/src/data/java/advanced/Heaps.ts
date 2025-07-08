@@ -1,4 +1,4 @@
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
 
 const quizData: Partial<QuizDocument> = {
@@ -90,7 +90,7 @@ const quizData: Partial<QuizDocument> = {
       score: 1
     },
     {
-      questionText: "Which heap type is used for Dijkstra’s algorithm?",
+      questionText: "Which heap type is used for Dijkstra's algorithm?",
       options: [
         { optionText: "Max-heap", optionTag: "A" },
         { optionText: "Min-heap", optionTag: "B" },

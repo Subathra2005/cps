@@ -1,4 +1,4 @@
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
 
 const quizData: Partial<QuizDocument> = {
@@ -48,7 +48,7 @@ const quizData: Partial<QuizDocument> = {
     {
       questionText: "Which algorithm is commonly used to construct suffix arrays efficiently?",
       options: [
-        { optionText: "Kadane’s Algorithm", optionTag: "D" },
+        { optionText: "Kadane's Algorithm", optionTag: "D" },
         { optionText: "Rabin-Karp", optionTag: "A" },
         { optionText: "Manber-Myers", optionTag: "B" },
         { optionText: "Dijkstra", optionTag: "C" },

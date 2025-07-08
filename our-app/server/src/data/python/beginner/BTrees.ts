@@ -1,4 +1,4 @@
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
 
 const quizData: Partial<QuizDocument> = {
@@ -28,7 +28,7 @@ const quizData: Partial<QuizDocument> = {
       options: [
         { optionText: "They store only integers", optionTag: "D" },
         { optionText: "They are self-balancing", optionTag: "B" },
-        { optionText: "They don’t support deletion", optionTag: "C" },
+        { optionText: "They don't support deletion", optionTag: "C" },
         { optionText: "They use a heap structure", optionTag: "A" },
       ],
       correctOption: "B",

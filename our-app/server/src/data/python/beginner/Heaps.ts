@@ -1,4 +1,4 @@
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
 
 const quizData: Partial<QuizDocument> = {
@@ -112,7 +112,7 @@ const quizData: Partial<QuizDocument> = {
       score: 1
     },
     {
-      questionText: "Which structure underlies Python’s heapq?",
+      questionText: "Which structure underlies Python's heapq?",
       options: [
         { optionText: "List", optionTag: "C" },
         { optionText: "Binary tree", optionTag: "D" },

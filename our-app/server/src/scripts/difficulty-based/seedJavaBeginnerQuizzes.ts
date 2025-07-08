@@ -136,7 +136,7 @@ const seedJavaBeginnerQuizzes = async () => {
             };
 
             await Quiz.insertMany([newQuiz]);
-            console.log(`Inserted beginner quiz for: ${courseTitle}`);
+            console.log(`Inserted Java beginner quiz for: ${courseTitle}`);
         }
 
         console.log("Java beginner quizzes inserted successfully.");

@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from './AuthContext';
-import axios from 'axios';
+import api from '../utils/api';
 
 
 const Home: React.FC = () => {
@@ -58,15 +58,15 @@ const Home: React.FC = () => {
     }
     try {
       // Use the existing /api/users/:id endpoint instead of /dashboard
-      const res = await axios.get(`/api/users/${userId}`);
+      const res = await api.get(`/api/users/${userId}`);
       const userData = res.data;
-      
+
       // Extract the same information from the user data structure
       const basicQuizDone = userData.quizzes && userData.quizzes.length > 0;
       const assessmentDone = userData.lang; // User has selected a language
       const customQuizDone = userData.customQuizzes && userData.customQuizzes.length > 0;
       const pathChosen = userData.courses && userData.courses.length > 0;
-      
+
       // Check if user has completed initial setup requirements
       if (!userData.lang || !basicQuizDone || !assessmentDone || !customQuizDone || !pathChosen) {
         navigate('/initial-setup');
@@ -89,7 +89,7 @@ const Home: React.FC = () => {
           Master Data Structures & Algorithms with personalized quizzes, adaptive learning, and
           comprehensive progress tracking. Get interview-ready with confidence.
         </p>
-        <br/>
+        <br />
         <div className="bg-primary text-white py-4 mt-4 rounded">
           <h4 className="text-white">Ready to Master DSA?</h4>
           <p>Join thousands of developers who've enhanced their coding skills with our platform</p>

@@ -1,7 +1,7 @@
 // src/data/java/beginner/hashTables.ts
 
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 
 const quizData: Partial<QuizDocument> = {
     title: "Java Hash Tables - Beginner Quiz",
@@ -70,7 +70,7 @@ const quizData: Partial<QuizDocument> = {
             score: 1
         },
         {
-            questionText: "What is the default initial capacity of Java’s HashMap?",
+            questionText: "What is the default initial capacity of Java's HashMap?",
             options: [
                 { optionText: "8", optionTag: "A" },
                 { optionText: "16", optionTag: "B" },
@@ -103,7 +103,7 @@ const quizData: Partial<QuizDocument> = {
             score: 1
         },
         {
-            questionText: "When does Java’s HashMap resize?",
+            questionText: "When does Java's HashMap resize?",
             options: [
                 { optionText: "When it is full", optionTag: "A" },
                 { optionText: "When load factor exceeds threshold", optionTag: "B" },

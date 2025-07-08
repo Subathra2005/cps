@@ -1,7 +1,7 @@
 // src/data/java/beginner/topological_sort.ts
 
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 
 const quizData: Partial<QuizDocument> = {
     title: "Java Topological Sort - Beginner Quiz",
@@ -70,7 +70,7 @@ const quizData: Partial<QuizDocument> = {
             score: 1
         },
         {
-            questionText: "Which sorting method uses Kahn’s Algorithm?",
+            questionText: "Which sorting method uses Kahn's Algorithm?",
             options: [
                 { optionText: "Topological Sort", optionTag: "A" },
                 { optionText: "Heap Sort", optionTag: "B" },
@@ -147,7 +147,7 @@ const quizData: Partial<QuizDocument> = {
             score: 1
         },
         {
-            questionText: "In Kahn’s algorithm, what triggers the next vertex to process?",
+            questionText: "In Kahn's algorithm, what triggers the next vertex to process?",
             options: [
                 { optionText: "In-degree becomes 0", optionTag: "A" },
                 { optionText: "Out-degree increases", optionTag: "B" },
@@ -213,7 +213,7 @@ const quizData: Partial<QuizDocument> = {
             score: 1
         },
         {
-            questionText: "In topological sort using Kahn’s algorithm, which data structure is used?",
+            questionText: "In topological sort using Kahn's algorithm, which data structure is used?",
             options: [
                 { optionText: "Queue", optionTag: "A" },
                 { optionText: "Stack", optionTag: "B" },

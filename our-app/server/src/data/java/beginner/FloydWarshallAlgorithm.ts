@@ -1,7 +1,7 @@
 // src/data/java/beginner/floyd_warshall_algorithm.ts
 
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 
 const quizData: Partial<QuizDocument> = {
     title: "Java Floyd-Warshall Algorithm - Beginner Quiz",

@@ -1,4 +1,4 @@
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
 
 const quizData: Partial<QuizDocument> = {
@@ -35,7 +35,7 @@ const quizData: Partial<QuizDocument> = {
       score: 1
     },
     {
-      questionText: "What is Java’s equivalent of a pointer dereference?",
+      questionText: "What is Java's equivalent of a pointer dereference?",
       options: [
         { optionText: "Using the '->' operator", optionTag: "A" },
         { optionText: "Using the '*' operator", optionTag: "B" },
@@ -84,7 +84,7 @@ const quizData: Partial<QuizDocument> = {
         { optionText: "Yes, using pointer class", optionTag: "A" },
         { optionText: "Yes, through JNI (native code)", optionTag: "B" },
         { optionText: "Yes, Java supports unsafe operations", optionTag: "C" },
-        { optionText: "No, Java doesn’t allow this", optionTag: "D" }
+        { optionText: "No, Java doesn't allow this", optionTag: "D" }
       ],
       correctOption: "B",
       score: 1

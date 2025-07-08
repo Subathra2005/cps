@@ -1,4 +1,4 @@
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
 
 const quizData: Partial<QuizDocument> = {
@@ -13,7 +13,7 @@ const quizData: Partial<QuizDocument> = {
   quizScore: 20,
   questions: [
     {
-      questionText: "What is the time complexity of matrix multiplication using Strassen’s algorithm?",
+      questionText: "What is the time complexity of matrix multiplication using Strassen's algorithm?",
       options: [
         { optionText: "O(n^2.81)", optionTag: "A" },
         { optionText: "O(n^3)", optionTag: "B" },
@@ -189,7 +189,7 @@ const quizData: Partial<QuizDocument> = {
       score: 1,
     },
     {
-      questionText: "What is the maximum complexity of Dijkstra’s algorithm using a min heap?",
+      questionText: "What is the maximum complexity of Dijkstra's algorithm using a min heap?",
       options: [
         { optionText: "O(E + V log V)", optionTag: "A" },
         { optionText: "O(V^2)", optionTag: "B" },

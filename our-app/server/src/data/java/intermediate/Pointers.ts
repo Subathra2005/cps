@@ -1,4 +1,4 @@
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
 
 const quizData: Partial<QuizDocument> = {
@@ -139,7 +139,7 @@ const quizData: Partial<QuizDocument> = {
                 { optionText: "It checks if two objects have same content", optionTag: "A" },
                 { optionText: "It checks if references point to the same object", optionTag: "B" },
                 { optionText: "It compares hash codes", optionTag: "C" },
-                { optionText: "It’s same as .equals()", optionTag: "D" }
+                { optionText: "It's same as .equals()", optionTag: "D" }
             ],
             correctOption: "B",
             score: 1
@@ -170,7 +170,7 @@ const quizData: Partial<QuizDocument> = {
             questionText: "When is an object eligible for garbage collection?",
             options: [
                 { optionText: "When it has zero value", optionTag: "A" },
-                { optionText: "When it’s not reachable by any reference", optionTag: "B" },
+                { optionText: "When it's not reachable by any reference", optionTag: "B" },
                 { optionText: "When explicitly freed", optionTag: "C" },
                 { optionText: "When stored in static memory", optionTag: "D" }
             ],
