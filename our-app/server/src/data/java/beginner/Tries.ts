@@ -1,7 +1,7 @@
 // src/data/java/beginner/tries.ts
 
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 
 const quizData: Partial<QuizDocument> = {
     title: "Java Tries - Beginner Quiz",
@@ -141,7 +141,7 @@ const quizData: Partial<QuizDocument> = {
                 { optionText: "Yes, with backtracking", optionTag: "A" },
                 { optionText: "No", optionTag: "B" },
                 { optionText: "Only if it's a prefix", optionTag: "C" },
-                { optionText: "Only if it’s the last word", optionTag: "D" }
+                { optionText: "Only if it's the last word", optionTag: "D" }
             ],
             correctOption: "A",
             score: 1
@@ -158,7 +158,7 @@ const quizData: Partial<QuizDocument> = {
             score: 1
         },
         {
-            questionText: "What’s the advantage of Trie over HashMap for prefix search?",
+            questionText: "What's the advantage of Trie over HashMap for prefix search?",
             options: [
                 { optionText: "Prefix search is faster", optionTag: "A" },
                 { optionText: "Less memory", optionTag: "B" },

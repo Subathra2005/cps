@@ -1,4 +1,4 @@
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
 
 const quizData: Partial<QuizDocument> = {
@@ -191,8 +191,8 @@ const quizData: Partial<QuizDocument> = {
         {
             questionText: "Which pointer is updated when a node is deleted from the middle?",
             options: [
-                { optionText: "The previous node’s next pointer", optionTag: "A" },
-                { optionText: "The next node’s pointer", optionTag: "B" },
+                { optionText: "The previous node's next pointer", optionTag: "A" },
+                { optionText: "The next node's pointer", optionTag: "B" },
                 { optionText: "The head only", optionTag: "C" },
                 { optionText: "None", optionTag: "D" }
             ],

@@ -1,7 +1,7 @@
 // File: sliding_window.ts
 
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 
 const quizData: Partial<QuizDocument> = {
   title: "Java Sliding Window - Beginner Quiz",
@@ -226,7 +226,7 @@ const quizData: Partial<QuizDocument> = {
     {
       questionText: "Which algorithm uses sliding window?",
       options: [
-        { optionText: "Dijkstra’s Algorithm", optionTag: "B" },
+        { optionText: "Dijkstra's Algorithm", optionTag: "B" },
         { optionText: "Merge Sort", optionTag: "A" },
         { optionText: "Longest substring without repeating characters", optionTag: "C" },
         { optionText: "Binary Search", optionTag: "D" }

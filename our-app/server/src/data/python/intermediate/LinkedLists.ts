@@ -1,4 +1,4 @@
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
 
 const quizData: Partial<QuizDocument> = {
@@ -103,7 +103,7 @@ const quizData: Partial<QuizDocument> = {
     {
       questionText: "How do you detect a loop in a linked list?",
       options: [
-        { optionText: "Use Floyd’s cycle detection algorithm", optionTag: "A" },
+        { optionText: "Use Floyd's cycle detection algorithm", optionTag: "A" },
         { optionText: "Traverse twice", optionTag: "B" },
         { optionText: "Use a hash table", optionTag: "C" },
         { optionText: "Both A and C", optionTag: "D" }
@@ -156,7 +156,7 @@ const quizData: Partial<QuizDocument> = {
       score: 1
     },
     {
-      questionText: "What will the tail node’s next point to in a singly linked list?",
+      questionText: "What will the tail node's next point to in a singly linked list?",
       options: [
         { optionText: "null", optionTag: "A" },
         { optionText: "head", optionTag: "B" },
@@ -189,7 +189,7 @@ const quizData: Partial<QuizDocument> = {
       score: 1
     },
     {
-      questionText: "What happens if you access a node’s next when it’s null?",
+      questionText: "What happens if you access a node's next when it's null?",
       options: [
         { optionText: "Throws an exception", optionTag: "A" },
         { optionText: "Returns zero", optionTag: "B" },

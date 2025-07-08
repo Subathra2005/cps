@@ -1,4 +1,4 @@
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
 
 const quizData: Partial<QuizDocument> = {
@@ -81,8 +81,8 @@ const quizData: Partial<QuizDocument> = {
     {
       questionText: "What happens if you delete a node without head reference?",
       options: [
-        { optionText: "You can’t delete it directly", optionTag: "A" },
-        { optionText: "It’s removed from memory", optionTag: "B" },
+        { optionText: "You can't delete it directly", optionTag: "A" },
+        { optionText: "It's removed from memory", optionTag: "B" },
         { optionText: "It becomes undefined", optionTag: "C" },
         { optionText: "Throws reference error", optionTag: "D" }
       ],

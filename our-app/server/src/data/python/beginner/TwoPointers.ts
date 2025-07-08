@@ -1,4 +1,4 @@
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
 
 const quizData: Partial<QuizDocument> = {
@@ -101,7 +101,7 @@ const quizData: Partial<QuizDocument> = {
       score: 1
     },
     {
-      questionText: "What’s the time complexity of a typical Two Pointers approach?",
+      questionText: "What's the time complexity of a typical Two Pointers approach?",
       options: [
         { optionText: "O(n^2)", optionTag: "D" },
         { optionText: "O(log n)", optionTag: "B" },
@@ -112,7 +112,7 @@ const quizData: Partial<QuizDocument> = {
       score: 1
     },
     {
-      questionText: "What’s a limitation of the two pointers approach?",
+      questionText: "What's a limitation of the two pointers approach?",
       options: [
         { optionText: "Only works on sorted data in some problems", optionTag: "D" },
         { optionText: "Takes too much space", optionTag: "B" },

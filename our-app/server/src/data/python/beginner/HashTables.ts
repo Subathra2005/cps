@@ -1,4 +1,4 @@
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
 
 const quizData: Partial<QuizDocument> = {
@@ -145,7 +145,7 @@ const quizData: Partial<QuizDocument> = {
       score: 1
     },
     {
-      questionText: "Python’s dict uses which probing method?",
+      questionText: "Python's dict uses which probing method?",
       options: [
         { optionText: "Quadratic Probing", optionTag: "B" },
         { optionText: "Double Hashing", optionTag: "D" },

@@ -1,4 +1,4 @@
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
 
 const quizData: Partial<QuizDocument> = {
@@ -13,7 +13,7 @@ const quizData: Partial<QuizDocument> = {
   quizScore: 20,
   questions: [
     {
-      questionText: "What is the maximum number of nodes at level ‘l’ in a binary tree?",
+      questionText: "What is the maximum number of nodes at level 'l' in a binary tree?",
       options: [
         { optionText: "l", optionTag: "A" },
         { optionText: "2^l", optionTag: "B" },

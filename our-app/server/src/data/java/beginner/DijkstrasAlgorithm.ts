@@ -1,7 +1,7 @@
 // src/data/java/beginner/dijkstras_algorithm.ts
 
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 
 const quizData: Partial<QuizDocument> = {
     title: "Java Dijkstra's Algorithm - Beginner Quiz",
@@ -37,7 +37,7 @@ const quizData: Partial<QuizDocument> = {
             score: 1
         },
         {
-            questionText: "What data structure is commonly used to implement Dijkstra’s algorithm efficiently?",
+            questionText: "What data structure is commonly used to implement Dijkstra's algorithm efficiently?",
             options: [
                 { optionText: "Priority Queue (Min-Heap)", optionTag: "A" },
                 { optionText: "Stack", optionTag: "B" },
@@ -48,7 +48,7 @@ const quizData: Partial<QuizDocument> = {
             score: 1
         },
         {
-            questionText: "What is initialized to 0 in the beginning of Dijkstra’s algorithm?",
+            questionText: "What is initialized to 0 in the beginning of Dijkstra's algorithm?",
             options: [
                 { optionText: "Source node distance", optionTag: "A" },
                 { optionText: "All node distances", optionTag: "B" },
@@ -125,7 +125,7 @@ const quizData: Partial<QuizDocument> = {
             score: 1
         },
         {
-            questionText: "In a graph with V vertices and E edges, Dijkstra’s time complexity with a min heap is:",
+            questionText: "In a graph with V vertices and E edges, Dijkstra's time complexity with a min heap is:",
             options: [
                 { optionText: "O((V + E) log V)", optionTag: "A" },
                 { optionText: "O(VE)", optionTag: "B" },
@@ -180,7 +180,7 @@ const quizData: Partial<QuizDocument> = {
             score: 1
         },
         {
-            questionText: "How do we choose the next node to process in Dijkstra’s?",
+            questionText: "How do we choose the next node to process in Dijkstra's?",
             options: [
                 { optionText: "With the smallest distance value", optionTag: "A" },
                 { optionText: "Alphabetically", optionTag: "B" },

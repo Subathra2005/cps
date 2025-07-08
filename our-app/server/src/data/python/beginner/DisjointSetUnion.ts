@@ -1,4 +1,4 @@
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
 
 const quizData: Partial<QuizDocument> = {
@@ -92,9 +92,9 @@ const quizData: Partial<QuizDocument> = {
     {
       questionText: "DSU is commonly used in which graph algorithm?",
       options: [
-        { optionText: "Kruskal’s Algorithm", optionTag: "B" },
-        { optionText: "Dijkstra’s Algorithm", optionTag: "C" },
-        { optionText: "Prim’s Algorithm", optionTag: "D" },
+        { optionText: "Kruskal's Algorithm", optionTag: "B" },
+        { optionText: "Dijkstra's Algorithm", optionTag: "C" },
+        { optionText: "Prim's Algorithm", optionTag: "D" },
         { optionText: "Floyd-Warshall Algorithm", optionTag: "A" },
       ],
       correctOption: "B",

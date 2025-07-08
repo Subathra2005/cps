@@ -1,4 +1,4 @@
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
 
 const quizData: Partial<QuizDocument> = {
@@ -68,7 +68,7 @@ const quizData: Partial<QuizDocument> = {
       score: 1
     },
     {
-      questionText: "What happens if a recursive function doesn’t reach a base case?",
+      questionText: "What happens if a recursive function doesn't reach a base case?",
       options: [
         { optionText: "Stack overflow", optionTag: "A" },
         { optionText: "Function terminates normally", optionTag: "B" },

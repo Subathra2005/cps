@@ -1,4 +1,4 @@
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
 
 const quizData: Partial<QuizDocument> = {
@@ -136,7 +136,7 @@ const quizData: Partial<QuizDocument> = {
     {
       questionText: "Which greedy algorithm uses edge weights to choose edges?",
       options: [
-        { optionText: "Kruskal’s Algorithm", optionTag: "A" },
+        { optionText: "Kruskal's Algorithm", optionTag: "A" },
         { optionText: "DFS", optionTag: "B" },
         { optionText: "BFS", optionTag: "C" },
         { optionText: "Prim's without weights", optionTag: "D" }
@@ -225,8 +225,8 @@ const quizData: Partial<QuizDocument> = {
       questionText: "Which algorithm is NOT based on greedy strategy?",
       options: [
         { optionText: "Matrix Chain Multiplication", optionTag: "A" },
-        { optionText: "Prim’s Algorithm", optionTag: "B" },
-        { optionText: "Kruskal’s Algorithm", optionTag: "C" },
+        { optionText: "Prim's Algorithm", optionTag: "B" },
+        { optionText: "Kruskal's Algorithm", optionTag: "C" },
         { optionText: "Huffman Encoding", optionTag: "D" }
       ],
       correctOption: "A",

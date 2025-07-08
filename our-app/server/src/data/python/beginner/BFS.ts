@@ -1,4 +1,4 @@
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
 
 const quizData: Partial<QuizDocument> = {
@@ -68,7 +68,7 @@ const quizData: Partial<QuizDocument> = {
       score: 1,
     },
     {
-      questionText: "BFS is implemented using which Python module’s data structure for efficiency?",
+      questionText: "BFS is implemented using which Python module's data structure for efficiency?",
       options: [
         { optionText: "collections.deque", optionTag: "C" },
         { optionText: "heapq", optionTag: "D" },
@@ -215,7 +215,7 @@ const quizData: Partial<QuizDocument> = {
       options: [
         { optionText: "Exactly once", optionTag: "C" },
         { optionText: "Twice", optionTag: "B" },
-        { optionText: "Only if it’s a leaf", optionTag: "D" },
+        { optionText: "Only if it's a leaf", optionTag: "D" },
         { optionText: "Randomly", optionTag: "A" },
       ],
       correctOption: "C",

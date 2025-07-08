@@ -1,7 +1,7 @@
 // src/data/java/beginner/trees.ts
 
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 
 const quizData: Partial<QuizDocument> = {
     title: "Java Trees - Beginner Quiz",
@@ -194,7 +194,7 @@ const quizData: Partial<QuizDocument> = {
             questionText: "What is a subtree?",
             options: [
                 { optionText: "A child of a node", optionTag: "A" },
-                { optionText: "Any node’s descendants", optionTag: "B" },
+                { optionText: "Any node's descendants", optionTag: "B" },
                 { optionText: "A node and its children forming a smaller tree", optionTag: "C" },
                 { optionText: "A rootless tree", optionTag: "D" }
             ],

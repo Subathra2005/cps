@@ -1,4 +1,4 @@
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
 
 const quizData: Partial<QuizDocument> = {
@@ -128,7 +128,7 @@ const quizData: Partial<QuizDocument> = {
         { optionText: "Aggressive cows", optionTag: "D" },
         { optionText: "DFS", optionTag: "A" },
         { optionText: "Cycle detection", optionTag: "B" },
-        { optionText: "Prim’s Algorithm", optionTag: "C" }
+        { optionText: "Prim's Algorithm", optionTag: "C" }
       ],
       correctOption: "D",
       score: 1

@@ -1,4 +1,4 @@
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
 
 const quizData: Partial<QuizDocument> = {
@@ -46,7 +46,7 @@ const quizData: Partial<QuizDocument> = {
       score: 1,
     },
     {
-      questionText: "What is the time complexity of Kahn’s Algorithm for Topological Sort?",
+      questionText: "What is the time complexity of Kahn's Algorithm for Topological Sort?",
       options: [
         { optionText: "O(V)", optionTag: "A" },
         { optionText: "O(E)", optionTag: "B" },
@@ -57,7 +57,7 @@ const quizData: Partial<QuizDocument> = {
       score: 1,
     },
     {
-      questionText: "Which data structure is used in Kahn’s Algorithm?",
+      questionText: "Which data structure is used in Kahn's Algorithm?",
       options: [
         { optionText: "Stack", optionTag: "A" },
         { optionText: "Priority Queue", optionTag: "B" },
@@ -123,7 +123,7 @@ const quizData: Partial<QuizDocument> = {
       score: 1,
     },
     {
-      questionText: "In Kahn’s Algorithm, what does the in-degree represent?",
+      questionText: "In Kahn's Algorithm, what does the in-degree represent?",
       options: [
         { optionText: "Number of cycles", optionTag: "A" },
         { optionText: "Number of incoming edges", optionTag: "B" },
@@ -134,7 +134,7 @@ const quizData: Partial<QuizDocument> = {
       score: 1,
     },
     {
-      questionText: "What is pushed into the queue initially in Kahn’s Algorithm?",
+      questionText: "What is pushed into the queue initially in Kahn's Algorithm?",
       options: [
         { optionText: "All visited nodes", optionTag: "A" },
         { optionText: "Nodes with in-degree 0", optionTag: "B" },

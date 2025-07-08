@@ -1,4 +1,4 @@
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
 
 const quizData: Partial<QuizDocument> = {
@@ -211,7 +211,7 @@ const quizData: Partial<QuizDocument> = {
       score: 1
     },
     {
-      questionText: "What’s the max number of edges in a tree with n nodes?",
+      questionText: "What's the max number of edges in a tree with n nodes?",
       options: [
         { optionText: "n", optionTag: "A" },
         { optionText: "n + 1", optionTag: "B" },

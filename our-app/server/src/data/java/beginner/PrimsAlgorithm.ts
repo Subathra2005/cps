@@ -1,7 +1,7 @@
 // src/data/java/beginner/prims_algorithm.ts
 
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 
 const quizData: Partial<QuizDocument> = {
     title: "Java Prim's Algorithm - Beginner Quiz",
@@ -37,7 +37,7 @@ const quizData: Partial<QuizDocument> = {
             score: 1
         },
         {
-            questionText: "What is the starting point for Prim’s algorithm?",
+            questionText: "What is the starting point for Prim's algorithm?",
             options: [
                 { optionText: "Any arbitrary vertex", optionTag: "A" },
                 { optionText: "Smallest edge", optionTag: "B" },
@@ -48,7 +48,7 @@ const quizData: Partial<QuizDocument> = {
             score: 1
         },
         {
-            questionText: "Prim’s algorithm works on which kind of graphs?",
+            questionText: "Prim's algorithm works on which kind of graphs?",
             options: [
                 { optionText: "Connected, weighted, undirected graphs", optionTag: "A" },
                 { optionText: "Disconnected graphs", optionTag: "B" },
@@ -72,16 +72,16 @@ const quizData: Partial<QuizDocument> = {
         {
             questionText: "Which of these algorithms is most similar to Prim's Algorithm?",
             options: [
-                { optionText: "Dijkstra’s Algorithm", optionTag: "A" },
+                { optionText: "Dijkstra's Algorithm", optionTag: "A" },
                 { optionText: "Floyd-Warshall Algorithm", optionTag: "B" },
                 { optionText: "DFS", optionTag: "C" },
-                { optionText: "Kruskal’s Algorithm", optionTag: "D" }
+                { optionText: "Kruskal's Algorithm", optionTag: "D" }
             ],
             correctOption: "A",
             score: 1
         },
         {
-            questionText: "Prim’s algorithm stops when:",
+            questionText: "Prim's algorithm stops when:",
             options: [
                 { optionText: "All vertices are included in MST", optionTag: "A" },
                 { optionText: "All edges are visited", optionTag: "B" },
@@ -125,7 +125,7 @@ const quizData: Partial<QuizDocument> = {
             score: 1
         },
         {
-            questionText: "Which graph representation is best suited for Prim’s algorithm?",
+            questionText: "Which graph representation is best suited for Prim's algorithm?",
             options: [
                 { optionText: "Adjacency List with Min Heap", optionTag: "A" },
                 { optionText: "Adjacency Matrix only", optionTag: "B" },
@@ -136,7 +136,7 @@ const quizData: Partial<QuizDocument> = {
             score: 1
         },
         {
-            questionText: "If a graph is disconnected, Prim’s algorithm will:",
+            questionText: "If a graph is disconnected, Prim's algorithm will:",
             options: [
                 { optionText: "Only build MST for the connected component", optionTag: "A" },
                 { optionText: "Throw an error", optionTag: "B" },
@@ -180,7 +180,7 @@ const quizData: Partial<QuizDocument> = {
             score: 1
         },
         {
-            questionText: "The main advantage of Prim’s algorithm is:",
+            questionText: "The main advantage of Prim's algorithm is:",
             options: [
                 { optionText: "Good for dense graphs", optionTag: "A" },
                 { optionText: "Can detect cycles", optionTag: "B" },
@@ -191,7 +191,7 @@ const quizData: Partial<QuizDocument> = {
             score: 1
         },
         {
-            questionText: "What is the base case for Prim’s algorithm?",
+            questionText: "What is the base case for Prim's algorithm?",
             options: [
                 { optionText: "Start with one node in MST", optionTag: "A" },
                 { optionText: "All nodes visited", optionTag: "B" },
@@ -213,7 +213,7 @@ const quizData: Partial<QuizDocument> = {
             score: 1
         },
         {
-            questionText: "Which of the following is required before applying Prim’s algorithm?",
+            questionText: "Which of the following is required before applying Prim's algorithm?",
             options: [
                 { optionText: "Graph must be connected and weighted", optionTag: "A" },
                 { optionText: "Graph must be unweighted", optionTag: "B" },

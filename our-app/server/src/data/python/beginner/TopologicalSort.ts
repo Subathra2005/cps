@@ -1,4 +1,4 @@
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
 
 const quizData: Partial<QuizDocument> = {
@@ -46,7 +46,7 @@ const quizData: Partial<QuizDocument> = {
       score: 1,
     },
     {
-      questionText: "Which Python data structure is useful in Kahn’s algorithm?",
+      questionText: "Which Python data structure is useful in Kahn's algorithm?",
       options: [
         { optionText: "Stack", optionTag: "A" },
         { optionText: "Set", optionTag: "D" },
@@ -90,7 +90,7 @@ const quizData: Partial<QuizDocument> = {
       score: 1,
     },
     {
-      questionText: "Kahn’s algorithm uses which approach?",
+      questionText: "Kahn's algorithm uses which approach?",
       options: [
         { optionText: "DFS", optionTag: "A" },
         { optionText: "Greedy BFS with in-degree tracking", optionTag: "C" },
@@ -136,7 +136,7 @@ const quizData: Partial<QuizDocument> = {
       score: 1,
     },
     {
-      questionText: "Which value is used to track vertices in Kahn’s algorithm?",
+      questionText: "Which value is used to track vertices in Kahn's algorithm?",
       options: [
         { optionText: "Out-degree", optionTag: "D" },
         { optionText: "Height", optionTag: "C" },
@@ -172,7 +172,7 @@ const quizData: Partial<QuizDocument> = {
       questionText: "Which algorithm can detect cycles in a DAG?",
       options: [
         { optionText: "Union-Find", optionTag: "B" },
-        { optionText: "Kahn’s Algorithm", optionTag: "A" },
+        { optionText: "Kahn's Algorithm", optionTag: "A" },
         { optionText: "Binary Search", optionTag: "D" },
         { optionText: "BFS only", optionTag: "C" },
       ],

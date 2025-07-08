@@ -1,4 +1,4 @@
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
 
 const quizData: Partial<QuizDocument> = {
@@ -167,7 +167,7 @@ const quizData: Partial<QuizDocument> = {
       score: 1
     },
     {
-      questionText: "What’s a drawback of tabulation?",
+      questionText: "What's a drawback of tabulation?",
       options: [
         { optionText: "Higher space consumption", optionTag: "A" },
         { optionText: "Stack overflow", optionTag: "B" },

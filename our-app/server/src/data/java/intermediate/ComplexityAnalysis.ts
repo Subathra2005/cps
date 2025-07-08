@@ -1,4 +1,4 @@
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
 
 const quizData: Partial<QuizDocument> = {
@@ -79,7 +79,7 @@ const quizData: Partial<QuizDocument> = {
             score: 1
         },
         {
-            questionText: "What is the time complexity of nested loops where both run ‘n’ times?",
+            questionText: "What is the time complexity of nested loops where both run 'n' times?",
             options: [
                 { optionText: "O(n^2)", optionTag: "A" },
                 { optionText: "O(n)", optionTag: "C" },

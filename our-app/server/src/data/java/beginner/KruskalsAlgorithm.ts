@@ -1,7 +1,7 @@
 // src/data/java/beginner/kruskals_algorithm.ts
 
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 
 const quizData: Partial<QuizDocument> = {
     title: "Java Kruskal's Algorithm - Beginner Quiz",
@@ -26,7 +26,7 @@ const quizData: Partial<QuizDocument> = {
             score: 1
         },
         {
-            questionText: "Which data structure is used in Kruskal’s Algorithm to detect cycles?",
+            questionText: "Which data structure is used in Kruskal's Algorithm to detect cycles?",
             options: [
                 { optionText: "Disjoint Set (Union-Find)", optionTag: "A" },
                 { optionText: "Priority Queue", optionTag: "B" },
@@ -48,7 +48,7 @@ const quizData: Partial<QuizDocument> = {
             score: 1
         },
         {
-            questionText: "Which graph representation is most commonly used with Kruskal’s Algorithm?",
+            questionText: "Which graph representation is most commonly used with Kruskal's Algorithm?",
             options: [
                 { optionText: "Edge list", optionTag: "B" },
                 { optionText: "Adjacency matrix", optionTag: "C" },
@@ -92,7 +92,7 @@ const quizData: Partial<QuizDocument> = {
             score: 1
         },
         {
-            questionText: "Kruskal’s algorithm works on which kind of graph?",
+            questionText: "Kruskal's algorithm works on which kind of graph?",
             options: [
                 { optionText: "Weighted and connected", optionTag: "C" },
                 { optionText: "Unweighted", optionTag: "A" },
@@ -103,7 +103,7 @@ const quizData: Partial<QuizDocument> = {
             score: 1
         },
         {
-            questionText: "Which of the following is not required in Kruskal’s Algorithm?",
+            questionText: "Which of the following is not required in Kruskal's Algorithm?",
             options: [
                 { optionText: "Adjacency matrix", optionTag: "D" },
                 { optionText: "Edge list", optionTag: "A" },
@@ -114,7 +114,7 @@ const quizData: Partial<QuizDocument> = {
             score: 1
         },
         {
-            questionText: "If the graph has V vertices, how many edges will the MST contain after Kruskal’s Algorithm finishes?",
+            questionText: "If the graph has V vertices, how many edges will the MST contain after Kruskal's Algorithm finishes?",
             options: [
                 { optionText: "V - 1", optionTag: "B" },
                 { optionText: "V", optionTag: "A" },
@@ -169,7 +169,7 @@ const quizData: Partial<QuizDocument> = {
             score: 1
         },
         {
-            questionText: "What does Kruskal’s algorithm do when an edge forms a cycle?",
+            questionText: "What does Kruskal's algorithm do when an edge forms a cycle?",
             options: [
                 { optionText: "Skips the edge", optionTag: "D" },
                 { optionText: "Adds it to MST", optionTag: "A" },
@@ -194,7 +194,7 @@ const quizData: Partial<QuizDocument> = {
             questionText: "Which is more efficient for dense graphs, Kruskal or Prim?",
             options: [
                 { optionText: "Prim's Algorithm", optionTag: "B" },
-                { optionText: "Kruskal’s Algorithm", optionTag: "A" },
+                { optionText: "Kruskal's Algorithm", optionTag: "A" },
                 { optionText: "Both same", optionTag: "C" },
                 { optionText: "Depends on sorting", optionTag: "D" }
             ],
@@ -213,7 +213,7 @@ const quizData: Partial<QuizDocument> = {
             score: 1
         },
         {
-            questionText: "Kruskal’s algorithm terminates when:",
+            questionText: "Kruskal's algorithm terminates when:",
             options: [
                 { optionText: "Number of edges in MST is V-1", optionTag: "D" },
                 { optionText: "All edges are checked", optionTag: "A" },
@@ -224,7 +224,7 @@ const quizData: Partial<QuizDocument> = {
             score: 1
         },
         {
-            questionText: "Which of the following problems can Kruskal’s Algorithm solve?",
+            questionText: "Which of the following problems can Kruskal's Algorithm solve?",
             options: [
                 { optionText: "Finding minimum spanning tree", optionTag: "A" },
                 { optionText: "Finding shortest path", optionTag: "B" },

@@ -1,4 +1,4 @@
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
 
 const quizData: Partial<QuizDocument> = {
@@ -192,7 +192,7 @@ const quizData: Partial<QuizDocument> = {
       questionText: "Is Floyd-Warshall suitable for very large graphs?",
       options: [
         { optionText: "No, due to O(V^3) time complexity", optionTag: "A" },
-        { optionText: "Yes, it’s linear", optionTag: "B" },
+        { optionText: "Yes, it's linear", optionTag: "B" },
         { optionText: "Yes, with BFS", optionTag: "C" },
         { optionText: "Only if sparse", optionTag: "D" }
       ],

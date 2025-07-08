@@ -1,4 +1,4 @@
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
 
 const quizData: Partial<QuizDocument> = {
@@ -105,7 +105,7 @@ const quizData: Partial<QuizDocument> = {
       options: [
         { optionText: "Index of first occurrence of 'a'", optionTag: "A" },
         { optionText: "Index of last occurrence of 'a'", optionTag: "B" },
-        { optionText: "Number of a’s in string", optionTag: "C" },
+        { optionText: "Number of a's in string", optionTag: "C" },
         { optionText: "Always 0", optionTag: "D" }
       ],
       correctOption: "A",

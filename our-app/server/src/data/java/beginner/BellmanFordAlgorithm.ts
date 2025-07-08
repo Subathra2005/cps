@@ -1,7 +1,7 @@
 // src/data/java/beginner/bellman_ford_algorithm.ts
 
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 
 const quizData: Partial<QuizDocument> = {
     title: "Java Bellman-Ford Algorithm - Beginner Quiz",
@@ -26,7 +26,7 @@ const quizData: Partial<QuizDocument> = {
             score: 1
         },
         {
-            questionText: "Which of the following can the Bellman-Ford algorithm handle that Dijkstra’s cannot?",
+            questionText: "Which of the following can the Bellman-Ford algorithm handle that Dijkstra's cannot?",
             options: [
                 { optionText: "Graphs with negative edge weights", optionTag: "A" },
                 { optionText: "Graphs with loops", optionTag: "B" },
@@ -160,10 +160,10 @@ const quizData: Partial<QuizDocument> = {
         {
             questionText: "Which algorithm is similar in usage but differs in edge weight conditions?",
             options: [
-                { optionText: "Dijkstra’s algorithm", optionTag: "A" },
+                { optionText: "Dijkstra's algorithm", optionTag: "A" },
                 { optionText: "DFS", optionTag: "B" },
-                { optionText: "Prim’s algorithm", optionTag: "C" },
-                { optionText: "Kruskal’s algorithm", optionTag: "D" }
+                { optionText: "Prim's algorithm", optionTag: "C" },
+                { optionText: "Kruskal's algorithm", optionTag: "D" }
             ],
             correctOption: "A",
             score: 1

@@ -1,4 +1,4 @@
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
 
 const quizData: Partial<QuizDocument> = {
@@ -46,7 +46,7 @@ const quizData: Partial<QuizDocument> = {
       score: 1
     },
     {
-      questionText: "What does a circular linked list’s last node point to?",
+      questionText: "What does a circular linked list's last node point to?",
       options: [
         { optionText: "null", optionTag: "A" },
         { optionText: "itself", optionTag: "B" },
@@ -68,7 +68,7 @@ const quizData: Partial<QuizDocument> = {
       score: 1
     },
     {
-      questionText: "What’s the time complexity for deleting the last node in a singly linked list?",
+      questionText: "What's the time complexity for deleting the last node in a singly linked list?",
       options: [
         { optionText: "O(1)", optionTag: "A" },
         { optionText: "O(n)", optionTag: "B" },
@@ -81,7 +81,7 @@ const quizData: Partial<QuizDocument> = {
     {
       questionText: "How do you detect a cycle in a linked list?",
       options: [
-        { optionText: "Floyd’s Cycle Detection", optionTag: "A" },
+        { optionText: "Floyd's Cycle Detection", optionTag: "A" },
         { optionText: "DFS", optionTag: "B" },
         { optionText: "BFS", optionTag: "C" },
         { optionText: "Linear Search", optionTag: "D" }
@@ -122,7 +122,7 @@ const quizData: Partial<QuizDocument> = {
       correctOption: "A",
       score: 1
     },
-    
+
     // 10 more
     {
       questionText: "In JavaScript, how would you define a Node for a linked list?",
@@ -169,7 +169,7 @@ const quizData: Partial<QuizDocument> = {
       score: 1
     },
     {
-      questionText: "What’s the major advantage of linked lists over arrays?",
+      questionText: "What's the major advantage of linked lists over arrays?",
       options: [
         { optionText: "Efficient memory usage", optionTag: "A" },
         { optionText: "Fast random access", optionTag: "B" },
@@ -204,7 +204,7 @@ const quizData: Partial<QuizDocument> = {
     {
       questionText: "Which algorithm is best for detecting loop in a linked list?",
       options: [
-        { optionText: "Floyd’s Cycle Detection", optionTag: "A" },
+        { optionText: "Floyd's Cycle Detection", optionTag: "A" },
         { optionText: "Binary Search", optionTag: "B" },
         { optionText: "Two-pointer with same speed", optionTag: "C" },
         { optionText: "Recursion", optionTag: "D" }
@@ -213,7 +213,7 @@ const quizData: Partial<QuizDocument> = {
       score: 1
     },
     {
-      questionText: "What’s the time complexity of reversing a singly linked list?",
+      questionText: "What's the time complexity of reversing a singly linked list?",
       options: [
         { optionText: "O(n)", optionTag: "A" },
         { optionText: "O(1)", optionTag: "B" },

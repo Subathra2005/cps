@@ -1,4 +1,4 @@
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
 
 const quizData: Partial<QuizDocument> = {
@@ -103,7 +103,7 @@ const quizData: Partial<QuizDocument> = {
     {
       questionText: "What does 'pruning' mean in backtracking?",
       options: [
-        { optionText: "Avoiding paths that won’t lead to a solution", optionTag: "C" },
+        { optionText: "Avoiding paths that won't lead to a solution", optionTag: "C" },
         { optionText: "Cutting recursion depth", optionTag: "A" },
         { optionText: "Limiting memory usage", optionTag: "B" },
         { optionText: "Removing tree nodes", optionTag: "D" }

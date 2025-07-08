@@ -1,4 +1,4 @@
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
 
 const quizData: Partial<QuizDocument> = {
@@ -13,7 +13,7 @@ const quizData: Partial<QuizDocument> = {
   quizScore: 20,
   questions: [
     {
-      questionText: "Which type of graphs can Bellman-Ford handle that Dijkstra’s cannot?",
+      questionText: "Which type of graphs can Bellman-Ford handle that Dijkstra's cannot?",
       options: [
         { optionText: "Graphs with negative edge weights", optionTag: "A" },
         { optionText: "Graphs with cycles", optionTag: "B" },
@@ -46,7 +46,7 @@ const quizData: Partial<QuizDocument> = {
       score: 1
     },
     {
-      questionText: "What does Bellman-Ford detect that Dijkstra’s does not?",
+      questionText: "What does Bellman-Ford detect that Dijkstra's does not?",
       options: [
         { optionText: "Negative weight cycles", optionTag: "A" },
         { optionText: "Shortest distance", optionTag: "B" },
@@ -114,8 +114,8 @@ const quizData: Partial<QuizDocument> = {
     {
       questionText: "Which of the following is true about Bellman-Ford?",
       options: [
-        { optionText: "It can be slower than Dijkstra’s for dense graphs", optionTag: "A" },
-        { optionText: "It’s faster than DFS", optionTag: "B" },
+        { optionText: "It can be slower than Dijkstra's for dense graphs", optionTag: "A" },
+        { optionText: "It's faster than DFS", optionTag: "B" },
         { optionText: "It uses a stack", optionTag: "C" },
         { optionText: "It always returns shortest path regardless of weights", optionTag: "D" }
       ],
@@ -156,7 +156,7 @@ const quizData: Partial<QuizDocument> = {
       score: 1
     },
     {
-      questionText: "Which loop structure is used in Bellman-Ford’s core implementation?",
+      questionText: "Which loop structure is used in Bellman-Ford's core implementation?",
       options: [
         { optionText: "Nested for-loops", optionTag: "A" },
         { optionText: "While loops", optionTag: "B" },

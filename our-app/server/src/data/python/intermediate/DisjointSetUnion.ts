@@ -1,4 +1,4 @@
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
 
 const quizData: Partial<QuizDocument> = {
@@ -61,7 +61,7 @@ const quizData: Partial<QuizDocument> = {
       options: [
         { optionText: "Path Compression", optionTag: "A" },
         { optionText: "Merge Sort", optionTag: "B" },
-        { optionText: "Dijkstra’s Algorithm", optionTag: "C" },
+        { optionText: "Dijkstra's Algorithm", optionTag: "C" },
         { optionText: "Recursion", optionTag: "D" }
       ],
       correctOption: "A",
@@ -116,7 +116,7 @@ const quizData: Partial<QuizDocument> = {
       options: [
         { optionText: "Prim's", optionTag: "A" },
         { optionText: "Bellman-Ford", optionTag: "B" },
-        { optionText: "Kruskal’s", optionTag: "C" },
+        { optionText: "Kruskal's", optionTag: "C" },
         { optionText: "BFS", optionTag: "D" }
       ],
       correctOption: "C",
@@ -200,7 +200,7 @@ const quizData: Partial<QuizDocument> = {
       score: 1
     },
     {
-      questionText: "What is the parent of a set’s root?",
+      questionText: "What is the parent of a set's root?",
       options: [
         { optionText: "None", optionTag: "A" },
         { optionText: "Itself", optionTag: "B" },
@@ -225,7 +225,7 @@ const quizData: Partial<QuizDocument> = {
       questionText: "What is a drawback of DSU?",
       options: [
         { optionText: "No support for dynamic sets", optionTag: "A" },
-        { optionText: "Can’t find prefix sums", optionTag: "B" },
+        { optionText: "Can't find prefix sums", optionTag: "B" },
         { optionText: "Only static operations", optionTag: "C" },
         { optionText: "Does not support graph operations", optionTag: "D" }
       ],

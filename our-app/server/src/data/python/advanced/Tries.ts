@@ -1,4 +1,4 @@
-import { QuizDocument } from "../../../interfaces/Document_Interfaces";
+import type { QuizDocument } from "../../../interfaces/Document_Interfaces";
 import mongoose from "mongoose";
 
 const quizData: Partial<QuizDocument> = {
@@ -167,7 +167,7 @@ const quizData: Partial<QuizDocument> = {
       score: 1,
     },
     {
-      questionText: "Which of these best describes Trie’s space usage?",
+      questionText: "Which of these best describes Trie's space usage?",
       options: [
         { optionText: "Can be more than HashMap", optionTag: "A" },
         { optionText: "Same as AVL tree", optionTag: "B" },
