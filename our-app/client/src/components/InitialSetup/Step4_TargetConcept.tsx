@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '@/utils/api';
+import api from '../../utils/api';
 
 interface Props {
   userId: string;
@@ -224,12 +224,12 @@ const Step4_TargetConcept: React.FC<Props> = ({ userId, onNext }) => {
 
     try {
       // Set the target concept as in-progress
-      await api.post(`/users/${userId}/update-user-courses?status=in-progress`, {
+      await api.post(`/api/users/${userId}/update-user-courses?status=in-progress`, {
         completedCourses: [conceptName]
       });
 
       // Get the recommended learning path
-      const pathRes = await api.get(`/users/${userId}/recommend-path?target=${encodeURIComponent(conceptName)}`);
+      const pathRes = await api.get(`/api/users/${userId}/recommend-path?target=${encodeURIComponent(conceptName)}`);
       setLearningPath(pathRes.data.recommendedPath || []);
       setShowPath(true);
     } catch (error) {
@@ -249,7 +249,7 @@ const Step4_TargetConcept: React.FC<Props> = ({ userId, onNext }) => {
     try {
       // Enroll user in the learning path courses
       if (learningPath.length > 0) {
-        await api.post(`/users/${userId}/update-user-courses?status=enrolled`, {
+        await api.post(`/api/users/${userId}/update-user-courses?status=enrolled`, {
           completedCourses: learningPath
         });
       }
@@ -302,7 +302,7 @@ const Step4_TargetConcept: React.FC<Props> = ({ userId, onNext }) => {
                   <p className="text-muted mb-3 small">{concept.description}</p>
                   <div className="d-flex justify-content-between align-items-center mb-2">
                     <span className={`badge ${concept.difficulty === 'Beginner' ? 'bg-success' :
-                        concept.difficulty === 'Intermediate' ? 'bg-warning' : 'bg-danger'
+                      concept.difficulty === 'Intermediate' ? 'bg-warning' : 'bg-danger'
                       }`}>
                       {concept.difficulty}
                     </span>

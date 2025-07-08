@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
-import api from '@/utils/api';
+import api from '../utils/api';
 import { useTabSwitchDetection } from '../hooks/useTabSwitchDetection';
 
 interface CustomQuizProps {
@@ -28,11 +28,11 @@ const CustomQuiz: React.FC<CustomQuizProps> = ({ onQuizStart, onQuizEnd }) => {
     const checkAvailabilityAndCreateQuiz = async () => {
       try {
         // First check if this level is available for the user
-        const userRes = await api.get(`/users/${userId}`);
+        const userRes = await api.get(`/api/users/${userId}`);
         const userData = userRes.data;
 
         // Get all custom quizzes for this user to check progression
-        const customQuizzesRes = await api.get(`/users/${userId}/custom-quizzes`);
+        const customQuizzesRes = await api.get(`/api/users/${userId}/custom-quizzes`);
         const allCustomQuizzes = customQuizzesRes.data.customQuizzes || [];
 
         // Check if this level is already completed
@@ -70,7 +70,7 @@ const CustomQuiz: React.FC<CustomQuizProps> = ({ onQuizStart, onQuizEnd }) => {
         const userLang = userData.lang || 'java';
 
         // Create custom quiz for user based on enrolled courses
-        const res = await api.post(`/users/${userId}/custom-quiz?lang=${userLang}&level=${difficulty}&totalQuestions=15`);
+        const res = await api.post(`/api/users/${userId}/custom-quiz?lang=${userLang}&level=${difficulty}&totalQuestions=15`);
 
         if (res.data.customQuiz) {
           setCustomQuizId(res.data.customQuiz._id);
@@ -92,7 +92,7 @@ const CustomQuiz: React.FC<CustomQuizProps> = ({ onQuizStart, onQuizEnd }) => {
   // Fetch review after submission
   useEffect(() => {
     if (submitted && userId && customQuizId) {
-      api.get(`/users/${userId}/custom-quiz/${customQuizId}`)
+      api.get(`/api/users/${userId}/custom-quiz/${customQuizId}`)
         .then(res => {
           setReview(res.data);
         })
@@ -117,7 +117,7 @@ const CustomQuiz: React.FC<CustomQuizProps> = ({ onQuizStart, onQuizEnd }) => {
 
   const handleSubmit = async () => {
     try {
-      const res = await api.post(`/users/${userId}/custom-quiz/${customQuizId}/submit`, {
+      const res = await api.post(`/api/users/${userId}/custom-quiz/${customQuizId}/submit`, {
         answers
       });
       setScore(res.data.results?.score ?? res.data.score);
@@ -143,7 +143,7 @@ const CustomQuiz: React.FC<CustomQuizProps> = ({ onQuizStart, onQuizEnd }) => {
         violationAnswers.push('B');
       }
       // Submit with violation flag, force score 0, and lockout
-      const res = await api.post(`/users/${userId}/custom-quiz/${customQuizId}/submit`, {
+      const res = await api.post(`/api/users/${userId}/custom-quiz/${customQuizId}/submit`, {
         answers: violationAnswers,
         violation: true,
         forceZeroScore: true, // backend should treat this as a forced zero

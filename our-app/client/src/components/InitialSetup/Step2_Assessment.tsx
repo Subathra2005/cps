@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import api from '@/utils/api';
+import api from '../../utils/api';
 
 const allConcepts = [
   // Beginner Level
@@ -119,7 +119,7 @@ const Step2_Assessment: React.FC<Props> = ({ userId, language, onNext }) => {
 
     console.log('Submitting assessment with completed courses:', completedCourses);
     try {
-      const res = await api.post(`/users/${userId}/update-user-courses?status=enrolled`, {
+      const res = await api.post(`/api/users/${userId}/update-user-courses?status=enrolled`, {
         completedCourses: completedCourses
       });
       if (res.status === 200) {

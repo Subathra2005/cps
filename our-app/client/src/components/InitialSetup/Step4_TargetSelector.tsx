@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import api from '@/utils/api';
+import api from '../../utils/api';
 
 interface Props {
   userId: string;
@@ -108,7 +108,7 @@ const Step4_TargetSelector: React.FC<Props> = ({ userId, onNext }) => {
   useEffect(() => {
     const checkExistingPath = async () => {
       try {
-        const userRes = await api.get(`/users/${userId}/dashboard`);
+        const userRes = await api.get(`/api/users/${userId}/dashboard`);
         const userData = userRes.data;
 
         if (userData.recommendations?.path?.target && userData.recommendations?.path?.path) {
@@ -143,7 +143,7 @@ const Step4_TargetSelector: React.FC<Props> = ({ userId, onNext }) => {
 
     try {
       // Get the recommended path - this will automatically store both target and path in user document
-      const pathRes = await api.get(`/users/${userId}/recommend-path?target=${encodeURIComponent(backendCourseName)}`);
+      const pathRes = await api.get(`/api/users/${userId}/recommend-path?target=${encodeURIComponent(backendCourseName)}`);
 
       setRecommendedPath(pathRes.data.recommendedPath || []);
       setMessage(`Great! Your learning path to reach "${targetCourse}" has been generated and saved.`);

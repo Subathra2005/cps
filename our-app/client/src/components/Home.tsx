@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from './AuthContext';
-import api from '@/utils/api';
+import api from '../utils/api';
 
 
 const Home: React.FC = () => {
@@ -58,7 +58,7 @@ const Home: React.FC = () => {
     }
     try {
       // Use the existing /api/users/:id endpoint instead of /dashboard
-      const res = await api.get(`/users/${userId}`);
+      const res = await api.get(`/api/users/${userId}`);
       const userData = res.data;
 
       // Extract the same information from the user data structure

@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
-import api from '@/utils/api';
+import api from '../utils/api';
 import { useNavigate } from 'react-router-dom';
 
 interface UserData {
@@ -108,7 +108,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = async (email: string, password: string) => {
     try {
-      const res = await api.post('/login', {
+      const res = await api.post('/api/login', {
         email,
         password,
       });
@@ -127,7 +127,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const signup = async (userName: string, email: string, password: string, role: string) => {
     try {
       // Send role as a query parameter, not in the body
-      await api.post(`/signup?role=${role}`, {
+      await api.post(`/api/signup?role=${role}`, {
         name: userName, // Backend expects 'name', not 'userName'
         email,
         password

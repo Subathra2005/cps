@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import api from '@/utils/api';
+import api from '../utils/api';
 import { useQuizProgression } from '../hooks/useQuizProgression';
 
 interface CourseQuizProps {
@@ -51,7 +51,7 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({ onQuizStart, onQuizEnd }) => {
 
         for (const level of allLevels) {
           try {
-            const reviewRes = await api.get(`/users/${userId}/${lang}/${level}/${encodeURIComponent(topic || '')}/review`);
+            const reviewRes = await api.get(`/api/users/${userId}/${lang}/${level}/${encodeURIComponent(topic || '')}/review`);
             if (reviewRes.data && reviewRes.data.statistics) {
               const stats = reviewRes.data.statistics;
               const bestScore = stats.bestScore || 0;
@@ -106,7 +106,7 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({ onQuizStart, onQuizEnd }) => {
         });
 
         // Update course completion status with the correct score
-        const updateRes = await api.put(`/users/${userId}/courses/${encodeURIComponent(formattedTopic || topic || '')}/complete`, {
+        const updateRes = await api.put(`/api/users/${userId}/courses/${encodeURIComponent(formattedTopic || topic || '')}/complete`, {
           result: resultToSend,
           actualScore: actualScore, // Also send the actual score for reference
           status: 'completed'
@@ -190,7 +190,7 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({ onQuizStart, onQuizEnd }) => {
 
     try {
       // Check if this level is available by trying to fetch questions (backend will handle locking)
-      const questionsRes = await api.get(`/users/${userId}/${lang}/${levelKey}/${encodeURIComponent(topic!)}/questions`);
+      const questionsRes = await api.get(`/api/users/${userId}/${lang}/${levelKey}/${encodeURIComponent(topic!)}/questions`);
 
       if (questionsRes.data && questionsRes.data.questions) {
         // Questions fetched successfully, navigate to quiz
@@ -304,7 +304,7 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({ onQuizStart, onQuizEnd }) => {
             <div key={level.key} className="col-lg-4 col-md-6">
               <div
                 className={`card h-100 border-0 shadow-sm ${isCompleted ? 'border-success border-2' :
-                    !isAvailable ? 'opacity-50' : ''
+                  !isAvailable ? 'opacity-50' : ''
                   }`}
                 style={{
                   cursor: isAvailable ? 'pointer' : 'not-allowed'
@@ -337,8 +337,8 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({ onQuizStart, onQuizEnd }) => {
 
                   <div className="mb-3">
                     <span className={`badge ${isCompleted ? 'bg-success' :
-                        isLocked ? 'bg-warning' :
-                          !isAvailable ? 'bg-secondary' : 'bg-primary'
+                      isLocked ? 'bg-warning' :
+                        !isAvailable ? 'bg-secondary' : 'bg-primary'
                       }`}>
                       {isCompleted ? 'Completed' :
                         isLocked ? 'Locked (24h)' :
@@ -348,7 +348,7 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({ onQuizStart, onQuizEnd }) => {
 
                   <button
                     className={`btn ${isCompleted ? 'btn-outline-success' :
-                        isAvailable ? 'btn-primary' : 'btn-secondary'
+                      isAvailable ? 'btn-primary' : 'btn-secondary'
                       } px-4`}
                     disabled={!isAvailable}
                     onClick={() => handleStartLevel(level.key)}

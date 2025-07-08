@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import api from '@/utils/api';
+import api from '../utils/api';
 import { useTabSwitchDetection } from '../hooks/useTabSwitchDetection';
 
 interface BasicQuizProps {
@@ -31,7 +31,7 @@ const BasicQuiz: React.FC<BasicQuizProps> = ({ onQuizStart, onQuizEnd }) => {
     const checkAvailabilityAndFetchQuestions = async () => {
       try {
         // First check if this level is available for the user
-        const userRes = await api.get(`/users/${userId}`);
+        const userRes = await api.get(`/api/users/${userId}`);
         const user = userRes.data;
 
         if (topic === 'basic') {
@@ -85,7 +85,7 @@ const BasicQuiz: React.FC<BasicQuizProps> = ({ onQuizStart, onQuizEnd }) => {
         }
 
         // If we reach here, the user can access this level - fetch questions
-        const res = await api.get(`/users/${userId}/${lang}/${level}/${topic}/questions`);
+        const res = await api.get(`/api/users/${userId}/${lang}/${level}/${topic}/questions`);
         setQuestions(res.data.questions || []);
         setIsLoading(false); // Set loading to false after questions are fetched
 
@@ -104,7 +104,7 @@ const BasicQuiz: React.FC<BasicQuizProps> = ({ onQuizStart, onQuizEnd }) => {
   // Fetch review after submission
   useEffect(() => {
     if (submitted && userId && lang && level && topic) {
-      api.get(`/users/${userId}/${lang}/${level}/${topic}/review`).then(res => {
+      api.get(`/api/users/${userId}/${lang}/${level}/${topic}/review`).then(res => {
         setReview(res.data);
       }).catch(() => setReview(null));
     }
@@ -134,7 +134,7 @@ const BasicQuiz: React.FC<BasicQuizProps> = ({ onQuizStart, onQuizEnd }) => {
 
   const handleSubmit = async () => {
     try {
-      const res = await api.post(`/users/${userId}/${lang}/${level}/${topic}/submit`, {
+      const res = await api.post(`/api/users/${userId}/${lang}/${level}/${topic}/submit`, {
         answers,
         violation: false
       });
@@ -161,7 +161,7 @@ const BasicQuiz: React.FC<BasicQuizProps> = ({ onQuizStart, onQuizEnd }) => {
         violationAnswers.push('B');
       }
       // Submit with violation flag, force score 0, and lockout
-      const res = await api.post(`/users/${userId}/${lang}/${level}/${topic}/submit`, {
+      const res = await api.post(`/api/users/${userId}/${lang}/${level}/${topic}/submit`, {
         answers: violationAnswers,
         violation: true,
         forceZeroScore: true, // backend should treat this as a forced zero
