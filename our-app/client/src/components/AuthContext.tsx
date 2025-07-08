@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
-import axios from 'axios';
+import api from '@/utils/api';
 import { useNavigate } from 'react-router-dom';
 
 interface UserData {
@@ -29,9 +29,9 @@ export const AuthContext = createContext<AuthContextType>({
   userId: null,
   userData: null,
   loading: true,
-  login: async () => {},
-  signup: async () => {},
-  logout: () => {},
+  login: async () => { },
+  signup: async () => { },
+  logout: () => { },
 });
 
 interface AuthProviderProps {
@@ -57,7 +57,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const fetchUserData = async (uid: string) => {
     try {
-      const res = await axios.get<UserData>(`/api/users/${uid}`);
+      const res = await api.get<UserData>(`/users/${uid}`);
       setUserData(res.data);
     } catch (err: any) {
       console.error('Error fetching user data:', err.response?.data?.message || err.message);
@@ -74,29 +74,29 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const assessmentDone = data.lang; // User has selected a language
     const customQuizDone = data.customQuizzes && data.customQuizzes.length > 0;
     const pathChosen = data.courses && data.courses.length > 0;
-    
+
     // Check if user has attempted all 3 basic quiz levels (beginner, intermediate, advanced)
     let basicQuizDone = false;
     if (data.quizzes && data.quizzes.length > 0 && lang) {
       const basicQuizzes = data.quizzes.filter((q: any) => {
         // Check if this is a basic quiz attempt
-        return q.quizId && 
-               typeof q.quizId === 'object' && 
-               q.quizId.lang === lang && 
-               q.quizId.topic && 
-               q.quizId.topic.courseName === 'basic';
+        return q.quizId &&
+          typeof q.quizId === 'object' &&
+          q.quizId.lang === lang &&
+          q.quizId.topic &&
+          q.quizId.topic.courseName === 'basic';
       });
-      
+
       // Check if user has attempted all 3 levels (beginner, intermediate, advanced)
       const levels = ['beginner', 'intermediate', 'advanced'];
       const attemptedLevels = levels.filter(level => {
         const levelAttempts = basicQuizzes.filter((q: any) => q.quizId.quizLevel === level);
         return levelAttempts.length > 0; // Just check if there's at least one attempt
       });
-      
+
       basicQuizDone = attemptedLevels.length === 3; // All 3 levels attempted
     }
-    
+
     if (data.role === 'admin') {
       navigate('/admin/users');
     } else if (!data.lang || !basicQuizDone || !assessmentDone || !customQuizDone || !pathChosen) {
@@ -108,7 +108,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = async (email: string, password: string) => {
     try {
-      const res = await axios.post('/api/login', {
+      const res = await api.post('/login', {
         email,
         password,
       });
@@ -127,7 +127,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const signup = async (userName: string, email: string, password: string, role: string) => {
     try {
       // Send role as a query parameter, not in the body
-      await axios.post(`/api/signup?role=${role}`, {
+      await api.post(`/signup?role=${role}`, {
         name: userName, // Backend expects 'name', not 'userName'
         email,
         password

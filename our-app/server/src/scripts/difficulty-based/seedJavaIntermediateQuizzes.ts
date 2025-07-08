@@ -136,7 +136,7 @@ const seedJavaIntermediateQuizzes = async () => {
             };
 
             await Quiz.create(newQuiz);
-            console.log(`Inserted intermediate quiz for: ${courseTitle}`);
+            console.log(`Inserted Java intermediate quiz for: ${courseTitle}`);
         }
 
         console.log("Java intermediate quizzes inserted successfully.");

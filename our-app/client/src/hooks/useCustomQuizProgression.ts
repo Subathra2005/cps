@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '@/utils/api';
 
 export interface CustomQuizProgressionOptions {
   userId: string;
@@ -24,7 +24,7 @@ export function useCustomQuizProgression({ userId, difficulties }: CustomQuizPro
     const fetchStatus = async () => {
       setLoading(true);
       try {
-        const userRes = await axios.get(`/api/users/${userId}`);
+        const userRes = await api.get(`/api/users/${userId}`);
         const userData = userRes.data;
         const customQuizInfos = userData.customQuizzes || [];
         const completedLevels: string[] = [];
@@ -32,12 +32,12 @@ export function useCustomQuizProgression({ userId, difficulties }: CustomQuizPro
         const userUpdatedAt = userData.updatedAt || userData.createdAt || new Date().toISOString();
 
         // Get all custom quizzes for this user
-        const customQuizzesRes = await axios.get(`/api/users/${userId}/custom-quizzes`);
+        const customQuizzesRes = await api.get(`/api/users/${userId}/custom-quizzes`);
         const allCustomQuizzes = customQuizzesRes.data.customQuizzes || [];
 
         for (const diff of difficulties) {
           // Find completed custom quizzes for this difficulty level
-          const levelQuizzes = allCustomQuizzes.filter((quiz: any) => 
+          const levelQuizzes = allCustomQuizzes.filter((quiz: any) =>
             quiz.quizLevel === diff.key && quiz.isSubmitted
           );
 

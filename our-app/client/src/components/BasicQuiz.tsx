@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '@/utils/api';
 import { useTabSwitchDetection } from '../hooks/useTabSwitchDetection';
 
 interface BasicQuizProps {
@@ -31,22 +31,22 @@ const BasicQuiz: React.FC<BasicQuizProps> = ({ onQuizStart, onQuizEnd }) => {
     const checkAvailabilityAndFetchQuestions = async () => {
       try {
         // First check if this level is available for the user
-        const userRes = await axios.get(`/api/users/${userId}`);
+        const userRes = await api.get(`/users/${userId}`);
         const user = userRes.data;
-        
+
         if (topic === 'basic') {
           // Find attempts for this specific level and topic for basic quizzes
           const levelAttempts = user.quizzes.filter((q: any) => {
-            if (typeof q.quizId === 'object' && q.quizId?.lang === lang && 
-                q.quizId?.quizLevel === level && q.quizId?.topic?.courseName === topic) {
+            if (typeof q.quizId === 'object' && q.quizId?.lang === lang &&
+              q.quizId?.quizLevel === level && q.quizId?.topic?.courseName === topic) {
               return true;
             }
             return false;
           });
-          
+
           // Check if this level is already completed (strict one-attempt blocking)
           const levelCompleted = levelAttempts.length > 0;
-          
+
           if (levelCompleted) {
             alert(`You have already completed the ${level} level basic quiz! Each level can only be attempted once.`);
             // Redirect to appropriate next level for basic quizzes
@@ -62,20 +62,20 @@ const BasicQuiz: React.FC<BasicQuizProps> = ({ onQuizStart, onQuizEnd }) => {
         } else {
           // For topic quizzes, check if user has passed (≥60%)
           const levelAttempts = user.quizzes.filter((q: any) => {
-            if (typeof q.quizId === 'object' && q.quizId?.lang === lang && 
-                q.quizId?.quizLevel === level && q.quizId?.topic?.courseName === topic) {
+            if (typeof q.quizId === 'object' && q.quizId?.lang === lang &&
+              q.quizId?.quizLevel === level && q.quizId?.topic?.courseName === topic) {
               return true;
             }
             return false;
           });
-          
+
           // Check if user has a passing attempt (≥60%) for topic quizzes
           const passedAttempt = levelAttempts.find((attempt: any) => {
             const score = attempt.userScore || 0;
             const total = attempt.userAnswers?.length || 10;
             return (score / total) >= 0.6;
           });
-          
+
           if (passedAttempt) {
             const passedPercentage = Math.round((passedAttempt.userScore / (passedAttempt.userAnswers?.length || 10)) * 100);
             alert(`You have already passed ${topic} ${level} level with ${passedPercentage}%!`);
@@ -83,12 +83,12 @@ const BasicQuiz: React.FC<BasicQuizProps> = ({ onQuizStart, onQuizEnd }) => {
             return;
           }
         }
-        
+
         // If we reach here, the user can access this level - fetch questions
-        const res = await axios.get(`/api/users/${userId}/${lang}/${level}/${topic}/questions`);
+        const res = await api.get(`/users/${userId}/${lang}/${level}/${topic}/questions`);
         setQuestions(res.data.questions || []);
         setIsLoading(false); // Set loading to false after questions are fetched
-        
+
       } catch (error) {
         console.error('Error checking availability or fetching questions:', error);
         setQuestions([]);
@@ -104,7 +104,7 @@ const BasicQuiz: React.FC<BasicQuizProps> = ({ onQuizStart, onQuizEnd }) => {
   // Fetch review after submission
   useEffect(() => {
     if (submitted && userId && lang && level && topic) {
-      axios.get(`/api/users/${userId}/${lang}/${level}/${topic}/review`).then(res => {
+      api.get(`/users/${userId}/${lang}/${level}/${topic}/review`).then(res => {
         setReview(res.data);
       }).catch(() => setReview(null));
     }
@@ -134,7 +134,7 @@ const BasicQuiz: React.FC<BasicQuizProps> = ({ onQuizStart, onQuizEnd }) => {
 
   const handleSubmit = async () => {
     try {
-      const res = await axios.post(`/api/users/${userId}/${lang}/${level}/${topic}/submit`, {
+      const res = await api.post(`/users/${userId}/${lang}/${level}/${topic}/submit`, {
         answers,
         violation: false
       });
@@ -150,10 +150,10 @@ const BasicQuiz: React.FC<BasicQuizProps> = ({ onQuizStart, onQuizEnd }) => {
   // Handle tab switching violation - mark as violation, do not lock or auto-submit with 0
   const handleTabSwitchViolation = async () => {
     if (tabViolationSubmitted || submitted) return;
-    
+
     console.log('Tab switching violation detected - marking as violation, auto-submitting with score 0 and locking');
     setTabViolationSubmitted(true);
-    
+
     try {
       // Fill remaining answers with a valid default (e.g., 'B') to avoid backend enum errors
       const violationAnswers = [...answers];
@@ -161,7 +161,7 @@ const BasicQuiz: React.FC<BasicQuizProps> = ({ onQuizStart, onQuizEnd }) => {
         violationAnswers.push('B');
       }
       // Submit with violation flag, force score 0, and lockout
-      const res = await axios.post(`/api/users/${userId}/${lang}/${level}/${topic}/submit`, {
+      const res = await api.post(`/users/${userId}/${lang}/${level}/${topic}/submit`, {
         answers: violationAnswers,
         violation: true,
         forceZeroScore: true, // backend should treat this as a forced zero
@@ -257,7 +257,7 @@ const BasicQuiz: React.FC<BasicQuizProps> = ({ onQuizStart, onQuizEnd }) => {
   };
 
   if (!questions.length) return <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '60vh' }}><div className="spinner-border text-primary" role="status"><span className="visually-hidden">Loading...</span></div></div>;
-  
+
   if (submitted) return (
     <div className="container mt-5">
       <div className="d-flex flex-column align-items-center mb-4">
@@ -265,9 +265,9 @@ const BasicQuiz: React.FC<BasicQuizProps> = ({ onQuizStart, onQuizEnd }) => {
         <div style={{ width: 120, height: 120, borderRadius: '50%', background: 'linear-gradient(135deg, #ff9800 60%, #1976d2 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 24, boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }}>
           <span style={{ color: 'white', fontWeight: 700, fontSize: 32 }}>{correctCount}</span>
         </div>
-        
+
         <h3 className="mb-4 text-center fw-bold" style={{ letterSpacing: 1 }}>Quiz Completed!</h3>
-        
+
         {/* Stats Row */}
         <div className="row w-100 justify-content-center mb-4">
           <div className="col-6 col-md-2 mb-2">
@@ -315,7 +315,7 @@ const BasicQuiz: React.FC<BasicQuizProps> = ({ onQuizStart, onQuizEnd }) => {
               Continue to Assessment
             </button>
           )}
-          <button className="btn btn-outline-secondary px-4 py-2" onClick={() => window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'})}>
+          <button className="btn btn-outline-secondary px-4 py-2" onClick={() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })}>
             View Review
           </button>
         </div>
@@ -327,7 +327,7 @@ const BasicQuiz: React.FC<BasicQuizProps> = ({ onQuizStart, onQuizEnd }) => {
         {questions.map((question, qIdx) => {
           const userAnswer = answers[qIdx];
           const isCorrect = userAnswer === question.correctOption;
-          
+
           return (
             <div key={qIdx} className="card mb-4 border-0 shadow-sm">
               <div className="card-body p-4">
@@ -338,12 +338,12 @@ const BasicQuiz: React.FC<BasicQuizProps> = ({ onQuizStart, onQuizEnd }) => {
                     {isCorrect ? 'Correct' : 'Incorrect'}
                   </span>
                 </div>
-                
+
                 <div className="d-flex flex-column gap-2">
                   {question.options.map((option: any, optIdx: number) => {
                     let className = 'px-3 py-2 rounded border d-flex align-items-center';
                     let style: React.CSSProperties = { fontWeight: 500 };
-                    
+
                     // Correct answer styling
                     if (option.optionTag === question.correctOption) {
                       className += ' border-success';
@@ -376,7 +376,7 @@ const BasicQuiz: React.FC<BasicQuizProps> = ({ onQuizStart, onQuizEnd }) => {
                     );
                   })}
                 </div>
-                
+
                 <div className="mt-3 p-3 bg-light rounded">
                   <div className="row">
                     <div className="col-md-4">
@@ -397,7 +397,7 @@ const BasicQuiz: React.FC<BasicQuizProps> = ({ onQuizStart, onQuizEnd }) => {
             </div>
           );
         })}
-        
+
         {/* Bottom Navigation */}
         <div className="text-center py-4">
           {getNextLevel() ? (
@@ -441,12 +441,12 @@ const BasicQuiz: React.FC<BasicQuizProps> = ({ onQuizStart, onQuizEnd }) => {
               {lang ? lang.charAt(0).toUpperCase() + lang.slice(1) : 'Quiz'} - {level || 'Level'}
             </span>
           </div>
-          
+
           {/* Progress bar */}
           <div className="progress mb-4" style={{ height: '8px' }}>
-            <div 
-              className="progress-bar bg-primary" 
-              role="progressbar" 
+            <div
+              className="progress-bar bg-primary"
+              role="progressbar"
               style={{ width: `${((current + 1) / questions.length) * 100}%` }}
             ></div>
           </div>
@@ -454,14 +454,14 @@ const BasicQuiz: React.FC<BasicQuizProps> = ({ onQuizStart, onQuizEnd }) => {
           <div className="card border-0 shadow-sm rounded-4 p-4 mb-4">
             <div className="card-body">
               <h2 className="h4 fw-bold mb-4">{questionText}</h2>
-              
+
               <div className="d-grid gap-3">
                 {Array.isArray(options) && options.length > 0 ? (
                   options.map((opt: any, idx: number) => (
-                    <div 
+                    <div
                       key={idx}
                       className={`card border-2 cursor-pointer ${answers[current] === opt.optionTag ? 'border-primary bg-primary bg-opacity-10' : 'border-light'}`}
-                      style={{ 
+                      style={{
                         cursor: 'pointer',
                         transition: 'all 0.2s ease'
                       }}
@@ -480,7 +480,7 @@ const BasicQuiz: React.FC<BasicQuizProps> = ({ onQuizStart, onQuizEnd }) => {
                       }}
                     >
                       <div className="card-body py-3 d-flex align-items-center">
-                        <div 
+                        <div
                           className={`rounded-circle d-flex align-items-center justify-content-center me-3 ${answers[current] === opt.optionTag ? 'bg-primary text-white' : 'bg-light text-dark'}`}
                           style={{ width: '40px', height: '40px', fontSize: '16px', fontWeight: 'bold' }}
                         >
@@ -496,12 +496,12 @@ const BasicQuiz: React.FC<BasicQuizProps> = ({ onQuizStart, onQuizEnd }) => {
               </div>
             </div>
           </div>
-          
+
           {/* Navigation buttons */}
           <div className="d-flex justify-content-between align-items-center">
             <div>
               {/* Debug button - remove in production */}
-              <button 
+              <button
                 className="btn btn-warning btn-sm"
                 onClick={testTabDetection}
                 title="Test tab detection (Debug only)"
@@ -511,7 +511,7 @@ const BasicQuiz: React.FC<BasicQuizProps> = ({ onQuizStart, onQuizEnd }) => {
             </div>
             <div className="d-flex gap-2">
               {current > 0 && (
-                <button 
+                <button
                   className="btn btn-outline-secondary px-4"
                   onClick={handlePrev}
                 >
@@ -519,7 +519,7 @@ const BasicQuiz: React.FC<BasicQuizProps> = ({ onQuizStart, onQuizEnd }) => {
                 </button>
               )}
               {current < questions.length - 1 ? (
-                <button 
+                <button
                   className="btn btn-primary px-4"
                   onClick={handleNext}
                   disabled={!answers[current]}
@@ -527,7 +527,7 @@ const BasicQuiz: React.FC<BasicQuizProps> = ({ onQuizStart, onQuizEnd }) => {
                   Next Question
                 </button>
               ) : (
-                <button 
+                <button
                   className="btn btn-success px-4"
                   onClick={handleSubmit}
                   disabled={!answers[current]}

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '@/utils/api';
 
 export interface QuizProgressionOptions {
   userId: string;
@@ -26,7 +26,7 @@ export function useQuizProgression({ userId, language, topic, difficulties }: Qu
     const fetchStatus = async () => {
       setLoading(true);
       try {
-        const userRes = await axios.get(`/api/users/${userId}`);
+        const userRes = await api.get(`/api/users/${userId}`);
         const userData = userRes.data;
         const quizInfos = userData.quizzes || [];
         const completedLevels: string[] = [];
@@ -36,7 +36,7 @@ export function useQuizProgression({ userId, language, topic, difficulties }: Qu
         const courseQuizLockouts = userData.courseQuizLockouts || {};
         for (const diff of difficulties) {
           try {
-            const quizRes = await axios.get(`/api/quizzes/lang/${language}/level/${diff.key}/topic/${topic}`);
+            const quizRes = await api.get(`/api/quizzes/lang/${language}/level/${diff.key}/topic/${topic}`);
             const quiz = quizRes.data;
             const quizId = Array.isArray(quiz) ? (quiz[0]?._id || quiz[0]?.id) : (quiz?._id || quiz?.id);
             if (!quizId) continue;
@@ -54,7 +54,7 @@ export function useQuizProgression({ userId, language, topic, difficulties }: Qu
               }
               continue;
             }
-            
+
             // TOPIC QUIZ LOGIC: 2 attempts, lockout if both ≤50%
             // Sort attempts by most recent first
             const sortedAttempts = attempts.sort((a: any, b: any) => {
@@ -89,7 +89,7 @@ export function useQuizProgression({ userId, language, topic, difficulties }: Qu
               const score = typeof mostRecent.userScore === 'number' ? mostRecent.userScore : 0;
               const total = Array.isArray(mostRecent.userAnswers) ? mostRecent.userAnswers.length : 10;
               if (total > 0 && (score / total) <= 0.5) {
-                const lastTime = mostRecent.submittedAt 
+                const lastTime = mostRecent.submittedAt
                   ? new Date(mostRecent.submittedAt).getTime()
                   : new Date(userUpdatedAt).getTime();
                 const now = Date.now();

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '@/utils/api';
 import Step0_ChooseLanguage from '../components/InitialSetup/Step0_ChooseLanguage';
 import Step1_BasicQuizStart from '../components/InitialSetup/Step1_BasicQuizStart';
 import Step2_Assessment from '../components/InitialSetup/Step2_Assessment';
@@ -45,7 +45,7 @@ const InitialSetup: React.FC = () => {
     // Use axios instead of fetch for consistency
     const fetchUserData = async () => {
       try {
-        const res = await axios.get(`/api/users/${userId}`);
+        const res = await api.get(`/api/users/${userId}`);
         const data: UserDashboard = res.data;
         
         setDashboard(data);
@@ -118,7 +118,7 @@ const InitialSetup: React.FC = () => {
                 setLanguage(lang);
                 try {
                   // Use axios instead of fetch for consistency
-                  await axios.put(`/api/users/${userId}`, { lang: lang });
+                  await api.put(`/api/users/${userId}`, { lang: lang });
                   goNext();
                 } catch (error) {
                   console.error('Error saving language:', error);
