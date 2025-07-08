@@ -6,8 +6,9 @@ interface QuizReviewProps {
     userAnswers: string[];
     userScore: number;
     submittedAt: string;
-    feedback?: string; // <-- add optional feedback
-    type?: string;     // <-- add optional type
+    feedback?: string;
+    type?: string;
+    userId?: string; // <-- add userId for custom quiz lookup
     // ...other fields as needed
   };
   onClose: () => void;
@@ -29,42 +30,112 @@ const QuizReview: React.FC<QuizReviewProps> = ({ attempt, onClose }) => {
     const userAnswers = Array.isArray(attempt.userAnswers) ? attempt.userAnswers : [];
     const isCustomQuiz = (typeof attempt.feedback === 'string' && attempt.feedback === 'Custom Quiz') ||
                         (typeof attempt.type === 'string' && attempt.type === 'custom');
-    const endpoint = isCustomQuiz ? `/api/custom-quizzes/${id}` : `/api/quizzes/${id}`;
 
-    fetch(endpoint)
-      .then(res => {
-        if (!res.ok) throw new Error(`Failed to fetch quiz data: ${res.status}`);
-        return res.json();
-      })
-      .then(quizData => {
-        let questions: any[] | null = null;
-        if (Array.isArray(quizData.questions)) {
-          questions = quizData.questions;
-        } else if (Array.isArray(quizData.quizQuestions)) {
-          questions = quizData.quizQuestions;
-        } else if (Array.isArray(quizData.customQuestions)) {
-          questions = quizData.customQuestions;
-        }
-        if (!questions) {
-          throw new Error("Quiz data is missing or malformed (no questions array)");
-        }
-        setQuizMeta({
-          title: quizData.title,
-          description: quizData.description,
-          totalQuestions: questions.length,
-          isCustom: isCustomQuiz
+    // Always get questions/options/correct answer from /api/custom-quizzes/:id for custom quizzes
+    if (isCustomQuiz) {
+      fetch(`/api/custom-quizzes/${id}`)
+        .then(res => {
+          if (!res.ok) throw new Error(`Failed to fetch quiz data: ${res.status}`);
+          return res.json();
+        })
+        .then(quizData => {
+          let questions: any[] | null = null;
+          if (Array.isArray(quizData.customQuestions)) {
+            questions = quizData.customQuestions;
+          }
+          if (!questions) {
+            throw new Error("Quiz data is missing or malformed (no questions array)");
+          }
+          setQuizMeta({
+            title: quizData.title,
+            description: quizData.description,
+            totalQuestions: questions.length,
+            isCustom: isCustomQuiz
+          });
+          // Use user answers from user object if available, else from attempt
+          let answers = userAnswers;
+          if (attempt.userId) {
+            fetch(`/api/users/${attempt.userId}`)
+              .then(res => res.ok ? res.json() : null)
+              .then(userData => {
+                if (userData && Array.isArray(userData.customQuizzes)) {
+                  const quizAttempt = userData.customQuizzes.find((q: any) => {
+                    const qid = q.quizId && (q.quizId.$oid || q.quizId);
+                    return qid === id;
+                  });
+                  if (quizAttempt && Array.isArray(quizAttempt.userAnswers)) {
+                    answers = quizAttempt.userAnswers;
+                  }
+                }
+                const reviews = questions.map((q: any, i: number) => ({
+                  ...q,
+                  userAnswer: answers[i] ?? null,
+                  isCorrect: answers[i] === q.correctOption
+                }));
+                setQuestionReviews(reviews);
+              })
+              .catch(() => {
+                // fallback to attempt.userAnswers
+                const reviews = questions.map((q: any, i: number) => ({
+                  ...q,
+                  userAnswer: userAnswers[i] ?? null,
+                  isCorrect: userAnswers[i] === q.correctOption
+                }));
+                setQuestionReviews(reviews);
+              })
+              .finally(() => setLoading(false));
+          } else {
+            const reviews = questions.map((q: any, i: number) => ({
+              ...q,
+              userAnswer: userAnswers[i] ?? null,
+              isCorrect: userAnswers[i] === q.correctOption
+            }));
+            setQuestionReviews(reviews);
+            setLoading(false);
+          }
+        })
+        .catch(error => {
+          setQuizMeta({ error: "Failed to load quiz details", message: error.message });
+          setLoading(false);
         });
-        const reviews = questions.map((q: any, i: number) => ({
-          ...q,
-          userAnswer: userAnswers[i] ?? null,
-          isCorrect: userAnswers[i] === q.correctOption
-        }));
-        setQuestionReviews(reviews);
-      })
-      .catch(error => {
-        setQuizMeta({ error: "Failed to load quiz details", message: error.message });
-      })
-      .finally(() => setLoading(false));
+      return;
+    }
+    // Only fetch /api/quizzes/:id for non-custom quizzes
+    if (!isCustomQuiz) {
+      const endpoint = `/api/quizzes/${id}`;
+      fetch(endpoint)
+        .then(res => {
+          if (!res.ok) throw new Error(`Failed to fetch quiz data: ${res.status}`);
+          return res.json();
+        })
+        .then(quizData => {
+          let questions: any[] | null = null;
+          if (Array.isArray(quizData.questions)) {
+            questions = quizData.questions;
+          } else if (Array.isArray(quizData.quizQuestions)) {
+            questions = quizData.quizQuestions;
+          }
+          if (!questions) {
+            throw new Error("Quiz data is missing or malformed (no questions array)");
+          }
+          setQuizMeta({
+            title: quizData.title,
+            description: quizData.description,
+            totalQuestions: questions.length,
+            isCustom: false
+          });
+          const reviews = questions.map((q: any, i: number) => ({
+            ...q,
+            userAnswer: userAnswers[i] ?? null,
+            isCorrect: userAnswers[i] === q.correctOption
+          }));
+          setQuestionReviews(reviews);
+        })
+        .catch(error => {
+          setQuizMeta({ error: "Failed to load quiz details", message: error.message });
+        })
+        .finally(() => setLoading(false));
+    }
   }, [attempt]);
 
   const userScore = questionReviews.reduce((score, q) => score + (q.isCorrect ? (q.score || 1) : 0), 0);

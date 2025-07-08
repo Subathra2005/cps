@@ -290,11 +290,23 @@ const Dashboard: React.FC<{ userId: string }> = ({ userId }) => {
         </div>
         
         {/* Quiz Review Modal */}
-        {(() => {
-          // Only show the modal if a test is selected and the modal flag is true
-          return showReviewModal && selectedTest && (
+        {showReviewModal && selectedTest && (() => {
+          const isCustom =
+            selectedTest.type === 'custom' ||
+            (typeof selectedTest.name === 'string' &&
+              selectedTest.name.toLowerCase().includes('custom quiz')) ||
+            (typeof selectedTest.feedback === 'string' &&
+              selectedTest.feedback.toLowerCase().includes('custom'));
+
+          const attempt = {
+            ...selectedTest,
+            type: isCustom ? 'custom' : selectedTest.type,
+            userId: isCustom ? (user?.userInfo?._id || user?._id) : undefined,
+          };
+
+          return (
             <QuizReview
-              attempt={selectedTest}
+              attempt={attempt}
               onClose={() => setShowReviewModal(false)}
             />
           );
