@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import Course from "../../models/Course";
 import Quiz from "../../models/Quiz";
-import {Lang, Level} from "../../types/customTypes";
+import type { Lang, Level } from "../../types/customTypes";
 
 // Java seeding scripts
 import seedJavaBeginnerQuizzes from "./seedJavaBeginnerQuizzes";
