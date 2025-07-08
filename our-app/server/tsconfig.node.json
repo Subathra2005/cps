@@ -21,7 +21,25 @@
     "noUncheckedSideEffectImports": true,
     "noImplicitAny": false,
     "noUnusedLocals": false,
-    "noUnusedParameters": false
+    "noUnusedParameters": false,
+    "baseUrl": "./src",
+    "paths": {
+      "@app": [
+        "app.ts"
+      ],
+      "@routes/*": [
+        "routes/*"
+      ],
+      "@controllers/*": [
+        "controllers/*"
+      ],
+      "@models/*": [
+        "models/*"
+      ],
+      "@interfaces/*": [
+        "interfaces/*"
+      ]
+    }
   },
   "include": [
     "src"
