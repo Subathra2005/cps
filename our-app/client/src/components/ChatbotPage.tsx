@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 
 const apiKey: string = import.meta.env.VITE_GEMINI_API_KEY;
 
@@ -65,7 +66,12 @@ const ChatbotPage: React.FC<ChatbotPageProps> = ({ isQuizActive }) => {
         }
       );
       const data = await response.json();
-      const botText = data?.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, I couldn't get a response.";
+      let botText = data?.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, I couldn't get a response.";
+      // Remove markdown formatting (bold, italics, underline, etc.)
+      botText = botText.replace(/\*\*([^*]+)\*\*/g, '$1') // bold
+        .replace(/\*([^*]+)\*/g, '$1')       // italics
+        .replace(/__([^_]+)__/g, '$1')         // underline
+        .replace(/_([^_]+)_/g, '$1');          // underline/italics
       setMessages(msgs => [...msgs, { sender: 'bot', text: botText }]);
     } catch (e) {
       setMessages(msgs => [...msgs, { sender: 'bot', text: "Sorry, there was an error connecting to the assistant." }]);
@@ -90,7 +96,7 @@ const ChatbotPage: React.FC<ChatbotPageProps> = ({ isQuizActive }) => {
               display: 'inline-block',
               fontWeight: msg.sender === 'bot' ? 700 : 500,
               boxShadow: '0 2px 8px rgba(0,0,0,0.07)'
-            }}>{msg.text}</span>
+            }}>{msg.sender === 'bot' ? <ReactMarkdown>{msg.text}</ReactMarkdown> : msg.text}</span>
           </div>
         ))}
         {loading && <div style={{ color: '#888', fontStyle: 'italic' }}>Bot is typing...</div>}

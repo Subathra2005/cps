@@ -110,7 +110,7 @@ const CustomQuiz: React.FC<CustomQuizProps> = ({ onQuizStart, onQuizEnd }) => {
     const fetchCourseId = async () => {
       if (!customQuizId) return;
       try {
-        const res = await axios.get(`/api/custom-quizzes/${customQuizId}`);
+        const res = await api.get(`/api/custom-quizzes/${customQuizId}`);
         if (res.data && res.data.courseId) {
           setCourseId(res.data.courseId);
         } else {
@@ -147,21 +147,14 @@ const CustomQuiz: React.FC<CustomQuizProps> = ({ onQuizStart, onQuizEnd }) => {
       answers: filledAnswers
     });
     try {
-<<<<<<< HEAD
-      const res = await api.post(`/api/users/${userId}/custom-quiz/${customQuizId}/submit`, {
-        answers
-      });
-      setScore(res.data.results?.score ?? res.data.score);
-=======
       // 1) submit answers and get result
-      const res = await axios.post(
+      const res = await api.post(
         `/api/users/${userId}/custom-quiz/${customQuizId}/submit`,
         { answers: filledAnswers }
       );
       // pull the numeric score from the response:
       const rawScore = res.data.results?.score ?? res.data.score;
       setScore(rawScore);
->>>>>>> team-Sai_Deepak-Recommendation
       setSubmitted(true);
       onQuizEnd();
 
@@ -174,7 +167,7 @@ const CustomQuiz: React.FC<CustomQuizProps> = ({ onQuizStart, onQuizEnd }) => {
       // 3) Only update course status/result if all three levels are completed and avgScore >= 60
       try {
         // Fetch all custom quizzes for this user
-        const customQuizzesRes = await axios.get(`/api/users/${userId}/custom-quizzes`);
+        const customQuizzesRes = await api.get(`/api/users/${userId}/custom-quizzes`);
         const allCustomQuizzes = customQuizzesRes.data.customQuizzes || [];
         const levels = ['beginner', 'intermediate', 'advanced'];
         const completedQuizzes = levels
@@ -186,17 +179,17 @@ const CustomQuiz: React.FC<CustomQuizProps> = ({ onQuizStart, onQuizEnd }) => {
           const avgScore = Math.round(total / 3);
           if (avgScore >= 60) {
             // fetch the up‐to‐date list of user courses
-            const { data: userData } = await axios.get(`/api/users/${userId}`);
+            const { data: userData } = await api.get(`/api/users/${userId}`);
             const userCourses = userData.courses || [];
             // fire all PUTs in parallel, sending only { result }
             await Promise.all(userCourses.map(course =>
-              axios.put(
+              api.put(
                 `/api/users/${userId}/courses/${encodeURIComponent(course.courseName)}/complete`,
                 { result: avgScore }
               )
             ));
             // finally, re‐fetch or update your local state so the UI picks up the changes:
-            const { data: refreshed } = await axios.get(`/api/users/${userId}`);
+            const { data: refreshed } = await api.get(`/api/users/${userId}`);
             console.log('Courses after update:', refreshed.courses);
             // Optionally, update your local state here if you want to reflect changes in the UI
           }

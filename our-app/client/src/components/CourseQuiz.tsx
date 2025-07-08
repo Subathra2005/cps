@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import { useQuizProgression } from '../hooks/useQuizProgression';
-import axios from 'axios';
+
 interface CourseQuizProps {
   onQuizStart: () => void;
   onQuizEnd: () => void;
@@ -40,7 +40,7 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({ onQuizStart, onQuizEnd }) => {
     const fetchCourseId = async () => {
       if (!lang || !topic) return;
       try {
-        const res = await axios.get(`/api/courses?lang=${encodeURIComponent(lang)}&topic=${encodeURIComponent(topic)}`);
+        const res = await api.get(`/api/courses?lang=${encodeURIComponent(lang)}&topic=${encodeURIComponent(topic)}`);
         // Assume backend returns an array of courses, pick the first match
         if (Array.isArray(res.data) && res.data.length > 0) {
           setCourseId(res.data[0]._id);
@@ -115,13 +115,13 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({ onQuizStart, onQuizEnd }) => {
           averagePercentage,
           bestLevelPercentage
         );
-        
+
         // For official completion, we ensure a minimum passing score of 60
         const resultToSend = Math.max(
           actualScore,
           60 // Minimum passing score changed from 70 to 60
         );
-        
+
         // Update course quiz itself as completed using the user course complete endpoint if avg >= 60
         if (!courseId) {
           alert('Could not find course for this topic/language.');
@@ -129,7 +129,7 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({ onQuizStart, onQuizEnd }) => {
         }
         if (resultToSend >= 60) {
           // Use the user course complete endpoint
-          const userCourseRes = await axios.put(
+          const userCourseRes = await api.put(
             `/api/users/${userId}/courses/${encodeURIComponent(formattedTopic)}/complete`,
             { result: resultToSend }
           );
