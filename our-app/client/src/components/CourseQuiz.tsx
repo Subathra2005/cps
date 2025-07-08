@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import { useQuizProgression } from '../hooks/useQuizProgression';
-
+import axios from 'axios';
 interface CourseQuizProps {
   onQuizStart: () => void;
   onQuizEnd: () => void;
@@ -14,6 +14,7 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({ onQuizStart, onQuizEnd }) => {
 
   const [currentLevel, setCurrentLevel] = useState<'beginner' | 'intermediate' | 'advanced'>('beginner');
   const [loading, setLoading] = useState(true);
+  const [courseId, setCourseId] = useState<string | null>(null);
 
   const levels = [
     { name: 'Easy', key: 'beginner', description: 'Basic concepts and simple problems', color: 'text-success' },
@@ -33,6 +34,28 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({ onQuizStart, onQuizEnd }) => {
   useEffect(() => {
     setLoading(progressLoading);
   }, [progressLoading]);
+
+  // Fetch the courseId for this topic/lang
+  useEffect(() => {
+    const fetchCourseId = async () => {
+      if (!lang || !topic) return;
+      try {
+        const res = await axios.get(`/api/courses?lang=${encodeURIComponent(lang)}&topic=${encodeURIComponent(topic)}`);
+        // Assume backend returns an array of courses, pick the first match
+        if (Array.isArray(res.data) && res.data.length > 0) {
+          setCourseId(res.data[0]._id);
+        } else if (res.data && res.data._id) {
+          setCourseId(res.data._id);
+        } else {
+          setCourseId(null);
+        }
+      } catch (err) {
+        setCourseId(null);
+        console.error('Error fetching courseId:', err);
+      }
+    };
+    fetchCourseId();
+  }, [lang, topic]);
 
   // Check if all levels are completed and update course progress
   const checkAndUpdateCourseCompletion = useCallback(async () => {
@@ -92,64 +115,49 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({ onQuizStart, onQuizEnd }) => {
           averagePercentage,
           bestLevelPercentage
         );
-
-        // For official completion, we ensure a minimum passing score of 70
+        
+        // For official completion, we ensure a minimum passing score of 60
         const resultToSend = Math.max(
           actualScore,
-          70 // Minimum passing score
+          60 // Minimum passing score changed from 70 to 60
         );
-
-        console.log('Sending completion data:', {
-          actualScore,
-          resultToSend,
-          isUsingMinimumPassingScore: resultToSend === 70 && actualScore < 70
-        });
-
-        // Update course completion status with the correct score
-        const updateRes = await api.put(`/api/users/${userId}/courses/${encodeURIComponent(formattedTopic || topic || '')}/complete`, {
-          result: resultToSend,
-          actualScore: actualScore, // Also send the actual score for reference
-          status: 'completed'
-        });
-
-        // Log what we're sending to the server
-        console.log('Sending to server:', {
-          courseName: formattedTopic,
-          result: resultToSend,
-          status: 'completed',
-          endpoint: `/api/users/${userId}/courses/${encodeURIComponent(formattedTopic || topic || '')}/complete`
-        });
-
-        if (updateRes.status === 200) {
-          console.log(`Course ${formattedTopic} marked as completed with result ${resultToSend}`);
-          console.log('Response:', updateRes.data);
-
-          // Force refresh the dashboard immediately and when returning to it
-          localStorage.setItem('dashboardNeedsRefresh', 'true');
-
-          // Add additional debugging info
-          console.log('Dashboard refresh flag set:', localStorage.getItem('dashboardNeedsRefresh'));
-
-          // Show confirmation to the user with a clearer message about the score
-          let completionMessage = `Congratulations! You've completed all levels of "${formattedTopic}"!`;
-
-          if (actualScore > resultToSend) {
-            completionMessage += `\n\nYour actual average score was ${actualScore}%, but the system records at least 70% for completed courses.`;
+        
+        // Update course quiz itself as completed using the user course complete endpoint if avg >= 60
+        if (!courseId) {
+          alert('Could not find course for this topic/language.');
+          return;
+        }
+        if (resultToSend >= 60) {
+          // Use the user course complete endpoint
+          const userCourseRes = await axios.put(
+            `/api/users/${userId}/courses/${encodeURIComponent(formattedTopic)}/complete`,
+            { result: resultToSend }
+          );
+          console.log('User course completion response:', userCourseRes.data);
+          if (userCourseRes.status === 200) {
+            console.log(`Course ${formattedTopic} marked as completed with result ${resultToSend}`);
+            console.log('Response:', userCourseRes.data);
+            // Force refresh the dashboard immediately and when returning to it
+            localStorage.setItem('dashboardNeedsRefresh', 'true');
+            // Add additional debugging info
+            console.log('Dashboard refresh flag set:', localStorage.getItem('dashboardNeedsRefresh'));
+            // Show confirmation to the user with a clearer message about the score
+            let completionMessage = `Congratulations! You've completed all levels of "${formattedTopic}"!`;
+            if (actualScore > resultToSend) {
+              completionMessage += `\n\nYour actual average score was ${actualScore}%, but the system records at least 70% for completed courses.`;
+            } else {
+              completionMessage += `\n\nYour score: ${resultToSend}%`;
+            }
+            completionMessage += '\n\nThe dashboard will update to reflect your progress and unlock the next concept.';
+            alert(completionMessage);
+            // Force a navigation to dashboard to see updates
+            setTimeout(() => {
+              navigate('/dashboard');
+            }, 1500);
           } else {
-            completionMessage += `\n\nYour score: ${resultToSend}%`;
+            console.error('Failed to update course completion status');
+            alert('There was an issue updating your course completion. Please try again or contact support.');
           }
-
-          completionMessage += '\n\nThe dashboard will update to reflect your progress and unlock the next concept.';
-
-          alert(completionMessage);
-
-          // Force a navigation to dashboard to see updates
-          setTimeout(() => {
-            navigate('/dashboard');
-          }, 1500);
-        } else {
-          console.error('Failed to update course completion status');
-          alert('There was an issue updating your course completion. Please try again or contact support.');
         }
       } catch (error: any) {
         console.error('Error updating course completion:', error);
@@ -158,7 +166,7 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({ onQuizStart, onQuizEnd }) => {
         }
       }
     }
-  }, [completedLevels, userId, lang, topic, navigate]);
+  }, [completedLevels, userId, lang, topic, navigate, courseId]);
 
   // Call this when completed levels change
   useEffect(() => {

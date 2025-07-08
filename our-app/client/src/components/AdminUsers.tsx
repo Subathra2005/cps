@@ -40,7 +40,9 @@ const AdminUsers: React.FC = () => {
       setLoading(true);
       try {
         const res = await axios.get("/api/users");
-        setUsers(res.data.users || res.data || []);
+        // Filter out users with role 'admin'
+        const filteredUsers = (res.data.users || res.data || []).filter((u: User) => u.role !== 'admin');
+        setUsers(filteredUsers);
       } catch (e) {
         setUsers([]);
       }

@@ -1,7 +1,7 @@
 import React, { createContext, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import api from '../utils/api';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 interface UserData {
   _id: string;
@@ -43,6 +43,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Load userId from localStorage and fetch userData
   useEffect(() => {
@@ -68,6 +69,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setLoading(false); // Finished loading regardless of success/failure
     }
   };
+
+  // Redirect admin to /admin/users if already logged in, but only if not already on an /admin route
+  useEffect(() => {
+    if (
+      !loading &&
+      userData &&
+      userData.role === 'admin' &&
+      !location.pathname.startsWith('/admin/')
+    ) {
+      navigate('/admin/users');
+    }
+  }, [userData, loading, navigate, location.pathname]);
 
   const checkInitialSetupAndRedirect = (data: any) => {
     const lang = data.lang;

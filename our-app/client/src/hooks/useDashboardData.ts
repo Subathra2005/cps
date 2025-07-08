@@ -93,6 +93,27 @@ export function useDashboardData(userId: string) {
     });
   }
 
+  // Helper: Check if all three levels are completed for a concept
+  function isAllLevelsCompleted(conceptName: string) {
+    const levels = ['beginner', 'intermediate', 'advanced'];
+    // Find all quiz attempts for this concept
+    const quizzes = (user?.quizzes || []).filter(att => {
+      if (att.quizId && typeof att.quizId === 'object' && att.quizId.topic && att.quizId.topic.courseName) {
+        return att.quizId.topic.courseName.toLowerCase() === conceptName.toLowerCase();
+      }
+      return false;
+    });
+    // For each level, check if there is at least one quiz attempt with that level and isSubmitted true
+    return levels.every(level =>
+      quizzes.some(q =>
+        q.quizId &&
+        typeof q.quizId === 'object' &&
+        (q.quizId.quizLevel === level || q.quizId.level === level) &&
+        (q.isSubmitted === true || q.status === 'completed')
+      )
+    );
+  }
+
   // Calculate timeline with average percentage per concept
   useEffect(() => {
     if (!user || !recommendedPath.length) {
@@ -103,15 +124,18 @@ export function useDashboardData(userId: string) {
       const normalizedCourseName = courseName.toLowerCase().trim();
       const userCourse = user?.courseProgress?.courses?.find((c: any) => c.courseName.toLowerCase().trim() === normalizedCourseName);
       const status = userCourse?.status || 'enrolled';
+      const result = userCourse?.result || 0;
       // Get all quiz percentage scores for this concept
       const quizPercentages = getConceptQuizPercentages(courseName);
       // Average only if there are scores
       const avgPercent = quizPercentages.length > 0 ? Math.round(quizPercentages.reduce((a, b) => a + b, 0) / quizPercentages.length) : 0;
-      // A concept is "covered" if the course is completed with a good score (>=60%)
-      // OR if the course is explicitly marked as completed regardless of score
-      const isCompleted = status === 'completed';
-      const hasGoodScore = avgPercent >= 60;
-      const isCovered = isCompleted || hasGoodScore;
+      // A concept is "covered" if either:
+      // 1. All three levels are completed (legacy logic)
+      // 2. The course is marked as completed and result >= 60 (new logic)
+      const isCovered = (
+        (status === 'completed' && result >= 60) ||
+        isAllLevelsCompleted(courseName)
+      );
       return {
         name: courseName,
         covered: isCovered,
