@@ -14,6 +14,7 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({ onQuizStart, onQuizEnd }) => {
   
   const [currentLevel, setCurrentLevel] = useState<'beginner' | 'intermediate' | 'advanced'>('beginner');
   const [loading, setLoading] = useState(true);
+  const [courseId, setCourseId] = useState<string | null>(null);
 
   const levels = [
     { name: 'Easy', key: 'beginner', description: 'Basic concepts and simple problems', color: 'text-success' },
@@ -33,6 +34,28 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({ onQuizStart, onQuizEnd }) => {
   useEffect(() => {
     setLoading(progressLoading);
   }, [progressLoading]);
+
+  // Fetch the courseId for this topic/lang
+  useEffect(() => {
+    const fetchCourseId = async () => {
+      if (!lang || !topic) return;
+      try {
+        const res = await axios.get(`/api/courses?lang=${encodeURIComponent(lang)}&topic=${encodeURIComponent(topic)}`);
+        // Assume backend returns an array of courses, pick the first match
+        if (Array.isArray(res.data) && res.data.length > 0) {
+          setCourseId(res.data[0]._id);
+        } else if (res.data && res.data._id) {
+          setCourseId(res.data._id);
+        } else {
+          setCourseId(null);
+        }
+      } catch (err) {
+        setCourseId(null);
+        console.error('Error fetching courseId:', err);
+      }
+    };
+    fetchCourseId();
+  }, [lang, topic]);
 
   // Check if all levels are completed and update course progress
   const checkAndUpdateCourseCompletion = useCallback(async () => {
@@ -105,11 +128,15 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({ onQuizStart, onQuizEnd }) => {
           isUsingMinimumPassingScore: resultToSend === 70 && actualScore < 70
         });
         
-        // Update course quiz itself as completed using the course quiz endpoint
-        const updateRes = await axios.put(`/api/quizzes/${encodeURIComponent(formattedTopic || topic || '')}`, {
+        // Update course quiz itself as completed using the course endpoint
+        if (!courseId) {
+          alert('Could not find course for this topic/language.');
+          return;
+        }
+        const updateRes = await axios.put(`/api/courses/${courseId}`, {
+          status: 'completed',
           result: resultToSend,
-          actualScore: actualScore, // Also send the actual score for reference
-          status: 'completed'
+          actualScore: actualScore
         });
         
         // Log what we're sending to the server
@@ -117,7 +144,7 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({ onQuizStart, onQuizEnd }) => {
           courseName: formattedTopic,
           result: resultToSend,
           status: 'completed',
-          endpoint: `/api/quizzes/${encodeURIComponent(formattedTopic || topic || '')}`
+          endpoint: `/api/courses/${courseId}`
         });
         
         if (updateRes.status === 200) {
@@ -158,7 +185,7 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({ onQuizStart, onQuizEnd }) => {
         }
       }
     }
-  }, [completedLevels, userId, lang, topic, navigate]);
+  }, [completedLevels, userId, lang, topic, navigate, courseId]);
 
   // Call this when completed levels change
   useEffect(() => {

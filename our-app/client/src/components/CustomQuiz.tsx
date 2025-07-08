@@ -22,6 +22,7 @@ const CustomQuiz: React.FC<CustomQuizProps> = ({ onQuizStart, onQuizEnd }) => {
   const [review, setReview] = useState<any>(null);
   const [tabViolationSubmitted, setTabViolationSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [courseId, setCourseId] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -104,6 +105,25 @@ const CustomQuiz: React.FC<CustomQuizProps> = ({ onQuizStart, onQuizEnd }) => {
     }
   }, [submitted, userId, customQuizId, onQuizEnd]);
 
+  // Fetch courseId for this custom quiz (assumes customQuiz object has courseId field)
+  useEffect(() => {
+    const fetchCourseId = async () => {
+      if (!customQuizId) return;
+      try {
+        const res = await axios.get(`/api/custom-quizzes/${customQuizId}`);
+        if (res.data && res.data.courseId) {
+          setCourseId(res.data.courseId);
+        } else {
+          setCourseId(null);
+        }
+      } catch (err) {
+        setCourseId(null);
+        console.error('Error fetching courseId for custom quiz:', err);
+      }
+    };
+    fetchCourseId();
+  }, [customQuizId]);
+
   const handleAnswer = (ans: string) => {
     setAnswers(prev => {
       const copy = [...prev];
@@ -132,6 +152,18 @@ const CustomQuiz: React.FC<CustomQuizProps> = ({ onQuizStart, onQuizEnd }) => {
         });
       } catch (err) {
         console.error('Failed to update custom quiz status:', err);
+      }
+
+      // Always update the custom quiz's course as completed using the course endpoint
+      try {
+        if (courseId) {
+          await axios.put(`/api/courses/${courseId}`, {
+            result: percentage,
+            status: 'completed'
+          });
+        }
+      } catch (err) {
+        console.error('Failed to update course status for custom quiz:', err);
       }
     } catch (error) {
       console.error('Error submitting custom quiz:', error);
