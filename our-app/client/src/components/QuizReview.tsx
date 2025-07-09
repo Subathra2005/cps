@@ -103,7 +103,7 @@ const QuizReview: React.FC<QuizReviewProps> = ({ attempt, onClose }) => {
     }
     // Only fetch /api/quizzes/:id for non-custom quizzes
     if (!isCustomQuiz) {
-      const endpoint = `/quizzes/${id}`;
+      const endpoint = `/api/quizzes/${id}`;
       api.get(endpoint)
         .then(res => {
           if (res.status < 200 || res.status >= 300) throw new Error(`Failed to fetch quiz data: ${res.status}`);
