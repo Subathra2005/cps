@@ -1,6 +1,6 @@
-import Course from '../models/Course';
-import type { CourseDocument } from '../interfaces/Document_Interfaces';
-import type { PrerequisiteGraph } from '../types/customTypes';
+import Course from '../models/Course.js';
+import type { CourseDocument } from '../interfaces/Document_Interfaces.js';
+import type { PrerequisiteGraph } from '../types/customTypes.js';
 
 // Building Prerequisite Graph
 export async function buildPrerequisiteGraph(): Promise<PrerequisiteGraph> {

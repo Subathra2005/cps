@@ -9,11 +9,10 @@
     "skipLibCheck": true,
     /* Bundler mode */
     "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
     "moduleDetection": "force",
     /* Emit output */
-    "noEmit": true, // Set to true to allow allowImportingTsExtensions
+    "noEmit": false, // Set to true to allow allowImportingTsExtensions
     "outDir": "dist", // production purposes only
     "rootDir": "src", // production purposes only
     /* Linting */
@@ -22,7 +21,25 @@
     "noUncheckedSideEffectImports": true,
     "noImplicitAny": false,
     "noUnusedLocals": false,
-    "noUnusedParameters": false
+    "noUnusedParameters": false,
+    "baseUrl": "./src",
+    "paths": {
+      "@app": [
+        "app.ts"
+      ],
+      "@routes/*": [
+        "routes/*"
+      ],
+      "@controllers/*": [
+        "controllers/*"
+      ],
+      "@models/*": [
+        "models/*"
+      ],
+      "@interfaces/*": [
+        "interfaces/*"
+      ]
+    }
   },
   "include": [
     "src"

@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import type { OptionTag, CourseStatus } from '../types/customTypes';
+import type { OptionTag, CourseStatus } from '../types/customTypes.js';
 
 export interface Option {
     optionText: string;

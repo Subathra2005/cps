@@ -1,11 +1,11 @@
-import User from '../models/User';
-import Quiz from '../models/Quiz';
-import CustomQuiz from '../models/CustomQuiz';
+import User from '../models/User.js';
+import Quiz from '../models/Quiz.js';
+import CustomQuiz from '../models/CustomQuiz.js';
 import type { Request, Response } from 'express';
 import mongoose from 'mongoose';
-import { getRecommendedPath } from '../main/recommendationPath';
-import Course from '../models/Course';
-import type { CourseStatus } from '../types/customTypes';
+import { getRecommendedPath } from '../main/recommendationPath.js';
+import Course from '../models/Course.js';
+import type { CourseStatus } from '../types/customTypes.js';
 
 // Get user dashboard with comprehensive info
 export const getUserDashboard = async (req: Request, res: Response) => {
@@ -37,18 +37,18 @@ export const getUserDashboard = async (req: Request, res: Response) => {
         if (user.recommendedPath && user.recommendedPath.path && user.recommendedPath.path.length > 0) {
             const recommendedCourses = user.recommendedPath.path;
             const userCourseNames = user.courses.map(course => course.courseName);
-            
+
             // Find courses in recommended path that user is not enrolled in
-            const missingCourses = recommendedCourses.filter(courseName => 
+            const missingCourses = recommendedCourses.filter(courseName =>
                 !userCourseNames.includes(courseName)
             );
-            
+
             if (missingCourses.length > 0) {
                 // Find course documents for missing courses
-                const coursesToAdd = await Course.find({ 
-                    courseName: { $in: missingCourses } 
+                const coursesToAdd = await Course.find({
+                    courseName: { $in: missingCourses }
                 });
-                
+
                 // Add missing courses with 'enrolled' status
                 for (const course of coursesToAdd) {
                     user.courses.push({
@@ -58,7 +58,7 @@ export const getUserDashboard = async (req: Request, res: Response) => {
                         result: 0
                     });
                 }
-                
+
                 // Save user if we added any courses
                 if (coursesToAdd.length > 0) {
                     await user.save();
@@ -73,12 +73,12 @@ export const getUserDashboard = async (req: Request, res: Response) => {
         const totalCourses = user.courses.length;
 
         // Average score (learning path courses only)
-        const completedCoursesWithScores = user.courses.filter(course => 
+        const completedCoursesWithScores = user.courses.filter(course =>
             course.status === 'completed' && course.result > 0
         );
         const totalCourseScore = completedCoursesWithScores.reduce((sum, course) => sum + course.result, 0);
-        const averageScore = completedCoursesWithScores.length > 0 
-            ? totalCourseScore / completedCoursesWithScores.length 
+        const averageScore = completedCoursesWithScores.length > 0
+            ? totalCourseScore / completedCoursesWithScores.length
             : 0;
 
         // Basic quiz stats (for reference)
@@ -110,17 +110,17 @@ export const getUserDashboard = async (req: Request, res: Response) => {
                 quizLevel = quizData.quizLevel || quizLevel;
                 quizLang = quizData.lang || quizLang;
                 topicName = quizData.topic?.courseName || topicName;
-                
+
                 // Generate a comprehensive title based on available data
                 if (quizData.title) {
                     quizTitle = quizData.title;
                 } else {
                     // Construct title from parts
                     const langPart = (quizLang || 'Java').charAt(0).toUpperCase() + (quizLang || 'Java').slice(1);
-                    const topicPart = (topicName === 'basic') ? 'Basic' : 
-                                     topicName.charAt(0).toUpperCase() + topicName.slice(1);
+                    const topicPart = (topicName === 'basic') ? 'Basic' :
+                        topicName.charAt(0).toUpperCase() + topicName.slice(1);
                     const levelPart = (quizLevel || 'Beginner').charAt(0).toUpperCase() + (quizLevel || 'Beginner').slice(1);
-                    
+
                     if (topicName === 'basic') {
                         quizTitle = `${langPart} Basic Quiz - ${levelPart}`;
                     } else {
@@ -147,7 +147,7 @@ export const getUserDashboard = async (req: Request, res: Response) => {
 
         const allCustomQuizAttempts = user.customQuizzes.map(quiz => {
             let quizTitle = 'Custom Quiz';
-            
+
             if (quiz.quizId && typeof quiz.quizId === 'object') {
                 const quizData = quiz.quizId as any;
                 quizTitle = quizData.title || quizTitle;
@@ -166,7 +166,7 @@ export const getUserDashboard = async (req: Request, res: Response) => {
         const recentQuizzes = allQuizAttempts
             .sort((a, b) => new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime())
             .slice(0, 10); // Increased to show more history
-            
+
         const recentCustomQuizzes = allCustomQuizAttempts
             .sort((a, b) => new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime())
             .slice(0, 10); // Increased to show more history
@@ -294,14 +294,14 @@ export const getQuestions = async (req: Request, res: Response) => {
             // Check if user has already attempted this basic quiz level
             const basicQuizAttempts = user.quizzes.filter(userQuiz => {
                 const quizData = userQuiz.quizId as any;
-                return quizData && 
-                       quizData.lang === lang && 
-                       quizData.quizLevel === quizLevel && 
-                       quizData.topic?.courseName === topic;
+                return quizData &&
+                    quizData.lang === lang &&
+                    quizData.quizLevel === quizLevel &&
+                    quizData.topic?.courseName === topic;
             });
 
             if (basicQuizAttempts.length > 0) {
-                return res.status(400).json({ 
+                return res.status(400).json({
                     error: 'Basic quiz already attempted',
                     message: `You have already completed the ${quizLevel} level basic quiz. You cannot retake it.`,
                     canRetake: false,
@@ -318,27 +318,27 @@ export const getQuestions = async (req: Request, res: Response) => {
 
             if (quizzes.length > 0) {
                 // Get all attempts for this specific topic and level
-                const userAttempts = user.quizzes.filter(userQuiz => 
+                const userAttempts = user.quizzes.filter(userQuiz =>
                     quizzes.some(quiz => {
                         const quizObjectId = quiz._id as mongoose.Types.ObjectId;
-                        const userQuizId = typeof userQuiz.quizId === 'string' 
-                            ? userQuiz.quizId 
+                        const userQuizId = typeof userQuiz.quizId === 'string'
+                            ? userQuiz.quizId
                             : userQuiz.quizId.toString();
                         return quizObjectId.toString() === userQuizId;
                     })
-                ).filter(attempt => 
-                    typeof attempt.userScore === 'number' && 
-                    Array.isArray(attempt.userAnswers) && 
+                ).filter(attempt =>
+                    typeof attempt.userScore === 'number' &&
+                    Array.isArray(attempt.userAnswers) &&
                     attempt.userAnswers.length > 0
                 );
 
                 // Check if user has already passed (>50%)
                 const totalQuestions = quizzes.reduce((sum, quiz) => sum + quiz.questions.length, 0);
                 const passingScore = totalQuestions * 0.5;
-                
+
                 const passedAttempt = userAttempts.find(attempt => attempt.userScore > passingScore);
                 if (passedAttempt) {
-                    return res.status(400).json({ 
+                    return res.status(400).json({
                         error: 'Level already passed',
                         message: `You have already passed ${topic} ${quizLevel} level. You cannot retake it.`,
                         canRetake: false
@@ -370,7 +370,7 @@ export const getQuestions = async (req: Request, res: Response) => {
                     const lastAttempt = sortedAttempts[0];
                     const failed = lastAttempt.userScore <= passingScore;
                     if (failed) {
-                        const lastFailedAttemptTime = lastAttempt.submittedAt 
+                        const lastFailedAttemptTime = lastAttempt.submittedAt
                             ? new Date(lastAttempt.submittedAt).getTime()
                             : new Date(user.updatedAt).getTime();
                         const lockoutDuration = 24 * 60 * 60 * 1000; // 24 hours
@@ -487,7 +487,7 @@ export const submitAnswers = async (req: Request, res: Response) => {
             // Set 24-hour lockout for this topic/level
             if (!user.courseQuizLockouts) user.courseQuizLockouts = {};
             if (!user.courseQuizLockouts[topic]) user.courseQuizLockouts[topic] = {};
-            user.courseQuizLockouts[topic][quizLevel] = Date.now() + 24*60*60*1000;
+            user.courseQuizLockouts[topic][quizLevel] = Date.now() + 24 * 60 * 60 * 1000;
             await user.save();
             console.log(`Violation detected: ${violationType} for user ${id}, topic ${topic}, level ${quizLevel}`);
         } else {
@@ -622,7 +622,7 @@ export const reviewQuiz = async (req: Request, res: Response) => {
                 score: isCorrect ? question.score : 0,
             });
         });
-        
+
         const totalQuestions = quizDoc.questions.length;
         const correctAnswers = questionDetails.filter(q => q.isCorrect).length;
         const percentage = (correctAnswers / totalQuestions) * 100;
@@ -866,7 +866,7 @@ export const reviewQuizByLevel = async (req: Request, res: Response) => {
         });
 
         if (quizAttempts.length === 0) {
-            return res.status(404).json({ 
+            return res.status(404).json({
                 error: `No quiz attempts found for level: ${level}`,
                 level,
                 statistics: {
@@ -897,7 +897,7 @@ export const reviewQuizByLevel = async (req: Request, res: Response) => {
         // Create detailed attempt history with question breakdown
         const detailedAttempts = quizAttempts.map((attempt, index) => {
             const quizDoc = attempt.quizId as any;
-            
+
             if (!quizDoc || !quizDoc.questions) {
                 return {
                     attemptNumber: index + 1,
@@ -1076,7 +1076,7 @@ export const completeCourse = async (req: Request, res: Response) => {
         console.log(`User ID: ${id}`);
         console.log(`Course Name: "${courseName}"`);
         console.log(`Received Body:`, req.body);
-        
+
         // Extract the additional actualScore field if provided
         const { actualScore } = req.body;
         if (actualScore) {
@@ -1089,25 +1089,25 @@ export const completeCourse = async (req: Request, res: Response) => {
         }
 
         console.log(`Looking for course name "${courseName}" in user's courses:`, user.courses.map((c: any) => c.courseName));
-        
+
         // Find the course in user's courses - with case-insensitive comparison as a fallback
         let userCourse = user.courses.find((c: any) => c.courseName === courseName);
-        
+
         // Try case-insensitive search if exact match fails
         if (!userCourse) {
-            userCourse = user.courses.find((c: any) => 
+            userCourse = user.courses.find((c: any) =>
                 c.courseName.toLowerCase() === courseName.toLowerCase()
             );
-            
+
             if (userCourse) {
                 console.log(`Found course "${userCourse.courseName}" using case-insensitive match for "${courseName}"`);
             }
         }
-        
+
         if (!userCourse) {
-            console.error(`Course "${courseName}" not found in user progress. Available courses:`, 
+            console.error(`Course "${courseName}" not found in user progress. Available courses:`,
                 user.courses.map((c: any) => c.courseName));
-            return res.status(404).json({ 
+            return res.status(404).json({
                 error: 'Course not found in user progress',
                 courseName: courseName,
                 availableCourses: user.courses.map((c: any) => c.courseName)
@@ -1116,7 +1116,7 @@ export const completeCourse = async (req: Request, res: Response) => {
 
         // Update course status and result
         userCourse.status = status;
-        
+
         // Ensure result is a positive number
         // If result is provided in the request, use it
         // Otherwise, keep existing value or default to 70 for completed courses
@@ -1381,7 +1381,7 @@ export const submitCustomQuizAnswers = async (req: Request, res: Response) => {
             totalScore = 0;
             correctAnswers = 0;
             console.log(`Custom quiz violation detected: ${violationType} for user ${id}, quiz ${customQuizId}`);
-            
+
             // Still populate question details for review, but mark all as incorrect
             customQuiz.customQuestions.forEach((question, index) => {
                 questionDetails.push({
@@ -1548,7 +1548,7 @@ export const reviewCourse = async (req: Request, res: Response) => {
             return res.status(404).json({ error: 'User not found' });
         }
 
-        const courseProgress = user.courses.find(course => 
+        const courseProgress = user.courses.find(course =>
             course.courseName === courseName
         );
 
@@ -1559,7 +1559,7 @@ export const reviewCourse = async (req: Request, res: Response) => {
         // Get user's preferred language
         const lang = user.lang || 'java';
         const levels = ['beginner', 'intermediate', 'advanced'];
-        
+
         // Aggregate quiz attempts across all levels for this course - but keep levels separate
         const levelResults = await Promise.all(levels.map(async (level) => {
             try {
@@ -1585,7 +1585,7 @@ export const reviewCourse = async (req: Request, res: Response) => {
                 }
 
                 // Find user's attempts for this level/course combination
-                const userAttempts = user.quizzes.filter(userQuiz => 
+                const userAttempts = user.quizzes.filter(userQuiz =>
                     quizzes.some(quiz => (quiz._id as mongoose.Types.ObjectId).equals(userQuiz.quizId))
                 );
 
@@ -1606,12 +1606,12 @@ export const reviewCourse = async (req: Request, res: Response) => {
                 // Get the latest attempt for detailed review
                 const latestAttempt = userAttempts[userAttempts.length - 1];
                 const latestQuiz = quizzes.find(q => (q._id as mongoose.Types.ObjectId).equals(latestAttempt.quizId));
-                
+
                 // Calculate statistics
                 const scores = userAttempts.map(attempt => attempt.userScore);
                 const bestScore = scores.length > 0 ? Math.max(...scores) : 0;
                 const latestScore = scores.length > 0 ? scores[scores.length - 1] : 0;
-                
+
                 // Calculate percentages based on quiz length
                 const totalQuestions = latestQuiz?.questions?.length || 0;
                 const bestPercentage = totalQuestions > 0 ? Math.round((bestScore / totalQuestions) * 100) : 0;
@@ -1665,8 +1665,8 @@ export const reviewCourse = async (req: Request, res: Response) => {
         // Calculate overall course statistics
         const totalAttempts = levelResults.reduce((sum, level) => sum + level.totalAttempts, 0);
         const totalQuestions = levelResults.reduce((sum, level) => sum + level.totalQuestions, 0);
-        const averageScore = levelResults.length > 0 
-            ? levelResults.reduce((sum, level) => sum + (level.bestPercentage || 0), 0) / levelResults.length 
+        const averageScore = levelResults.length > 0
+            ? levelResults.reduce((sum, level) => sum + (level.bestPercentage || 0), 0) / levelResults.length
             : 0;
 
         // Determine completion status
@@ -1703,7 +1703,7 @@ export const reviewCourse = async (req: Request, res: Response) => {
 // Helper function to generate recommendations based on course performance
 function getRecommendations(levelResults: any[], courseName: string): string[] {
     const recommendations: string[] = [];
-    
+
     const beginnerLevel = levelResults.find(level => level.level === 'beginner');
     const intermediateLevel = levelResults.find(level => level.level === 'intermediate');
     const advancedLevel = levelResults.find(level => level.level === 'advanced');
@@ -1711,15 +1711,15 @@ function getRecommendations(levelResults: any[], courseName: string): string[] {
     if (beginnerLevel && (beginnerLevel.bestPercentage || 0) < 60) {
         recommendations.push(`Focus on strengthening basic ${courseName} concepts`);
     }
-    
+
     if (beginnerLevel && (beginnerLevel.bestPercentage || 0) >= 60 && (!intermediateLevel || intermediateLevel.totalAttempts === 0)) {
         recommendations.push(`Ready to attempt intermediate ${courseName} level`);
     }
-    
+
     if (intermediateLevel && (intermediateLevel.bestPercentage || 0) >= 60 && (!advancedLevel || advancedLevel.totalAttempts === 0)) {
         recommendations.push(`Ready to attempt advanced ${courseName} level`);
     }
-    
+
     if (advancedLevel && (advancedLevel.bestPercentage || 0) >= 80) {
         recommendations.push(`Excellent mastery of ${courseName}! Consider moving to the next concept.`);
     }
@@ -1740,10 +1740,10 @@ function getRecommendations(levelResults: any[], courseName: string): string[] {
 // Helper function to generate quiz recommendations
 function generateQuizRecommendations(level: string, bestScore: number, totalAttempts: number, improvement: number, topicsCovered: string[]): string[] {
     const recommendations: string[] = [];
-    
+
     // Calculate approximate percentage (assuming ~10-20 questions per quiz)
     const estimatedPercentage = (bestScore / Math.max(15, bestScore)) * 100;
-    
+
     if (totalAttempts === 0) {
         recommendations.push(`Start taking ${level} level quizzes to build your foundation`);
     } else if (estimatedPercentage < 40) {
@@ -1767,17 +1767,17 @@ function generateQuizRecommendations(level: string, bestScore: number, totalAtte
             recommendations.push(`Consider exploring more advanced topics or different subjects`);
         }
     }
-    
+
     if (improvement > 0 && totalAttempts > 1) {
         recommendations.push(`Great improvement! Your score increased by ${improvement} points`);
     } else if (improvement < 0 && totalAttempts > 1) {
         recommendations.push(`Take some time to review before the next attempt`);
     }
-    
+
     if (topicsCovered.length > 0) {
         recommendations.push(`Topics covered: ${topicsCovered.join(', ')}`);
     }
-    
+
     return recommendations;
 }
 
@@ -1800,9 +1800,9 @@ export const debugUserQuizHistory = async (req: Request, res: Response) => {
         }
 
         // Get all available Java basic quizzes
-        const allJavaQuizzes = await Quiz.find({ 
-            lang: 'java', 
-            'topic.courseName': 'basic' 
+        const allJavaQuizzes = await Quiz.find({
+            lang: 'java',
+            'topic.courseName': 'basic'
         });
 
         // Analyze user's quiz attempts
@@ -1833,7 +1833,7 @@ export const debugUserQuizHistory = async (req: Request, res: Response) => {
 
         // Find missing basic quizzes that user hasn't attempted
         const attemptedQuizIds = user.quizzes.map(q => q.quizId?.toString()).filter(Boolean);
-        const missingBasicQuizzes = allJavaQuizzes.filter(quiz => 
+        const missingBasicQuizzes = allJavaQuizzes.filter(quiz =>
             !attemptedQuizIds.includes((quiz._id as any).toString())
         );
 

@@ -60,3 +60,6 @@ temp
 
 our-app/server/.env
 our-app/client/.env
+
+rasmal*.txt
+rasmal*.md

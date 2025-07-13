@@ -2,12 +2,12 @@ import express from 'express';
 import cors from 'cors';
 
 // Import all route modules
-import authRoutes from './routes/authRoutes';
-import homeRoutes from './routes/homeRoutes';
-import userRoutes from './routes/userRoutes';
-import courseRoutes from './routes/courseRoutes';
-import quizRoutes from './routes/quizRoutes';
-import customQuizRoutes from './routes/customQuizRoutes';
+import authRoutes from './routes/authRoutes.js';
+import homeRoutes from './routes/homeRoutes.js';
+import userRoutes from './routes/userRoutes.js';
+import courseRoutes from './routes/courseRoutes.js';
+import quizRoutes from './routes/quizRoutes.js';
+import customQuizRoutes from './routes/customQuizRoutes.js';
 
 const app = express();
 

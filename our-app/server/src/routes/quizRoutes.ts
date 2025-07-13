@@ -19,7 +19,7 @@ import {
     editQuizzesByLangLevelTopic,
     submitQuizzesByLangLevelTopic,
     deleteQuizzesByLangLevelTopic
-} from '../controllers/quizController';
+} from '../controllers/quizController.js';
 
 const router = express.Router();
 

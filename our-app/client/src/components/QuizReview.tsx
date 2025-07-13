@@ -36,8 +36,8 @@ const QuizReview: React.FC<QuizReviewProps> = ({ attempt, onClose }) => {
     if (isCustomQuiz) {
       api.get(`/api/custom-quizzes/${id}`)
         .then(res => {
-          if (!res.ok) throw new Error(`Failed to fetch quiz data: ${res.status}`);
-          return res.json();
+          if (res.status < 200 || res.status >= 300) throw new Error(`Failed to fetch quiz data: ${res.status}`);
+          return res.data;
         })
         .then(quizData => {
           let questions: any[] | null = null;
@@ -57,7 +57,7 @@ const QuizReview: React.FC<QuizReviewProps> = ({ attempt, onClose }) => {
           let answers = userAnswers;
           if (attempt.userId) {
             api.get(`/api/users/${attempt.userId}`)
-              .then(res => res.ok ? res.json() : null)
+              .then(res => (res.status >= 200 && res.status < 300) ? res.data : null)
               .then(userData => {
                 if (userData && Array.isArray(userData.customQuizzes)) {
                   const quizAttempt = userData.customQuizzes.find((q: any) => {
@@ -103,11 +103,11 @@ const QuizReview: React.FC<QuizReviewProps> = ({ attempt, onClose }) => {
     }
     // Only fetch /api/quizzes/:id for non-custom quizzes
     if (!isCustomQuiz) {
-      const endpoint = `/quizzes/${id}`;
+      const endpoint = `/api/quizzes/${id}`;
       api.get(endpoint)
         .then(res => {
-          if (!res.ok) throw new Error(`Failed to fetch quiz data: ${res.status}`);
-          return res.json();
+          if (res.status < 200 || res.status >= 300) throw new Error(`Failed to fetch quiz data: ${res.status}`);
+          return res.data;
         })
         .then(quizData => {
           let questions: any[] | null = null;

@@ -1,5 +1,5 @@
-import { buildPrerequisiteGraph } from './graphBuilder';
-import type { PrerequisiteGraph } from '../types/customTypes';
+import { buildPrerequisiteGraph } from './graphBuilder.js';
+import type { PrerequisiteGraph } from '../types/customTypes.js';
 
 // Get all prerequisites (recursively) for a target node in the graph.
 function collectAllPrerequisites(target: string, graph: PrerequisiteGraph, visited = new Set<string>()): Set<string> {

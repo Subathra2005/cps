@@ -15,7 +15,7 @@ import {
     searchCourses,
     getCoursesByDifficultyRange,
     debugCourses
-} from '../controllers/courseController';
+} from '../controllers/courseController.js';
 
 const router = express.Router();
 

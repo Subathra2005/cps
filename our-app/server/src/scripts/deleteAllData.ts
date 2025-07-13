@@ -2,10 +2,10 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import mongoose from 'mongoose';
-import Course from '../models/Course';
-import Quiz from '../models/Quiz';
-import CustomQuiz from '../models/CustomQuiz';
-import User from '../models/User';
+import Course from '../models/Course.js';
+import Quiz from '../models/Quiz.js';
+import CustomQuiz from '../models/CustomQuiz.js';
+import User from '../models/User.js';
 
 const deleteData = async (options: {
     all?: boolean;
